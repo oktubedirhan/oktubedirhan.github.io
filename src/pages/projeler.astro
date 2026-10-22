@@ -5,8 +5,10 @@ import { PROJECTS } from '../consts';
 ---
 
 <Base title="Projeler" description="Üzerinde çalıştığım projeler.">
-  <h1>Projeler</h1>
-  <p class="muted">Üzerinde çalıştığım ya da çalışmış olduğum şeyler.</p>
+  <header class="page-head">
+    <h1>Projeler</h1>
+    <p class="lead">Üzerinde çalıştığım ya da çalışmış olduğum şeyler.</p>
+  </header>
   <div class="grid">
     {PROJECTS.map((p) => <ProjectCard project={p} />)}
   </div>
@@ -15,7 +17,7 @@ import { PROJECTS } from '../consts';
 <style>
   .grid {
     display: grid;
-    gap: 1rem;
-    margin-top: 2rem;
+    gap: var(--space-4);
+    grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
   }
 </style>

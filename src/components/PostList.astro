@@ -16,8 +16,14 @@ const { posts } = Astro.props;
     <ul>
       {posts.map((post) => (
         <li>
-          <a href={`/blog/${post.id}/`}>{post.data.title}</a>
-          <FormattedDate date={post.data.date} />
+          <a href={`/blog/${post.id}/`}>
+            <FormattedDate date={post.data.date} />
+            <span class="title">
+              {post.data.title}
+              <span class="desc">{post.data.description}</span>
+            </span>
+            <span class="arrow" aria-hidden="true">→</span>
+          </a>
         </li>
       ))}
     </ul>
@@ -29,27 +35,54 @@ const { posts } = Astro.props;
     list-style: none;
     padding: 0;
     margin: 0;
+    border-top: 1px solid var(--rule);
   }
   li {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 1rem;
-    padding: 0.6rem 0;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--rule);
   }
-  li a {
-    color: var(--text);
+  a {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr auto;
+    align-items: baseline;
+    gap: var(--space-4);
+    padding: var(--space-3) 0;
+    color: var(--ink);
     text-decoration: none;
+  }
+  .title {
     font-weight: 500;
   }
-  li a:hover {
-    color: var(--accent);
+  .desc {
+    display: block;
+    margin-top: 2px;
+    font-size: 15px;
+    line-height: 22px;
+    font-weight: 400;
+    color: var(--ink-muted);
   }
-  li :global(time) {
-    flex-shrink: 0;
-    font-size: 0.85rem;
-    color: var(--muted);
-    font-variant-numeric: tabular-nums;
+  .arrow {
+    color: var(--kiremit);
+    opacity: 0;
+    transform: translateX(-4px);
+    transition:
+      opacity 0.15s,
+      transform 0.15s;
+  }
+  a:hover .title {
+    color: var(--kiremit);
+  }
+  a:hover .arrow,
+  a:focus-visible .arrow {
+    opacity: 1;
+    transform: none;
+  }
+  @media (max-width: 560px) {
+    a {
+      grid-template-columns: 1fr;
+      gap: 2px;
+    }
+    .arrow {
+      display: none;
+    }
   }
 </style>
