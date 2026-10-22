@@ -6,6 +6,9 @@ backend:
   name: github
   repo: oktubedirhan/oktubedirhan.github.io
   branch: main
+  # GitHub ile giriş: Vercel'deki bedirhanoktu-cms-auth projesi + "bedirhanoktu.dev CMS" GitHub App
+  base_url: https://bedirhanoktu-cms-auth.vercel.app
+  auth_methods: [oauth]
   commit_messages:
     create: '{{collection}}: "{{slug}}" eklendi'
     update: '{{collection}}: "{{slug}}" güncellendi'
