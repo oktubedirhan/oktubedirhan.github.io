@@ -1,5 +1,7 @@
 ---
-import type { Project } from '../consts';
+import type { CollectionEntry } from 'astro:content';
+
+type Project = CollectionEntry<'projeler'>['data'];
 
 interface Props {
   project: Project;

@@ -1,7 +1,9 @@
 ---
 import Base from '../layouts/Base.astro';
 import ProjectCard from '../components/ProjectCard.astro';
-import { PROJECTS } from '../consts';
+import { getProjects } from '../utils';
+
+const projects = await getProjects();
 ---
 
 <Base title="Projeler" description="Üzerinde çalıştığım projeler.">
@@ -10,7 +12,7 @@ import { PROJECTS } from '../consts';
     <p class="lead">Üzerinde çalıştığım ya da çalışmış olduğum şeyler.</p>
   </header>
   <div class="grid">
-    {PROJECTS.map((p) => <ProjectCard project={p} />)}
+    {projects.map((p) => <ProjectCard project={p} />)}
   </div>
 </Base>
 

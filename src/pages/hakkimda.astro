@@ -1,24 +1,17 @@
 ---
+import { getEntry, render } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import { LINKS } from '../consts';
+
+const page = await getEntry('sayfalar', 'hakkimda');
+if (!page) throw new Error('src/content/sayfalar/hakkimda.md bulunamadı');
+const { Content } = await render(page);
 ---
 
-<Base title="Hakkımda">
+<Base title={page.data.title}>
   <header class="page-head">
-    <h1>Hakkımda</h1>
+    <h1>{page.data.title}</h1>
   </header>
   <div class="prose">
-    <p>
-      Ben Bedirhan Oktu. Orta Doğu Teknik Üniversitesi'nde matematik okuyorum.
-    </p>
-    <p>
-      Matematiğin yanında yazılımla uğraşmayı seviyorum: Swift ile iOS/macOS uygulamaları,
-      TypeScript ile web projeleri ve arada bir tersine mühendislik. Bu sitede öğrendiklerimi
-      not ediyor, projelerimi paylaşıyorum.
-    </p>
-    <p>
-      Bana <a href={LINKS.email}>e-posta</a> ile ulaşabilir ya da
-      <a href={LINKS.github}>GitHub</a>'da projelerime göz atabilirsin.
-    </p>
+    <Content />
   </div>
 </Base>

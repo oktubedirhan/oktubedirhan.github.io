@@ -1,0 +1,10 @@
+{
+  "name": "Köprü",
+  "order": 1,
+  "description": "Apple Silicon Mac'te Windows oyunlarını CrossOver Wine + D3DMetal ile çalıştırmak için yazdığım bir öğrenme projesi.",
+  "tags": [
+    "Swift",
+    "macOS"
+  ],
+  "repo": "https://github.com/oktubedirhan/kopru"
+}

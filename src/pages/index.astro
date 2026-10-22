@@ -2,20 +2,19 @@
 import Base from '../layouts/Base.astro';
 import PostList from '../components/PostList.astro';
 import ProjectCard from '../components/ProjectCard.astro';
-import { PROJECTS, LINKS } from '../consts';
-import { getPosts } from '../utils';
+import { LINKS } from '../consts';
+import { getPosts, getProjects } from '../utils';
+import home from '../data/home.json';
 
 const posts = (await getPosts()).slice(0, 5);
+const projects = await getProjects();
 ---
 
 <Base>
   <section class="hero" slot="hero">
-    <p class="label eyebrow">ODTÜ · Matematik</p>
-    <h1>Merhaba, ben <em>Bedirhan</em>.</h1>
-    <p class="lead">
-      ODTÜ'de matematik okuyorum. Boş zamanlarımda iOS ve macOS uygulamaları, küçük web
-      projeleri yapıyorum. Burada öğrendiklerimi ve üzerinde çalıştığım şeyleri yazıyorum.
-    </p>
+    <p class="label eyebrow">{home.eyebrow}</p>
+    <h1>Merhaba, ben <em>{home.name}</em>.</h1>
+    <p class="lead">{home.lead}</p>
     <div class="links">
       <a class="btn btn-primary" href="/blog/">Yazıları oku →</a>
       <a class="btn" href={LINKS.github}>GitHub</a>
@@ -34,7 +33,7 @@ const posts = (await getPosts()).slice(0, 5);
     <a href="/projeler/">Tümü →</a>
   </div>
   <div class="grid">
-    {PROJECTS.slice(0, 3).map((p) => <ProjectCard project={p} />)}
+    {projects.slice(0, 3).map((p) => <ProjectCard project={p} />)}
   </div>
 </Base>
 

@@ -1,0 +1,9 @@
+{
+  "name": "Blackjack",
+  "order": 3,
+  "description": "Tarayıcıda oynanan basit bir blackjack oyunu.",
+  "tags": [
+    "JavaScript"
+  ],
+  "repo": "https://github.com/oktubedirhan/blackjack"
+}

@@ -1,0 +1,83 @@
+# yaml-language-server: $schema=https://unpkg.com/@sveltia/cms@0.233.0/schema/sveltia-cms.json
+# Panelde yapılan her kayıt main dalına commit atar; GitHub Actions siteyi ~1 dakikada yeniler.
+# Alanlar src/content.config.ts içindeki şemalarla aynı olmalı.
+
+backend:
+  name: github
+  repo: oktubedirhan/oktubedirhan.github.io
+  branch: main
+  commit_messages:
+    create: '{{collection}}: "{{slug}}" eklendi'
+    update: '{{collection}}: "{{slug}}" güncellendi'
+    delete: '{{collection}}: "{{slug}}" silindi'
+    uploadMedia: 'Medya: "{{path}}" yüklendi'
+    deleteMedia: 'Medya: "{{path}}" silindi'
+
+site_url: https://www.bedirhanoktu.dev
+display_url: https://www.bedirhanoktu.dev
+
+media_folder: public/media
+public_folder: /media
+
+slug:
+  encoding: ascii
+  clean_accents: true
+
+collections:
+  - name: blog
+    label: Blog yazıları
+    label_singular: Yazı
+    folder: src/content/blog
+    extension: md
+    format: frontmatter
+    create: true
+    slug: '{{title}}'
+    summary: '{{title}} · {{date}}'
+    sortable_fields: [date, title]
+    preview_path: /blog/{{slug}}/
+    fields:
+      - { label: Başlık, name: title, widget: string }
+      - { label: Kısa özet, name: description, widget: string, hint: Listelerde ve arama motorlarında görünür. }
+      - { label: Tarih, name: date, widget: datetime, type: date }
+      - { label: Etiketler, name: tags, widget: list, required: false, default: [] }
+      - { label: Taslak, name: draft, widget: boolean, default: false, hint: Açıkken yazı sitede görünmez. }
+      - { label: İçerik, name: body, widget: markdown }
+
+  - name: projeler
+    label: Projeler
+    label_singular: Proje
+    folder: src/content/projeler
+    extension: json
+    format: json
+    create: true
+    slug: '{{name}}'
+    identifier_field: name
+    summary: '{{order}}. {{name}}'
+    sortable_fields: [order, name]
+    fields:
+      - { label: Ad, name: name, widget: string }
+      - { label: Açıklama, name: description, widget: text }
+      - { label: Sıra, name: order, widget: number, value_type: int, default: 10, hint: Küçük sayı önce gösterilir. Ana sayfada ilk 3 proje görünür. }
+      - { label: Etiketler, name: tags, widget: list, required: false, default: [] }
+      - { label: Site adresi, name: url, widget: string, required: false, hint: 'Varsa projenin canlı adresi (https://...)' }
+      - { label: Kaynak kod, name: repo, widget: string, required: false, hint: 'GitHub reposu (https://github.com/...)' }
+
+  - name: sayfalar
+    label: Sayfalar
+    files:
+      - name: anasayfa
+        label: Ana sayfa girişi
+        file: src/data/home.json
+        format: json
+        fields:
+          - { label: Üst etiket, name: eyebrow, widget: string }
+          - { label: Ad (başlıkta vurgulanır), name: name, widget: string, hint: '"Merhaba, ben ___." cümlesindeki ad' }
+          - { label: Tanıtım paragrafı, name: lead, widget: text }
+      - name: hakkimda
+        label: Hakkımda
+        file: src/content/sayfalar/hakkimda.md
+        format: frontmatter
+        preview_path: /hakkimda/
+        fields:
+          - { label: Başlık, name: title, widget: string }
+          - { label: İçerik, name: body, widget: markdown }
