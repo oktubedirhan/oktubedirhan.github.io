@@ -60,7 +60,7 @@ collections:
     fields:
       - { label: Ad, name: name, widget: string }
       - { label: Açıklama, name: description, widget: text }
-      - { label: Sıra, name: order, widget: number, value_type: int, default: 10, hint: Küçük sayı önce gösterilir. Ana sayfada ilk 3 proje görünür. }
+      - { label: Sıra, name: order, widget: number, value_type: int, default: 10, hint: Küçük sayı önce gösterilir. }
       - { label: Etiketler, name: tags, widget: list, required: false, default: [] }
       - { label: Site adresi, name: url, widget: string, required: false, hint: 'Sitedeki yolu (/karteikasten/) ya da tam adresi (https://...)' }
       - { label: Kaynak kod, name: repo, widget: string, required: false, hint: 'GitHub reposu (https://github.com/...)' }
