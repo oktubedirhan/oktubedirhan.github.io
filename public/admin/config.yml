@@ -62,7 +62,7 @@ collections:
       - { label: Açıklama, name: description, widget: text }
       - { label: Sıra, name: order, widget: number, value_type: int, default: 10, hint: Küçük sayı önce gösterilir. Ana sayfada ilk 3 proje görünür. }
       - { label: Etiketler, name: tags, widget: list, required: false, default: [] }
-      - { label: Site adresi, name: url, widget: string, required: false, hint: 'Varsa projenin canlı adresi (https://...)' }
+      - { label: Site adresi, name: url, widget: string, required: false, hint: 'Sitedeki yolu (/karteikasten/) ya da tam adresi (https://...)' }
       - { label: Kaynak kod, name: repo, widget: string, required: false, hint: 'GitHub reposu (https://github.com/...)' }
 
   - name: sayfalar
@@ -81,6 +81,14 @@ collections:
         file: src/content/sayfalar/hakkimda.md
         format: frontmatter
         preview_path: /hakkimda/
+        fields:
+          - { label: Başlık, name: title, widget: string }
+          - { label: İçerik, name: body, widget: markdown }
+      - name: kopru
+        label: Köprü proje sayfası
+        file: src/content/sayfalar/kopru.md
+        format: frontmatter
+        preview_path: /kopru/
         fields:
           - { label: Başlık, name: title, widget: string }
           - { label: İçerik, name: body, widget: markdown }

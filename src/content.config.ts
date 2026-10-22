@@ -22,7 +22,8 @@ const projeler = defineCollection({
     description: z.string(),
     order: z.number().default(100),
     tags: z.array(z.string()).default([]),
-    url: z.string().url().optional().or(z.literal('').transform(() => undefined)),
+    // Sitedeki yol (/karteikasten/) ya da tam adres (https://...)
+    url: z.string().optional().transform((v) => v || undefined),
     repo: z.string().url().optional().or(z.literal('').transform(() => undefined)),
   }),
 });

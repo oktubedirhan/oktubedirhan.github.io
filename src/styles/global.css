@@ -364,3 +364,24 @@ pre code {
     line-height: 38px;
   }
 }
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 22px;
+}
+
+.prose th,
+.prose td {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--rule);
+  text-align: left;
+  vertical-align: top;
+}
+
+.prose th {
+  color: var(--ink-muted);
+  font-weight: 600;
+}
