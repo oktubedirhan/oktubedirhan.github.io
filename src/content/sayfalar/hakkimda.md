@@ -2,7 +2,7 @@
 title: Hakkımda
 ---
 
-Ben Bedirhan Oktu. Orta Doğu Teknik Üniversitesi'nde matematik okuyorum.
+Ben Bedirhan Oktu. Orta Doğu Teknik Üniversitesi'nde Matematik okuyorum.
 
 Matematiğin yanında yazılımla uğraşmayı seviyorum: Swift ile iOS/macOS uygulamaları, TypeScript ile web projeleri ve arada bir tersine mühendislik. Bu sitede öğrendiklerimi not ediyor, projelerimi paylaşıyorum.
 
