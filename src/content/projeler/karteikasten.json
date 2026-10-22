@@ -1,0 +1,10 @@
+{
+  "name": "Karteikasten",
+  "order": 4,
+  "description": "Almanca kelime kutusu: Leitner sistemiyle Goethe A2 sınavına hazırlık. Tamamen çevrimdışı çalışıyor.",
+  "tags": [
+    "TypeScript",
+    "React"
+  ],
+  "url": "https://karteikasten-wine.vercel.app"
+}
