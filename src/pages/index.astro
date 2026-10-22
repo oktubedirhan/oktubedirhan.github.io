@@ -1,0 +1,55 @@
+---
+import Base from '../layouts/Base.astro';
+import PostList from '../components/PostList.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { PROJECTS, LINKS } from '../consts';
+import { getPosts } from '../utils';
+
+const posts = (await getPosts()).slice(0, 5);
+---
+
+<Base>
+  <section class="intro">
+    <h1>Merhaba, ben Bedirhan.</h1>
+    <p>
+      ODTÜ'de matematik okuyorum. Boş zamanlarımda iOS ve macOS uygulamaları, küçük web
+      projeleri yapıyorum. Burada öğrendiklerimi ve üzerinde çalıştığım şeyleri yazıyorum.
+    </p>
+    <p class="cta">
+      <a href={LINKS.github}>GitHub</a>
+      <span aria-hidden="true">·</span>
+      <a href={LINKS.email}>E-posta</a>
+    </p>
+  </section>
+
+  <div class="section-head">
+    <h2>Son yazılar</h2>
+    <a href="/blog/">Tümü →</a>
+  </div>
+  <PostList posts={posts} />
+
+  <div class="section-head">
+    <h2>Projeler</h2>
+    <a href="/projeler/">Tümü →</a>
+  </div>
+  <div class="grid">
+    {PROJECTS.slice(0, 2).map((p) => <ProjectCard project={p} />)}
+  </div>
+</Base>
+
+<style>
+  .intro p {
+    font-size: 1.15rem;
+    color: var(--muted);
+    max-width: 36rem;
+  }
+  .cta {
+    display: flex;
+    gap: 0.6rem;
+    font-size: 1rem !important;
+  }
+  .grid {
+    display: grid;
+    gap: 1rem;
+  }
+</style>

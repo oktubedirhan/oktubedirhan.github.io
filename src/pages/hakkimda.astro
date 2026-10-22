@@ -1,0 +1,22 @@
+---
+import Base from '../layouts/Base.astro';
+import { LINKS } from '../consts';
+---
+
+<Base title="Hakkımda">
+  <h1>Hakkımda</h1>
+  <div class="prose">
+    <p>
+      Ben Bedirhan Oktu. Orta Doğu Teknik Üniversitesi'nde matematik okuyorum.
+    </p>
+    <p>
+      Matematiğin yanında yazılımla uğraşmayı seviyorum: Swift ile iOS/macOS uygulamaları,
+      TypeScript ile web projeleri ve arada bir tersine mühendislik. Bu sitede öğrendiklerimi
+      not ediyor, projelerimi paylaşıyorum.
+    </p>
+    <p>
+      Bana <a href={LINKS.email}>e-posta</a> ile ulaşabilir ya da
+      <a href={LINKS.github}>GitHub</a>'da projelerime göz atabilirsin.
+    </p>
+  </div>
+</Base>

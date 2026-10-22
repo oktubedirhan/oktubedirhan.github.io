@@ -1,0 +1,54 @@
+---
+import type { Project } from '../consts';
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const href = project.url ?? project.repo;
+---
+
+<article>
+  <h3><a href={href}>{project.name}</a></h3>
+  <p>{project.description}</p>
+  <div class="meta">
+    {project.tags.map((t) => <span class="tag">{t}</span>)}
+    {project.url && project.repo && <a class="repo" href={project.repo}>Kaynak kod</a>}
+  </div>
+</article>
+
+<style>
+  article {
+    padding: 1.1rem 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+  }
+  h3 {
+    margin: 0 0 0.35rem;
+    font-size: 1.05rem;
+  }
+  h3 a {
+    color: var(--text);
+    text-decoration: none;
+  }
+  h3 a:hover {
+    color: var(--accent);
+  }
+  p {
+    margin: 0 0 0.75rem;
+    font-size: 0.95rem;
+    color: var(--muted);
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    align-items: center;
+  }
+  .repo {
+    margin-left: auto;
+    font-size: 0.85rem;
+  }
+</style>

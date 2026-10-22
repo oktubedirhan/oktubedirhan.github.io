@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { PROJECTS } from '../consts';
+---
+
+<Base title="Projeler" description="Üzerinde çalıştığım projeler.">
+  <h1>Projeler</h1>
+  <p class="muted">Üzerinde çalıştığım ya da çalışmış olduğum şeyler.</p>
+  <div class="grid">
+    {PROJECTS.map((p) => <ProjectCard project={p} />)}
+  </div>
+</Base>
+
+<style>
+  .grid {
+    display: grid;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+</style>
