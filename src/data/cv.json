@@ -1,0 +1,88 @@
+{
+  "name": "Bedirhan Oktu",
+  "role": "Mathematics Student · Software Developer",
+  "profile": "Mathematics student at Middle East Technical University (METU), currently in the English preparatory year, admitted with a result in the top 0.84% of the quantitative track of Türkiye's national entrance examination. Outside class I build software on my own — native Apple apps in Swift and web apps in TypeScript. I am looking for an international academic environment where mathematics and software work can grow together.",
+  "contact": [
+    { "label": "E-mail", "value": "oktubedirhan@gmail.com", "url": "mailto:oktubedirhan@gmail.com" },
+    { "label": "Website", "value": "bedirhanoktu.dev", "url": "https://www.bedirhanoktu.dev" },
+    { "label": "GitHub", "value": "github.com/oktubedirhan", "url": "https://github.com/oktubedirhan" }
+  ],
+  "languages": [
+    { "name": "Turkish", "level": "Native" },
+    { "name": "English — C1", "level": "METU English Preparatory Program" },
+    { "name": "German — A2", "level": "Elementary" }
+  ],
+  "technical": [
+    "Swift, SwiftUI (iOS, macOS)",
+    "JavaScript & TypeScript",
+    "React, Next.js, Tailwind CSS",
+    "Python",
+    "Supabase / PostgreSQL",
+    "Git, Vercel",
+    "AI-assisted development (Claude Code)"
+  ],
+  "strengths": [
+    "Analytical problem solving",
+    "Independent, self-taught learning",
+    "Time management",
+    "Teamwork"
+  ],
+  "education": [
+    {
+      "title": "Middle East Technical University (METU)",
+      "date": "Sept 2026 — present",
+      "sub": "B.Sc. Mathematics · English Preparatory Program · Ankara, Türkiye",
+      "note": "Admitted through the YKS national entrance examination — top 0.84% in the quantitative track"
+    },
+    {
+      "title": "Ataköy Cumhuriyet Anatolian High School",
+      "date": "2021 — 2025",
+      "sub": "Secondary education · İstanbul, Türkiye"
+    }
+  ],
+  "projects": [
+    {
+      "title": "Köprü",
+      "date": "macOS game launcher",
+      "url": "/kopru/",
+      "text": "A native macOS launcher for running Windows games on Apple Silicon, built to learn how compatibility layers work. Wine is compiled from source on a CrossOver 26.3 base with custom patches, and Apple's D3DMetal translates DirectX 11/12 calls to Metal. The Witcher 3 (DirectX 12) runs through Steam.",
+      "stack": "Swift · SwiftUI · Wine · D3DMetal · Rosetta 2"
+    },
+    {
+      "title": "Denge",
+      "date": "iPhone app · in development",
+      "url": "/denge-site/",
+      "text": "A screen-time balance app: time spent reading or working earns phone time at a set ratio, with a daily cap, focus sessions and a progress view. Working prototype with five visual themes; all data stays on the device, with no accounts or servers.",
+      "stack": "iOS · HTML (product & privacy pages)"
+    },
+    {
+      "title": "Karteikasten",
+      "date": "German vocabulary app",
+      "url": "/karteikasten/",
+      "text": "A Leitner-system flashcard app for Goethe A2 exam preparation that works fully offline.",
+      "stack": "React · TypeScript · Tailwind CSS · Capacitor"
+    },
+    {
+      "title": "Blackjack",
+      "date": "Browser game",
+      "url": "/blackjack/",
+      "text": "Deals from a real, finite 52-card deck instead of random cards and reshuffles with the Fisher–Yates algorithm when the deck runs out; 3:2 payouts, dealer stands on soft 17, betting and round history.",
+      "stack": "JavaScript"
+    }
+  ],
+  "extracurricular": [
+    {
+      "title": "European Union Club & Entrepreneurship Club",
+      "date": "High school",
+      "sub": "Ataköy Cumhuriyet Anatolian High School",
+      "text": "Responsible for the clubs' finances — tracking the budget and keeping accounts for club activities."
+    }
+  ],
+  "achievements": [
+    {
+      "title": "2nd place, 400 m — İstanbul Championship",
+      "date": "Finswimming",
+      "text": "Trained and competed as a finswimmer at city level."
+    }
+  ]
+}

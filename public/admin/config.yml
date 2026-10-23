@@ -92,3 +92,76 @@ collections:
         fields:
           - { label: Başlık, name: title, widget: string }
           - { label: İçerik, name: body, widget: markdown }
+      - name: cv
+        label: CV
+        file: src/data/cv.json
+        format: json
+        preview_path: /cv/
+        fields:
+          - { label: Ad, name: name, widget: string }
+          - { label: Unvan, name: role, widget: string }
+          - { label: Profil, name: profile, widget: text }
+          - label: İletişim
+            name: contact
+            widget: list
+            hint: Sayfa herkese açık; telefon ve adres eklemeden önce iki kez düşün.
+            fields:
+              - { label: Etiket, name: label, widget: string }
+              - { label: Değer, name: value, widget: string }
+              - { label: Link, name: url, widget: string, required: false }
+          - label: Diller
+            name: languages
+            widget: list
+            fields:
+              - { label: Dil, name: name, widget: string }
+              - { label: Seviye, name: level, widget: string }
+          - { label: Teknik, name: technical, widget: list }
+          - { label: Güçlü yanlar, name: strengths, widget: list }
+          - label: Eğitim
+            name: education
+            widget: list
+            summary: '{{fields.title}}'
+            fields:
+              - { label: Başlık, name: title, widget: string }
+              - { label: Tarih / tür, name: date, widget: string, required: false }
+              - { label: Alt satır, name: sub, widget: string, required: false }
+              - { label: Açıklama, name: text, widget: text, required: false }
+              - { label: Not kutusu, name: note, widget: string, required: false }
+              - { label: Teknolojiler, name: stack, widget: string, required: false }
+              - { label: Link, name: url, widget: string, required: false }
+          - label: Projeler
+            name: projects
+            widget: list
+            summary: '{{fields.title}}'
+            fields:
+              - { label: Başlık, name: title, widget: string }
+              - { label: Tarih / tür, name: date, widget: string, required: false }
+              - { label: Alt satır, name: sub, widget: string, required: false }
+              - { label: Açıklama, name: text, widget: text, required: false }
+              - { label: Not kutusu, name: note, widget: string, required: false }
+              - { label: Teknolojiler, name: stack, widget: string, required: false }
+              - { label: Link, name: url, widget: string, required: false }
+          - label: Okul dışı
+            name: extracurricular
+            widget: list
+            summary: '{{fields.title}}'
+            fields:
+              - { label: Başlık, name: title, widget: string }
+              - { label: Tarih / tür, name: date, widget: string, required: false }
+              - { label: Alt satır, name: sub, widget: string, required: false }
+              - { label: Açıklama, name: text, widget: text, required: false }
+              - { label: Not kutusu, name: note, widget: string, required: false }
+              - { label: Teknolojiler, name: stack, widget: string, required: false }
+              - { label: Link, name: url, widget: string, required: false }
+          - label: Başarılar
+            name: achievements
+            widget: list
+            summary: '{{fields.title}}'
+            fields:
+              - { label: Başlık, name: title, widget: string }
+              - { label: Tarih / tür, name: date, widget: string, required: false }
+              - { label: Alt satır, name: sub, widget: string, required: false }
+              - { label: Açıklama, name: text, widget: text, required: false }
+              - { label: Not kutusu, name: note, widget: string, required: false }
+              - { label: Teknolojiler, name: stack, widget: string, required: false }
+              - { label: Link, name: url, widget: string, required: false }

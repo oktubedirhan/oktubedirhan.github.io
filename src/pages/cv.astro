@@ -1,0 +1,355 @@
+---
+import Base from '../layouts/Base.astro';
+import cv from '../data/cv.json';
+
+type Entry = { title: string; date?: string; sub?: string; note?: string; text?: string; stack?: string; url?: string };
+
+const sections: { heading: string; entries: Entry[] }[] = [
+  { heading: 'Education', entries: cv.education },
+  { heading: 'Personal Projects', entries: cv.projects },
+  { heading: 'Extracurricular', entries: cv.extracurricular },
+  { heading: 'Achievements', entries: cv.achievements },
+];
+---
+
+<Base title="CV" description={`${cv.name} — ${cv.role}`}>
+  <article class="cv" lang="en">
+    <header class="cv-head">
+      <div>
+        <p class="label">Curriculum Vitae</p>
+        <h1>{cv.name}</h1>
+        <p class="role">{cv.role}</p>
+      </div>
+      <button class="btn btn-primary print-btn" type="button" onclick="window.print()">PDF olarak kaydet</button>
+    </header>
+
+    <div class="cols">
+      <aside class="side">
+        <section>
+          <h2>Contact</h2>
+          <dl>
+            {
+              cv.contact.map((c) => (
+                <div class="kv">
+                  <dt>{c.label}</dt>
+                  <dd>{c.url ? <a href={c.url}>{c.value}</a> : c.value}</dd>
+                </div>
+              ))
+            }
+          </dl>
+        </section>
+
+        <section>
+          <h2>Languages</h2>
+          {
+            cv.languages.map((l) => (
+              <div class="lang">
+                <div class="l1">{l.name}</div>
+                <div class="l2">{l.level}</div>
+              </div>
+            ))
+          }
+        </section>
+
+        <section>
+          <h2>Technical</h2>
+          <ul>{cv.technical.map((t) => <li>{t}</li>)}</ul>
+        </section>
+
+        <section>
+          <h2>Strengths</h2>
+          <ul>{cv.strengths.map((t) => <li>{t}</li>)}</ul>
+        </section>
+      </aside>
+
+      <div class="main">
+        <section>
+          <h2>Profile</h2>
+          <p class="profile">{cv.profile}</p>
+        </section>
+
+        {
+          sections.map((s) => (
+            <section>
+              <h2>{s.heading}</h2>
+              {s.entries.map((e) => (
+                <div class="entry">
+                  <div class="entry-head">
+                    <h3>{e.url ? <a href={e.url}>{e.title}</a> : e.title}</h3>
+                    {e.date && <span class="entry-date">{e.date}</span>}
+                  </div>
+                  {e.sub && <p class="entry-sub">{e.sub}</p>}
+                  {e.text && <p>{e.text}</p>}
+                  {e.note && <p class="note">{e.note}</p>}
+                  {e.stack && <p class="stack">{e.stack}</p>}
+                </div>
+              ))}
+            </section>
+          ))
+        }
+      </div>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .cv {
+    margin-top: var(--space-6);
+  }
+  .cv-head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-bottom: var(--space-5);
+    margin-bottom: var(--space-6);
+    border-bottom: 2px solid var(--ink);
+  }
+  .cv-head h1 {
+    margin: var(--space-2) 0 var(--space-1);
+  }
+  .role {
+    margin: 0;
+    color: var(--ink-muted);
+  }
+  .print-btn {
+    border: 0;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .cols {
+    display: grid;
+    grid-template-columns: 15rem minmax(0, 1fr);
+    gap: var(--space-7);
+  }
+  .main {
+    border-left: 1px solid var(--rule);
+    padding-left: var(--space-7);
+  }
+  section + section {
+    margin-top: var(--space-6);
+  }
+  h2 {
+    margin: 0 0 var(--space-4);
+    padding-bottom: var(--space-2);
+    font-size: 15px;
+    line-height: 20px;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--kiremit);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  dl {
+    margin: 0;
+  }
+  .kv + .kv {
+    margin-top: var(--space-3);
+  }
+  dt,
+  .l2 {
+    font-size: 13px;
+    line-height: 18px;
+    color: var(--ink-muted);
+  }
+  dd {
+    margin: 0;
+    font-size: 15px;
+    line-height: 22px;
+    word-break: break-word;
+  }
+  .lang + .lang {
+    margin-top: var(--space-3);
+  }
+  .l1 {
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 22px;
+  }
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  li {
+    position: relative;
+    padding-left: var(--space-4);
+    font-size: 15px;
+    line-height: 22px;
+  }
+  li + li {
+    margin-top: var(--space-2);
+  }
+  li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 6px;
+    height: 6px;
+    border-radius: 1px;
+    background: var(--kiremit);
+  }
+
+  .profile {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: 18px;
+    line-height: 30px;
+  }
+  .entry + .entry {
+    margin-top: var(--space-5);
+  }
+  .entry-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0 var(--space-4);
+  }
+  .entry-head h3 {
+    margin: 0;
+  }
+  .entry-head h3 a {
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .entry-head h3 a:hover {
+    color: var(--kiremit);
+  }
+  .entry-date {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--ink-muted);
+    white-space: nowrap;
+  }
+  .entry p {
+    margin: var(--space-1) 0 0;
+    font-size: 16px;
+    line-height: 26px;
+  }
+  .entry .entry-sub {
+    font-style: italic;
+    color: var(--ink-muted);
+  }
+  .entry .note {
+    display: inline-block;
+    margin-top: var(--space-2);
+    padding: var(--space-1) var(--space-3);
+    border-left: 2px solid var(--kiremit);
+    background: var(--kiremit-soft);
+    font-size: 15px;
+    line-height: 22px;
+  }
+  .entry .stack {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--deniz);
+  }
+
+  @media screen and (max-width: 760px) {
+    .cols {
+      grid-template-columns: 1fr;
+      gap: var(--space-6);
+    }
+    .main {
+      border-left: 0;
+      padding-left: 0;
+      order: -1;
+    }
+  }
+
+  /* Yazdırma / PDF: tek A4, sitenin üst ve alt kısmı yok */
+  @page {
+    size: A4;
+    margin: 14mm 14mm 12mm;
+  }
+  @media print {
+    :global(:root) {
+      --paper: #ffffff;
+      --ink: #1d1813;
+      --ink-muted: #5c5247;
+      --rule: #d8cfbf;
+      --kiremit: #b03f17;
+      --kiremit-soft: #f7ebe2;
+      --deniz: #1d5c57;
+      color-scheme: light;
+    }
+    :global(body) {
+      background: #fff;
+      font-size: 10pt;
+    }
+    /* Base.astro'daki kapsamlı stiller daha özgül; !important şart */
+    :global(.site-header),
+    :global(.site-footer),
+    .print-btn {
+      display: none !important;
+    }
+    :global(main.container-wide) {
+      width: auto;
+    }
+    .cv {
+      margin: 0;
+    }
+    .cv-head {
+      padding-bottom: 4mm;
+      margin-bottom: 6mm;
+    }
+    .cv-head h1 {
+      font-size: 26pt;
+      line-height: 1.1;
+    }
+    .cols {
+      grid-template-columns: 52mm minmax(0, 1fr);
+      gap: 7mm;
+    }
+    .main {
+      padding-left: 7mm;
+    }
+    section + section {
+      margin-top: 5mm;
+    }
+    h2 {
+      font-size: 9pt;
+      margin-bottom: 2.5mm;
+      padding-bottom: 1mm;
+    }
+    dt,
+    .l2,
+    .entry-date,
+    .entry .stack {
+      font-size: 8pt;
+      line-height: 1.4;
+    }
+    dd,
+    .l1,
+    li,
+    .entry p,
+    .entry .note {
+      font-size: 9.5pt;
+      line-height: 1.45;
+    }
+    .profile {
+      font-size: 10.5pt;
+      line-height: 1.55;
+    }
+    .entry-head h3 {
+      font-size: 11pt;
+      line-height: 1.3;
+    }
+    .entry + .entry {
+      margin-top: 3.5mm;
+    }
+    .entry {
+      break-inside: avoid;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+  }
+</style>
