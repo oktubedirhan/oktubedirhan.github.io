@@ -76,6 +76,8 @@ collections:
           - { label: Üst etiket, name: eyebrow, widget: string }
           - { label: Ad (başlıkta vurgulanır), name: name, widget: string, hint: '"Merhaba, ben ___." cümlesindeki ad' }
           - { label: Tanıtım paragrafı, name: lead, widget: text }
+          - { label: Şu an, name: now, widget: text, required: false, hint: 'Şu an ne üzerinde çalıştığın; boş bırakırsan kutu görünmez.' }
+          - { label: Şu an · güncelleme tarihi, name: nowDate, widget: datetime, type: date, required: false }
       - name: hakkimda
         label: Hakkımda
         file: src/content/sayfalar/hakkimda.md

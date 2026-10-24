@@ -1,19 +1,20 @@
-/* Defter tasarım sistemi — değerler tasarım sistemindeki tokens.json ile aynı. */
+/* Defter tasarım sistemi · Mürekkep mavisi paleti.
+   Tema: varsayılan sistem tercihi; header'daki düğme <html data-theme="light|dark"> yazar. */
 :root {
-  --paper: #f6f2ea;
-  --paper-raised: #fffdf8;
-  --paper-sunk: #ede6d9;
-  --ink: #1d1813;
-  --ink-muted: #655b4f;
-  --rule: #ddd3c2;
-  --grid: #e4dccd;
-  --kiremit: #b03f17;
-  --kiremit-soft: #f5e1d3;
-  --on-kiremit: #ffffff;
-  --deniz: #1d5c57;
-  --deniz-soft: #dcebe7;
+  --paper: #f5f3ee;
+  --paper-raised: #fffefb;
+  --paper-sunk: #eae7df;
+  --ink: #191c24;
+  --ink-muted: #5d6170;
+  --rule: #dcd8cd;
+  --grid: #e3dfd5;
+  --accent: #2b4bb3;
+  --accent-soft: #e2e8f8;
+  --on-accent: #ffffff;
+  --accent-2: #a8431b;
+  --accent-2-soft: #f6e4d8;
   --fosfor: #f6d873;
-  --shadow-lift: 0 1px 0 rgba(29, 24, 19, 0.04), 0 8px 24px -12px rgba(29, 24, 19, 0.18);
+  --shadow-lift: 0 1px 0 rgba(25, 28, 36, 0.04), 0 8px 24px -12px rgba(25, 28, 36, 0.2);
 
   --space-1: 4px;
   --space-2: 8px;
@@ -39,28 +40,52 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --paper: #15130f;
-    --paper-raised: #1e1b16;
-    --paper-sunk: #25211b;
-    --ink: #f0e9dd;
-    --ink-muted: #a89d8d;
-    --rule: #38322a;
-    --grid: #26221c;
-    --kiremit: #ef8a5e;
-    --kiremit-soft: #3b2418;
-    --on-kiremit: #1a0e07;
-    --deniz: #7fc6bc;
-    --deniz-soft: #1b2f2c;
+  :root:not([data-theme='light']) {
+    --paper: #12141a;
+    --paper-raised: #1a1d25;
+    --paper-sunk: #22252f;
+    --ink: #eceef3;
+    --ink-muted: #a2a7b5;
+    --rule: #2f3340;
+    --grid: #1f222b;
+    --accent: #8fa8ff;
+    --accent-soft: #1f2a4d;
+    --on-accent: #0b1020;
+    --accent-2: #f0a27c;
+    --accent-2-soft: #3a2418;
     --fosfor: #5b4a12;
     --shadow-lift: 0 1px 0 rgba(0, 0, 0, 0.3), 0 8px 24px -12px rgba(0, 0, 0, 0.6);
     color-scheme: dark;
   }
-  .astro-code,
-  .astro-code span {
+  :root:not([data-theme='light']) .astro-code,
+  :root:not([data-theme='light']) .astro-code span {
     color: var(--shiki-dark) !important;
     background-color: var(--paper-sunk) !important;
   }
+}
+
+/* Düğmeyle seçilen koyu tema; değerler yukarıdakiyle aynı. */
+:root[data-theme='dark'] {
+  --paper: #12141a;
+  --paper-raised: #1a1d25;
+  --paper-sunk: #22252f;
+  --ink: #eceef3;
+  --ink-muted: #a2a7b5;
+  --rule: #2f3340;
+  --grid: #1f222b;
+  --accent: #8fa8ff;
+  --accent-soft: #1f2a4d;
+  --on-accent: #0b1020;
+  --accent-2: #f0a27c;
+  --accent-2-soft: #3a2418;
+  --fosfor: #5b4a12;
+  --shadow-lift: 0 1px 0 rgba(0, 0, 0, 0.3), 0 8px 24px -12px rgba(0, 0, 0, 0.6);
+  color-scheme: dark;
+}
+:root[data-theme='dark'] .astro-code,
+:root[data-theme='dark'] .astro-code span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--paper-sunk) !important;
 }
 
 *,
@@ -89,7 +114,7 @@ body {
 }
 
 a {
-  color: var(--kiremit);
+  color: var(--accent);
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
 }
@@ -99,7 +124,7 @@ a:hover {
 }
 
 :focus-visible {
-  outline: 2px solid var(--kiremit);
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
   border-radius: var(--radius-sm);
 }
@@ -194,7 +219,7 @@ h3 {
 }
 
 .section-head h2 .label {
-  color: var(--kiremit);
+  color: var(--accent);
 }
 
 .section-head a {
@@ -218,15 +243,15 @@ h3 {
   text-transform: uppercase;
   padding: var(--space-1) 10px;
   border-radius: var(--radius-pill);
-  background: var(--kiremit-soft);
-  color: var(--kiremit);
+  background: var(--accent-soft);
+  color: var(--accent);
   white-space: nowrap;
 }
 
 /* Teknoloji adları özgün yazımıyla kalır (Swift, macOS); tr büyük harfi "SWİFT" yapar. */
-.tag-deniz {
-  background: var(--deniz-soft);
-  color: var(--deniz);
+.tag-tech {
+  background: var(--accent-2-soft);
+  color: var(--accent-2);
   text-transform: none;
   letter-spacing: 0;
 }
@@ -257,8 +282,8 @@ h3 {
 }
 
 .btn-primary {
-  background: var(--kiremit);
-  color: var(--on-kiremit);
+  background: var(--accent);
+  color: var(--on-accent);
   box-shadow: none;
 }
 
@@ -312,7 +337,7 @@ h3 {
   margin: 1.5em 0;
   padding: var(--space-4) var(--space-5);
   border-radius: var(--radius-md);
-  background: var(--deniz-soft);
+  background: var(--accent-2-soft);
   color: var(--ink);
   font-style: italic;
 }
@@ -384,4 +409,43 @@ pre code {
 .prose th {
   color: var(--ink-muted);
   font-weight: 600;
+}
+
+/* Sayfa geçişleri: tarayıcının kendi (çapraz belge) View Transitions'ı.
+   Header yerinde kalır, içerik hafifçe yükselerek gelir. Desteklemeyen tarayıcıda normal geçiş. */
+@view-transition {
+  navigation: auto;
+  types: sayfa;
+}
+
+html:active-view-transition-type(sayfa)::view-transition-old(icerik) {
+  animation: 160ms cubic-bezier(0.4, 0, 1, 1) both icerik-cik;
+}
+
+html:active-view-transition-type(sayfa)::view-transition-new(icerik) {
+  animation: 320ms cubic-bezier(0.16, 1, 0.3, 1) 60ms both icerik-gir;
+}
+
+@keyframes icerik-cik {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes icerik-gir {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
 }

@@ -2,24 +2,40 @@
 import Base from '../layouts/Base.astro';
 import PostList from '../components/PostList.astro';
 import ProjectCard from '../components/ProjectCard.astro';
+import FormattedDate from '../components/FormattedDate.astro';
 import { LINKS } from '../consts';
 import { getPosts, getProjects } from '../utils';
 import home from '../data/home.json';
 
 const posts = (await getPosts()).slice(0, 5);
 const projects = await getProjects();
+const nowDate = home.nowDate ? new Date(home.nowDate) : undefined;
 ---
 
 <Base>
-  <section class="hero" slot="hero">
-    <p class="label eyebrow">{home.eyebrow}</p>
-    <h1>Merhaba, ben <em>{home.name}</em>.</h1>
-    <p class="lead">{home.lead}</p>
-    <div class="links">
-      <a class="btn btn-primary" href="/blog/">Yazıları oku →</a>
-      <a class="btn" href={LINKS.github}>GitHub</a>
-      <a class="btn" href={LINKS.email}>E-posta</a>
+  <section class:list={['hero', { 'has-now': home.now }]} slot="hero">
+    <div class="intro">
+      <p class="label eyebrow">{home.eyebrow}</p>
+      <h1>Merhaba, ben <em>{home.name}</em>.</h1>
+      <p class="lead">{home.lead}</p>
+      <div class="links">
+        <a class="btn btn-primary" href="/blog/">Yazıları oku →</a>
+        <a class="btn" href={LINKS.github}>GitHub</a>
+        <a class="btn" href={LINKS.email}>E-posta</a>
+      </div>
     </div>
+    {
+      home.now && (
+        <aside class="now" aria-labelledby="now-title">
+          <h2 id="now-title" class="now-head">
+            <span class="pulse" aria-hidden="true" />
+            Şu an
+          </h2>
+          <p>{home.now}</p>
+          {nowDate && <FormattedDate date={nowDate} />}
+        </aside>
+      )
+    }
   </section>
 
   <div class="section-head">
@@ -72,6 +88,73 @@ const projects = await getProjects();
   .hero {
     padding-block: var(--space-8) var(--space-7);
   }
+  .hero.has-now {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 18rem;
+    gap: var(--space-7);
+    align-items: end;
+  }
+  .now {
+    padding: var(--space-5);
+    border-radius: var(--radius-lg);
+    background: var(--paper-raised);
+    box-shadow: inset 0 0 0 1px var(--rule);
+  }
+  .now-head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0 0 var(--space-3);
+    font-family: var(--font-mono);
+    font-variation-settings: normal;
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .pulse {
+    position: relative;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .pulse::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--accent);
+    animation: pulse 2.4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  }
+  @keyframes pulse {
+    from {
+      transform: scale(1);
+      opacity: 0.6;
+    }
+    to {
+      transform: scale(3);
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pulse::after {
+      animation: none;
+    }
+  }
+  .now p {
+    margin: 0 0 var(--space-3);
+    font-size: 15px;
+    line-height: 24px;
+  }
+  @media (max-width: 860px) {
+    .hero.has-now {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-6);
+    }
+  }
   .eyebrow {
     margin: 0 0 var(--space-4);
   }
@@ -86,7 +169,7 @@ const projects = await getProjects();
   h1 em {
     font-style: italic;
     font-weight: 500;
-    color: var(--kiremit);
+    color: var(--accent);
   }
   .lead {
     margin-top: var(--space-5);
@@ -118,8 +201,8 @@ const projects = await getProjects();
     transition: background 0.15s, opacity 0.15s;
   }
   .nav-btn:hover:not(:disabled) {
-    background: var(--kiremit-soft);
-    color: var(--kiremit);
+    background: var(--accent-soft);
+    color: var(--accent);
   }
   .nav-btn:disabled {
     opacity: 0.35;
@@ -155,7 +238,7 @@ const projects = await getProjects();
     mask-image: linear-gradient(to right, transparent, #000 48px, #000 calc(100% - 48px), transparent);
   }
   .rail:focus-visible {
-    outline: 2px solid var(--kiremit);
+    outline: 2px solid var(--accent);
     outline-offset: 4px;
   }
   .rail > :global(*) {
