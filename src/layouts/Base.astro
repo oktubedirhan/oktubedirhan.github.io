@@ -55,7 +55,11 @@ const nav = [
     <div class:list={[{ 'grid-bg': hasHero }]}>
       <header class="container-wide site-header">
         <a href="/" class="brand">
-          <span class="brand-mark" aria-hidden="true">B</span>
+          <svg class="brand-mark" viewBox="0 0 64 64" width="32" height="32" aria-hidden="true">
+            <rect width="64" height="64" rx="16" class="mark-bg" />
+            <text x="27" y="46" font-size="40" font-weight="700" text-anchor="middle" class="mark-b">B</text>
+            <circle cx="48" cy="42" r="4.5" class="mark-dot" />
+          </svg>
           {SITE_TITLE}
         </a>
         <nav aria-label="Ana menü">
@@ -148,17 +152,20 @@ const nav = [
     font-size: 19px;
     letter-spacing: -0.01em;
   }
+  /* "B." işareti: koyu zemin, kâğıt renginde B, mavi nokta. Koyu temada zemin ve harf yer değiştirir. */
   .brand-mark {
-    display: grid;
-    place-items: center;
-    width: 32px;
-    height: 32px;
-    border-radius: var(--radius-md);
-    background: var(--accent);
-    color: var(--on-accent);
-    font-size: 20px;
-    font-weight: 700;
-    line-height: 1;
+    display: block;
+    flex: none;
+  }
+  .mark-bg {
+    fill: var(--ink);
+  }
+  .mark-b {
+    fill: var(--paper);
+    font-family: var(--font-display);
+  }
+  .mark-dot {
+    fill: var(--mark-dot);
   }
   .site-header nav {
     display: flex;
