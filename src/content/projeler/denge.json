@@ -2,6 +2,7 @@
   "name": "Denge",
   "order": 2,
   "description": "Denge iPhone uygulaması ve onun tanıtım / gizlilik sayfaları.",
+  "description_en": "The Denge iPhone app and its product and privacy pages.",
   "tags": [
     "iOS",
     "HTML"

@@ -2,10 +2,12 @@
   "name": "Blackjack",
   "order": 3,
   "description": "Tarayıcıda oynanan basit bir blackjack oyunu.",
+  "description_en": "A simple blackjack game that runs in the browser.",
   "tags": [
     "JavaScript"
   ],
   "detay": "Gerçek 52 kartlık deste; her elden önce Fisher–Yates ile karıştırılıyor.",
+  "detay_en": "A real 52-card deck, shuffled with Fisher–Yates before every hand.",
   "repo": "https://github.com/oktubedirhan/blackjack",
   "url": "/blackjack/"
 }

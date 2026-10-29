@@ -43,15 +43,7 @@ collections:
       - { label: Kısa özet, name: description, widget: string, hint: Listelerde ve arama motorlarında görünür. }
       - { label: Tarih, name: date, widget: datetime, type: date }
       - { label: Etiketler, name: tags, widget: list, required: false, default: [] }
-      - { label: Teknik not, name: detay, widget: text, required: false, hint: 'Nasıl yapıldığını anlatan tek cümle. Ana sayfada açıklamanın altında görünür.' }
-      - label: Katmanlar
-        name: katmanlar
-        widget: list
-        required: false
-        hint: 'Sırası 1 olan proje ana sayfada öne çıkar; katmanları varsa üstten alta yığın şeması olarak çizilir.'
-        fields:
-          - { label: Ad, name: ad, widget: string }
-          - { label: Görevi, name: is, widget: string }
+      - { label: Dil, name: lang, widget: select, options: [{ label: Türkçe, value: tr }, { label: English, value: en }], default: tr, hint: 'Türkçe yazılar /blog/, İngilizce yazılar /en/blog/ altında listelenir.' }
       - { label: Taslak, name: draft, widget: boolean, default: false, hint: Açıkken yazı sitede görünmez. }
       - { label: İçerik, name: body, widget: markdown }
 
@@ -69,9 +61,11 @@ collections:
     fields:
       - { label: Ad, name: name, widget: string }
       - { label: Açıklama, name: description, widget: text }
+      - { label: Açıklama (English), name: description_en, widget: text, required: false, hint: 'Boş bırakırsan İngilizce sayfada Türkçesi görünür.' }
       - { label: Sıra, name: order, widget: number, value_type: int, default: 10, hint: Küçük sayı önce gösterilir. }
       - { label: Etiketler, name: tags, widget: list, required: false, default: [] }
       - { label: Teknik not, name: detay, widget: text, required: false, hint: 'Nasıl yapıldığını anlatan tek cümle. Ana sayfada açıklamanın altında görünür.' }
+      - { label: Teknik not (English), name: detay_en, widget: text, required: false }
       - label: Katmanlar
         name: katmanlar
         widget: list
@@ -80,6 +74,7 @@ collections:
         fields:
           - { label: Ad, name: ad, widget: string }
           - { label: Görevi, name: is, widget: string }
+          - { label: Görevi (English), name: is_en, widget: string, required: false }
       - { label: Site adresi, name: url, widget: string, required: false, hint: 'Sitedeki yolu (/karteikasten/) ya da tam adresi (https://...)' }
       - { label: Kaynak kod, name: repo, widget: string, required: false, hint: 'GitHub reposu (https://github.com/...)' }
 
@@ -92,15 +87,26 @@ collections:
         format: json
         fields:
           - { label: Üst etiket, name: eyebrow, widget: string }
+          - { label: Üst etiket (English), name: eyebrow_en, widget: string, required: false }
           - { label: Ad (başlıkta vurgulanır), name: name, widget: string, hint: '"Merhaba, ben ___." cümlesindeki ad' }
           - { label: Tanıtım paragrafı, name: lead, widget: text }
+          - { label: Tanıtım paragrafı (English), name: lead_en, widget: text, required: false }
           - { label: Şu an, name: now, widget: text, required: false, hint: 'Şu an ne üzerinde çalıştığın; boş bırakırsan kutu görünmez.' }
+          - { label: Şu an (English), name: now_en, widget: text, required: false }
           - { label: Şu an · güncelleme tarihi, name: nowDate, widget: datetime, type: date, required: false }
       - name: hakkimda
         label: Hakkımda
         file: src/content/sayfalar/hakkimda.md
         format: frontmatter
         preview_path: /hakkimda/
+        fields:
+          - { label: Başlık, name: title, widget: string }
+          - { label: İçerik, name: body, widget: markdown }
+      - name: hakkimda_en
+        label: Hakkımda (English)
+        file: src/content/sayfalar/en/hakkimda.md
+        format: frontmatter
+        preview_path: /en/about/
         fields:
           - { label: Başlık, name: title, widget: string }
           - { label: İçerik, name: body, widget: markdown }
@@ -112,11 +118,19 @@ collections:
         fields:
           - { label: Başlık, name: title, widget: string }
           - { label: İçerik, name: body, widget: markdown }
+      - name: kopru_en
+        label: Köprü proje sayfası (English)
+        file: src/content/sayfalar/en/kopru.md
+        format: frontmatter
+        preview_path: /en/kopru/
+        fields:
+          - { label: Başlık, name: title, widget: string }
+          - { label: İçerik, name: body, widget: markdown }
       - name: cv
         label: CV
         file: src/data/cv.json
         format: json
-        preview_path: /cv/
+        preview_path: /en/cv/
         fields:
           - { label: Ad, name: name, widget: string }
           - { label: Unvan, name: role, widget: string }

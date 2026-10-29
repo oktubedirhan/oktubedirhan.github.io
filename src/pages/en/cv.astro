@@ -1,6 +1,6 @@
 ---
-import Base from '../layouts/Base.astro';
-import cv from '../data/cv.json';
+import Base from '../../layouts/Base.astro';
+import cv from '../../data/cv.json';
 
 type Entry = { title: string; date?: string; sub?: string; note?: string; text?: string; stack?: string; url?: string };
 
@@ -12,7 +12,7 @@ const sections: { heading: string; entries: Entry[] }[] = [
 ];
 ---
 
-<Base title="CV" description={`${cv.name} — ${cv.role}`}>
+<Base title="CV" description={`${cv.name} — ${cv.role}`} lang="en">
   <article class="cv" lang="en">
     <header class="cv-head">
       <div>
@@ -20,7 +20,7 @@ const sections: { heading: string; entries: Entry[] }[] = [
         <h1>{cv.name}</h1>
         <p class="role">{cv.role}</p>
       </div>
-      <button class="btn btn-primary print-btn" type="button" onclick="window.print()">PDF olarak kaydet</button>
+      <button class="btn btn-primary print-btn" type="button" onclick="window.print()">Save as PDF</button>
     </header>
 
     <div class="cols">

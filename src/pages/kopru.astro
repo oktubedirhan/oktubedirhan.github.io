@@ -1,32 +1,5 @@
 ---
-import { getEntry, render } from 'astro:content';
-import Base from '../layouts/Base.astro';
-
-const page = await getEntry('sayfalar', 'kopru');
-if (!page) throw new Error('src/content/sayfalar/kopru.md bulunamadı');
-const { Content } = await render(page);
+import Kopru from '../views/Kopru.astro';
 ---
 
-<Base title={page.data.title} description="Windows oyunlarını Apple Silicon Mac'te çalıştıran başlatıcı.">
-  <header class="page-head">
-    <p class="label">Proje · macOS</p>
-    <h1>{page.data.title}</h1>
-    <div class="links">
-      <a class="btn btn-primary" href="https://github.com/oktubedirhan/kopru">GitHub'da incele →</a>
-      <a class="btn" href="https://github.com/oktubedirhan/kopru/blob/main/docs/KURULUM.md">Kurulum</a>
-    </div>
-  </header>
-  <div class="prose">
-    <Content />
-  </div>
-  <a class="back-link" href="/projeler/">← Tüm projeler</a>
-</Base>
-
-<style>
-  .links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-    margin-top: var(--space-5);
-  }
-</style>
+<Kopru lang="tr" />

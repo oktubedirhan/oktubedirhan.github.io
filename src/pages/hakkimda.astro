@@ -1,17 +1,5 @@
 ---
-import { getEntry, render } from 'astro:content';
-import Base from '../layouts/Base.astro';
-
-const page = await getEntry('sayfalar', 'hakkimda');
-if (!page) throw new Error('src/content/sayfalar/hakkimda.md bulunamadı');
-const { Content } = await render(page);
+import About from '../views/About.astro';
 ---
 
-<Base title={page.data.title}>
-  <header class="page-head">
-    <h1>{page.data.title}</h1>
-  </header>
-  <div class="prose">
-    <Content />
-  </div>
-</Base>
+<About lang="tr" />

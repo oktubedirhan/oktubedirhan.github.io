@@ -44,7 +44,7 @@
     {
       "title": "Köprü",
       "date": "macOS game launcher",
-      "url": "/kopru/",
+      "url": "/en/kopru/",
       "text": "A native macOS launcher for running Windows games on Apple Silicon, built to learn how compatibility layers work. Wine is compiled from source on a CrossOver 26.3 base with custom patches, and Apple's D3DMetal translates DirectX 11/12 calls to Metal. The Witcher 3 (DirectX 12) runs through Steam.",
       "stack": "Swift · SwiftUI · Wine · D3DMetal · Rosetta 2"
     },

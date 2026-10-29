@@ -1,0 +1,475 @@
+---
+import Base from '../layouts/Base.astro';
+import PostList from '../components/PostList.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+import { LINKS } from '../consts';
+import { getPosts, getProjects } from '../utils';
+import { ui, routes, other, localHref, type Lang } from '../i18n';
+import home from '../data/home.json';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = ui[lang];
+const en = lang === 'en';
+const posts = (await getPosts(lang)).slice(0, 5);
+const [featured, ...rest] = await getProjects(lang);
+// İngilizce alan boşsa Türkçesi gösterilir.
+const intro = {
+  eyebrow: (en && home.eyebrow_en) || home.eyebrow,
+  lead: (en && home.lead_en) || home.lead,
+  now: (en && home.now_en) || home.now,
+};
+const nowDate = home.nowDate ? new Date(home.nowDate) : undefined;
+const hrefOf = (p: { url?: string; repo?: string }) => p.url ?? p.repo;
+const [beforeRss, afterRss] = t.noPostsHome.split('{rss}');
+---
+
+<Base lang={lang} alternate={routes.home[other(lang)]}>
+  <section class:list={['hero', { 'has-now': intro.now }]} slot="hero">
+    <div class="intro">
+      <h1>{t.hello} <em>{home.name}</em>.</h1>
+      <p class="lead">{intro.lead}</p>
+      <div class="links">
+        <a class="btn btn-primary" href="#projeler">{t.seeProjects}</a>
+        <a class="btn" href={routes.cv[lang]}>CV</a>
+        {posts.length > 0 && <a class="btn" href={routes.blog[lang]}>{t.writing}</a>}
+      </div>
+      <p class="kunye">
+        <span>{intro.eyebrow}</span>
+        <a href={LINKS.github}>GitHub</a>
+        <a href={LINKS.email}>{t.email}</a>
+        {t.cvOther && <a href={routes.cv[lang]} lang={t.cvOther.lang}>{t.cvOther.text}</a>}
+      </p>
+    </div>
+    {
+      intro.now && (
+        <aside class="now" aria-labelledby="now-title">
+          <h2 id="now-title" class="now-head">
+            <span class="pulse" aria-hidden="true" />
+            {t.now}
+          </h2>
+          <p>{intro.now}</p>
+          {nowDate && <FormattedDate date={nowDate} lang={lang} />}
+        </aside>
+      )
+    }
+  </section>
+
+  <div class="section-head" id="projeler">
+    <h2><span class="label">§ 01</span>{t.projects}</h2>
+    <a href={routes.projects[lang]}>{t.all}</a>
+  </div>
+
+  {
+    featured && (
+      <article class="featured">
+        <div class="featured-text">
+          <h3>
+            <a href={localHref(lang, hrefOf(featured))}>{featured.name}</a>
+          </h3>
+          <p class="desc">{featured.description}</p>
+          {featured.detay && <p class="detay">{featured.detay}</p>}
+          <div class="meta">
+            {featured.tags.map((t) => <span class="tag tag-tech">{t}</span>)}
+          </div>
+          <div class="featured-links">
+            {featured.url && <a href={localHref(lang, featured.url)}>{t.projectPage}</a>}
+            {featured.repo && <a href={featured.repo}>{t.source}</a>}
+          </div>
+        </div>
+        {
+          featured.katmanlar && featured.katmanlar.length > 0 && (
+            <figure class="stack">
+              <ol>
+                {featured.katmanlar.map((k) => (
+                  <li>
+                    <span class="stack-name">{k.ad}</span>
+                    <span class="stack-role">{k.is}</span>
+                  </li>
+                ))}
+              </ol>
+              <figcaption>{t.stackCaption}</figcaption>
+            </figure>
+          )
+        }
+      </article>
+    )
+  }
+
+  <ul class="index">
+    {
+      rest.map((p) => (
+        <li>
+          <h3>
+            <a href={localHref(lang, hrefOf(p))}>{p.name}</a>
+          </h3>
+          <div class="index-body">
+            <p>{p.description}</p>
+            {p.detay && <p class="detay">{p.detay}</p>}
+          </div>
+          <div class="index-meta">
+            {p.tags.map((t) => <span class="tag tag-tech">{t}</span>)}
+            {p.url && p.repo && (
+              <a class="repo" href={p.repo}>
+                {t.source}
+              </a>
+            )}
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+
+  <div class="section-head">
+    <h2><span class="label">§ 02</span>{t.writing}</h2>
+    {posts.length > 0 && <a href={routes.blog[lang]}>{t.all}</a>}
+  </div>
+  {
+    posts.length > 0 ? (
+      <PostList posts={posts} lang={lang} />
+    ) : (
+      <p class="empty">
+        {beforeRss}
+        <a href={routes.rss[lang]}>RSS</a>
+        {afterRss}
+      </p>
+    )
+  }
+</Base>
+
+<style>
+  .hero {
+    padding-block: var(--space-8) var(--space-7);
+  }
+  .hero.has-now {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 18rem;
+    gap: var(--space-7);
+    align-items: end;
+  }
+  .now {
+    padding: var(--space-5);
+    border-radius: var(--radius-lg);
+    background: var(--paper-raised);
+    box-shadow: inset 0 0 0 1px var(--rule);
+  }
+  .now-head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0 0 var(--space-3);
+    font-family: var(--font-mono);
+    font-variation-settings: normal;
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .pulse {
+    position: relative;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .pulse::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--accent);
+    animation: pulse 2.4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  }
+  @keyframes pulse {
+    from {
+      transform: scale(1);
+      opacity: 0.6;
+    }
+    to {
+      transform: scale(3);
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pulse::after {
+      animation: none;
+    }
+  }
+  .now p {
+    margin: 0 0 var(--space-3);
+    font-size: 15px;
+    line-height: 24px;
+  }
+  @media (max-width: 860px) {
+    .hero.has-now {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-6);
+    }
+  }
+  h1 {
+    margin: 0;
+    font-variation-settings: 'opsz' 96;
+    font-size: 56px;
+    line-height: 58px;
+    letter-spacing: -0.025em;
+    max-width: 14ch;
+  }
+  h1 em {
+    font-style: italic;
+    font-weight: 500;
+    color: var(--accent);
+  }
+  .lead {
+    margin-top: var(--space-5);
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-6);
+  }
+  /* Künye: kim olduğun ve nereden ulaşılır, düğmelerden daha sessiz */
+  .kunye {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-4);
+    margin: var(--space-5) 0 0;
+    font-size: 15px;
+    line-height: 22px;
+    color: var(--ink-muted);
+  }
+  .kunye a {
+    color: var(--ink-muted);
+    text-decoration: underline;
+    text-decoration-color: var(--rule);
+  }
+  .kunye a:hover {
+    color: var(--accent);
+    text-decoration-color: currentColor;
+  }
+
+  /* Öne çıkan proje: metin solda, katman yığını sağda */
+  .featured {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: var(--space-7);
+    align-items: center;
+    padding: var(--space-6) 0 var(--space-7);
+    border-top: 1px solid var(--ink);
+  }
+  .featured h3 {
+    margin: 0 0 var(--space-3);
+    font-variation-settings: 'opsz' 72;
+    font-size: 40px;
+    line-height: 44px;
+    letter-spacing: -0.02em;
+  }
+  .featured h3 a,
+  .index h3 a {
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .featured h3 a:hover,
+  .index h3 a:hover {
+    color: var(--accent);
+  }
+  .desc {
+    margin: 0 0 var(--space-3);
+    font-size: 18px;
+    line-height: 29px;
+    color: var(--ink-muted);
+  }
+  .detay {
+    margin: 0;
+    color: var(--ink);
+  }
+  .featured .detay {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 18px;
+    line-height: 29px;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-5);
+  }
+  .featured-links {
+    display: flex;
+    gap: var(--space-5);
+    margin-top: var(--space-5);
+    font-size: 15px;
+    font-weight: 500;
+  }
+  .featured-links a {
+    text-decoration: none;
+  }
+  .featured-links a:hover {
+    text-decoration: underline;
+  }
+
+  /* Katman yığını: her katman bir öncekinin altına biraz içeriden oturur */
+  .stack {
+    margin: 0;
+  }
+  .stack ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+  }
+  .stack li {
+    --i: 0;
+    display: grid;
+    grid-template-columns: 7.5rem 1fr;
+    align-items: baseline;
+    gap: var(--space-4);
+    margin-left: calc(var(--i) * 20px);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    background: var(--paper-raised);
+    box-shadow: inset 0 0 0 1px var(--rule);
+  }
+  .stack li:nth-child(2) {
+    --i: 1;
+  }
+  .stack li:nth-child(3) {
+    --i: 2;
+  }
+  .stack li:nth-child(n + 4) {
+    --i: 3;
+  }
+  .stack li:first-child {
+    background: var(--accent);
+    box-shadow: none;
+  }
+  .stack li:first-child .stack-name,
+  .stack li:first-child .stack-role {
+    color: var(--on-accent);
+  }
+  .stack-name {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 17px;
+    line-height: 22px;
+  }
+  .stack-role {
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--ink-muted);
+  }
+  .stack figcaption {
+    margin-top: var(--space-3);
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--ink-muted);
+  }
+
+  /* Diğer projeler: defter dizini gibi satırlar */
+  .index {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .index li {
+    position: relative;
+    display: grid;
+    grid-template-columns: 12rem minmax(0, 1fr) 14rem;
+    gap: var(--space-5);
+    align-items: baseline;
+    padding: var(--space-5) 0;
+    border-top: 1px solid var(--rule);
+  }
+  .index li:last-child {
+    border-bottom: 1px solid var(--rule);
+  }
+  .index h3 {
+    margin: 0;
+    font-size: 24px;
+    line-height: 30px;
+  }
+  /* Satırın tamamı tıklanabilir */
+  .index h3 a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .index li:hover h3 a {
+    color: var(--accent);
+  }
+  .index-body p {
+    margin: 0;
+    font-size: 16px;
+    line-height: 26px;
+  }
+  .index-body p:first-child {
+    color: var(--ink-muted);
+  }
+  .index-body .detay {
+    margin-top: var(--space-1);
+  }
+  .index-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    align-items: baseline;
+    justify-content: flex-end;
+  }
+  .repo {
+    position: relative;
+    z-index: 1;
+    margin-left: var(--space-2);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+  }
+  .repo:hover {
+    text-decoration: underline;
+  }
+  .empty {
+    margin: 0;
+    padding-block: var(--space-4);
+    border-top: 1px solid var(--rule);
+    color: var(--ink-muted);
+  }
+
+  @media (max-width: 860px) {
+    .featured {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-6);
+    }
+    .index li {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-2);
+    }
+    .index-meta {
+      justify-content: flex-start;
+      margin-top: var(--space-2);
+    }
+  }
+  @media (max-width: 560px) {
+    .hero {
+      padding-block: var(--space-7) var(--space-6);
+    }
+    h1 {
+      font-size: 40px;
+      line-height: 44px;
+    }
+    .featured h3 {
+      font-size: 34px;
+      line-height: 38px;
+    }
+    .stack li {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 2px;
+      margin-left: calc(var(--i) * 10px);
+    }
+  }
+</style>

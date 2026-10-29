@@ -1,0 +1,198 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+import { ui, routes, type Lang } from '../i18n';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+  lang: Lang;
+}
+
+const { post, lang } = Astro.props;
+const t = ui[lang];
+const { Content, headings } = await render(post);
+
+// Okuma süresi: dakikada ~200 kelime
+const words = (post.body ?? '').split(/\s+/).filter(Boolean).length;
+const minutes = Math.max(1, Math.round(words / 200));
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+const hasToc = toc.length >= 2;
+---
+
+<Base title={post.data.title} description={post.data.description} lang={lang}>
+  <div class="progress" aria-hidden="true"></div>
+  <article class:list={['post', { 'has-toc': hasToc }]}>
+    <header class="page-head">
+      <div class="meta">
+        <FormattedDate date={post.data.date} lang={lang} />
+        <span class="label">{t.readingTime(minutes)}</span>
+        {post.data.tags.map((t) => <span class="tag">{t}</span>)}
+        {post.data.draft && <span class="tag tag-line">{t.draft}</span>}
+      </div>
+      <h1>{post.data.title}</h1>
+      {post.data.description && <p class="lead">{post.data.description}</p>}
+    </header>
+
+    {
+      hasToc && (
+        <nav class="toc" aria-labelledby="toc-title">
+          <details open>
+            <summary id="toc-title" class="label">{t.toc}</summary>
+            <ol>
+              {toc.map((h) => (
+                <li class:list={[`d${h.depth}`]}>
+                  <a href={`#${h.slug}`}>{h.text}</a>
+                </li>
+              ))}
+            </ol>
+          </details>
+        </nav>
+      )
+    }
+
+    <div class="prose">
+      <Content />
+    </div>
+  </article>
+  <a class="back-link" href={routes.blog[lang]}>{t.allPosts}</a>
+</Base>
+
+<script>
+  // İçindekiler: okunan bölümü işaretle
+  const links = new Map<string, HTMLAnchorElement>();
+  document.querySelectorAll<HTMLAnchorElement>('.toc a').forEach((a) => {
+    links.set(decodeURIComponent(a.hash.slice(1)), a);
+  });
+
+  if (links.size) {
+    const targets = [...links.keys()]
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          links.forEach((a) => a.removeAttribute('aria-current'));
+          links.get(e.target.id)?.setAttribute('aria-current', 'location');
+        });
+      },
+      { rootMargin: '0px 0px -70% 0px' },
+    );
+    targets.forEach((t) => observer.observe(t));
+  }
+</script>
+
+<style>
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    align-items: center;
+    margin-bottom: var(--space-3);
+  }
+  h1 {
+    max-width: 22ch;
+  }
+  .page-head .lead {
+    margin-top: var(--space-4);
+  }
+
+  /* Okuma ilerleme çizgisi: kaydırmaya bağlı CSS animasyonu; desteklemeyen tarayıcıda görünmez */
+  .progress {
+    display: none;
+  }
+  @supports (animation-timeline: scroll()) {
+    .progress {
+      display: block;
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 10;
+      height: 3px;
+      background: var(--accent);
+      transform-origin: 0 50%;
+      transform: scaleX(0);
+      animation: read linear both;
+      animation-timeline: scroll(root);
+    }
+    @keyframes read {
+      to {
+        transform: scaleX(1);
+      }
+    }
+  }
+
+  .toc {
+    margin: 0 0 var(--space-6);
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--radius-md);
+    background: var(--paper-sunk);
+  }
+  .toc summary {
+    cursor: pointer;
+    color: var(--ink);
+  }
+  .toc ol {
+    list-style: none;
+    margin: var(--space-3) 0 0;
+    padding: 0;
+  }
+  .toc li {
+    font-size: 15px;
+    line-height: 22px;
+  }
+  .toc li + li {
+    margin-top: var(--space-2);
+  }
+  .toc li.d3 {
+    padding-left: var(--space-4);
+  }
+  .toc a {
+    color: var(--ink-muted);
+    text-decoration: none;
+  }
+  .toc a:hover,
+  .toc a[aria-current] {
+    color: var(--accent);
+  }
+
+  /* Geniş ekranda içindekiler sağda sabit durur */
+  @media (min-width: 1080px) {
+    .post.has-toc {
+      display: grid;
+      grid-template-columns: minmax(0, 68ch) 14rem;
+      column-gap: var(--space-7);
+      align-items: start;
+    }
+    .post.has-toc .page-head {
+      grid-column: 1 / -1;
+    }
+    .post.has-toc .toc {
+      grid-column: 2;
+      grid-row: 2;
+      position: sticky;
+      top: var(--space-6);
+      margin: 0;
+      padding: 0 0 0 var(--space-4);
+      background: none;
+      border-left: 1px solid var(--rule);
+      border-radius: 0;
+    }
+    .post.has-toc .toc summary {
+      pointer-events: none;
+      list-style: none;
+    }
+    .post.has-toc .toc summary::-webkit-details-marker {
+      display: none;
+    }
+    .post.has-toc .prose {
+      grid-column: 1;
+      grid-row: 2;
+    }
+  }
+
+  .prose :global(h2),
+  .prose :global(h3) {
+    scroll-margin-top: var(--space-6);
+  }
+</style>

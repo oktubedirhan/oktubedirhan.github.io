@@ -1,12 +1,15 @@
 ---
+import { ui, type Lang } from '../i18n';
+
 interface Props {
   date: Date;
   class?: string;
+  lang?: Lang;
 }
 
-const { date, class: className = 'label' } = Astro.props;
+const { date, class: className = 'label', lang = 'tr' } = Astro.props;
 ---
 
 <time class={className} datetime={date.toISOString()}>
-  {date.toLocaleDateString('tr-TR', { year: 'numeric', month: 'short', day: 'numeric' })}
+  {date.toLocaleDateString(ui[lang].locale, { year: 'numeric', month: 'short', day: 'numeric' })}
 </time>

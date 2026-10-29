@@ -2,6 +2,7 @@
   "name": "Karteikasten",
   "order": 4,
   "description": "Almanca kelime kutusu: Leitner sistemiyle Goethe A2 sınavına hazırlık. Tamamen çevrimdışı çalışıyor.",
+  "description_en": "A German vocabulary box for the Goethe A2 exam, built on the Leitner system. Works fully offline.",
   "tags": [
     "TypeScript",
     "React"

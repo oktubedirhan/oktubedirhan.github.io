@@ -1,0 +1,22 @@
+---
+import Base from '../layouts/Base.astro';
+import PostList from '../components/PostList.astro';
+import { getPosts } from '../utils';
+import { ui, routes, other, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = ui[lang];
+const posts = await getPosts(lang);
+---
+
+<Base title="Blog" description={t.blogLead} lang={lang} alternate={routes.blog[other(lang)]}>
+  <header class="page-head">
+    <h1>Blog</h1>
+    <p class="lead">{t.blogLead}</p>
+  </header>
+  <PostList posts={posts} lang={lang} />
+</Base>

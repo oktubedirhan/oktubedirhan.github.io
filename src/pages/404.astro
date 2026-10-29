@@ -7,6 +7,18 @@ import Base from '../layouts/Base.astro';
     <p class="label">Hata 404</p>
     <h1>Bu sayfa defterde yok.</h1>
     <p class="lead">Aradığın sayfa burada yok.</p>
+    <p class="lead" lang="en">This page isn't in the notebook.</p>
   </header>
-  <a class="btn" href="/">← Ana sayfaya dön</a>
+  <div class="links">
+    <a class="btn" href="/">← Ana sayfaya dön</a>
+    <a class="btn" href="/en/" lang="en">← Back to the English home page</a>
+  </div>
 </Base>
+
+<style>
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+</style>

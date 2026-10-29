@@ -1,15 +1,5 @@
 ---
-import Base from '../../layouts/Base.astro';
-import PostList from '../../components/PostList.astro';
-import { getPosts } from '../../utils';
-
-const posts = await getPosts();
+import BlogIndex from '../../views/BlogIndex.astro';
 ---
 
-<Base title="Blog" description="Matematik, yazılım ve öğrendiklerim üzerine yazılar.">
-  <header class="page-head">
-    <h1>Blog</h1>
-    <p class="lead">Matematik, yazılım ve öğrendiklerim üzerine yazılar.</p>
-  </header>
-  <PostList posts={posts} />
-</Base>
+<BlogIndex lang="tr" />

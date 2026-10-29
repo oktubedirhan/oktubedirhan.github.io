@@ -1,23 +1,25 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import FormattedDate from './FormattedDate.astro';
+import { ui, postHref, type Lang } from '../i18n';
 
 interface Props {
   posts: CollectionEntry<'blog'>[];
+  lang?: Lang;
 }
 
-const { posts } = Astro.props;
+const { posts, lang = 'tr' } = Astro.props;
 ---
 
 {
   posts.length === 0 ? (
-    <p class="muted">Henüz yazı yok.</p>
+    <p class="muted">{ui[lang].noPosts}</p>
   ) : (
     <ul>
       {posts.map((post) => (
         <li>
-          <a href={`/blog/${post.id}/`}>
-            <FormattedDate date={post.data.date} />
+          <a href={postHref(lang, post.id)}>
+            <FormattedDate date={post.data.date} lang={lang} />
             <span class="title">
               {post.data.title}
               <span class="desc">{post.data.description}</span>

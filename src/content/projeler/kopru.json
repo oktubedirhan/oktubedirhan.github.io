@@ -2,27 +2,33 @@
   "name": "Köprü",
   "order": 1,
   "description": "Apple Silicon Mac'te Windows oyunlarını CrossOver Wine + D3DMetal ile çalıştırmak için yazdığım bir öğrenme projesi.",
+  "description_en": "A learning project: a launcher I wrote to run Windows games on Apple Silicon Macs with CrossOver Wine and D3DMetal.",
   "tags": [
     "Swift",
     "macOS"
   ],
   "detay": "Wine'ı (CrossOver 26.3) kaynaktan derledim; The Witcher 3 DirectX 12 ile, D3DMetal üzerinden çalışıyor.",
+  "detay_en": "I compiled Wine (CrossOver 26.3) from source; The Witcher 3 runs on DirectX 12 through D3DMetal.",
   "katmanlar": [
     {
       "ad": "Köprü",
-      "is": "SwiftUI başlatıcı: oyun listesi, prefix yönetimi, Oyna düğmesi"
+      "is": "SwiftUI başlatıcı: oyun listesi, prefix yönetimi, Oyna düğmesi",
+      "is_en": "SwiftUI launcher: game list, prefix management, Play button"
     },
     {
       "ad": "Wine",
-      "is": "Windows programını macOS'ta çalıştırır"
+      "is": "Windows programını macOS'ta çalıştırır",
+      "is_en": "Runs Windows programs on macOS"
     },
     {
       "ad": "D3DMetal",
-      "is": "DirectX 11/12 çağrılarını Metal'e çevirir"
+      "is": "DirectX 11/12 çağrılarını Metal'e çevirir",
+      "is_en": "Translates DirectX 11/12 calls to Metal"
     },
     {
       "ad": "Rosetta 2",
-      "is": "x86_64 kodu Apple Silicon'da çalıştırır"
+      "is": "x86_64 kodu Apple Silicon'da çalıştırır",
+      "is_en": "Runs x86_64 code on Apple Silicon"
     }
   ],
   "repo": "https://github.com/oktubedirhan/kopru",

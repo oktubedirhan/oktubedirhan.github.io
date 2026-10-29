@@ -1,0 +1,32 @@
+---
+import Base from '../layouts/Base.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { getProjects } from '../utils';
+import { ui, routes, other, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = ui[lang];
+const projects = await getProjects(lang);
+---
+
+<Base title={t.projectsTitle} description={t.projectsDescription} lang={lang} alternate={routes.projects[other(lang)]}>
+  <header class="page-head">
+    <h1>{t.projectsTitle}</h1>
+    <p class="lead">{t.projectsLead}</p>
+  </header>
+  <div class="grid">
+    {projects.map((p) => <ProjectCard project={p} lang={lang} />)}
+  </div>
+</Base>
+
+<style>
+  .grid {
+    display: grid;
+    gap: var(--space-4);
+    grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+  }
+</style>
