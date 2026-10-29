@@ -43,6 +43,15 @@ collections:
       - { label: Kısa özet, name: description, widget: string, hint: Listelerde ve arama motorlarında görünür. }
       - { label: Tarih, name: date, widget: datetime, type: date }
       - { label: Etiketler, name: tags, widget: list, required: false, default: [] }
+      - { label: Teknik not, name: detay, widget: text, required: false, hint: 'Nasıl yapıldığını anlatan tek cümle. Ana sayfada açıklamanın altında görünür.' }
+      - label: Katmanlar
+        name: katmanlar
+        widget: list
+        required: false
+        hint: 'Sırası 1 olan proje ana sayfada öne çıkar; katmanları varsa üstten alta yığın şeması olarak çizilir.'
+        fields:
+          - { label: Ad, name: ad, widget: string }
+          - { label: Görevi, name: is, widget: string }
       - { label: Taslak, name: draft, widget: boolean, default: false, hint: Açıkken yazı sitede görünmez. }
       - { label: İçerik, name: body, widget: markdown }
 
@@ -62,6 +71,15 @@ collections:
       - { label: Açıklama, name: description, widget: text }
       - { label: Sıra, name: order, widget: number, value_type: int, default: 10, hint: Küçük sayı önce gösterilir. }
       - { label: Etiketler, name: tags, widget: list, required: false, default: [] }
+      - { label: Teknik not, name: detay, widget: text, required: false, hint: 'Nasıl yapıldığını anlatan tek cümle. Ana sayfada açıklamanın altında görünür.' }
+      - label: Katmanlar
+        name: katmanlar
+        widget: list
+        required: false
+        hint: 'Sırası 1 olan proje ana sayfada öne çıkar; katmanları varsa üstten alta yığın şeması olarak çizilir.'
+        fields:
+          - { label: Ad, name: ad, widget: string }
+          - { label: Görevi, name: is, widget: string }
       - { label: Site adresi, name: url, widget: string, required: false, hint: 'Sitedeki yolu (/karteikasten/) ya da tam adresi (https://...)' }
       - { label: Kaynak kod, name: repo, widget: string, required: false, hint: 'GitHub reposu (https://github.com/...)' }
 

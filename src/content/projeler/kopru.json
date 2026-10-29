@@ -6,6 +6,25 @@
     "Swift",
     "macOS"
   ],
+  "detay": "Wine'ı (CrossOver 26.3) kaynaktan derledim; The Witcher 3 DirectX 12 ile, D3DMetal üzerinden çalışıyor.",
+  "katmanlar": [
+    {
+      "ad": "Köprü",
+      "is": "SwiftUI başlatıcı: oyun listesi, prefix yönetimi, Oyna düğmesi"
+    },
+    {
+      "ad": "Wine",
+      "is": "Windows programını macOS'ta çalıştırır"
+    },
+    {
+      "ad": "D3DMetal",
+      "is": "DirectX 11/12 çağrılarını Metal'e çevirir"
+    },
+    {
+      "ad": "Rosetta 2",
+      "is": "x86_64 kodu Apple Silicon'da çalıştırır"
+    }
+  ],
   "repo": "https://github.com/oktubedirhan/kopru",
   "url": "/kopru/"
 }

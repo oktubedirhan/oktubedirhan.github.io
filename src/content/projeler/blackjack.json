@@ -5,6 +5,7 @@
   "tags": [
     "JavaScript"
   ],
+  "detay": "Gerçek 52 kartlık deste; her elden önce Fisher–Yates ile karıştırılıyor.",
   "repo": "https://github.com/oktubedirhan/blackjack",
   "url": "/blackjack/"
 }

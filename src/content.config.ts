@@ -22,6 +22,10 @@ const projeler = defineCollection({
     description: z.string(),
     order: z.number().default(100),
     tags: z.array(z.string()).default([]),
+    // Nasıl yapıldığını anlatan tek cümle; ana sayfada açıklamanın altında görünür.
+    detay: z.string().optional(),
+    // Öne çıkan projede üstten alta yığın şeması olarak çizilir.
+    katmanlar: z.array(z.object({ ad: z.string(), is: z.string() })).optional(),
     // Sitedeki yol (/karteikasten/) ya da tam adres (https://...)
     url: z.string().optional().transform((v) => v || undefined),
     repo: z.string().url().optional().or(z.literal('').transform(() => undefined)),
