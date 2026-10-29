@@ -9,6 +9,28 @@
   ],
   "detay": "Beş görsel temalı, çalışan bir iPhone prototipi. Bütün veriler cihazda kalıyor; hesap ya da sunucu yok.",
   "detay_en": "A working iPhone prototype with five visual themes. All data stays on the device; no accounts, no servers.",
+  "ekranlar": [
+    {
+      "resim": "/media/denge/bugun.webp",
+      "ad": "Bugün",
+      "ad_en": "Today"
+    },
+    {
+      "resim": "/media/denge/kazan.webp",
+      "ad": "Kazan",
+      "ad_en": "Earn"
+    },
+    {
+      "resim": "/media/denge/odak.webp",
+      "ad": "Odak",
+      "ad_en": "Focus"
+    },
+    {
+      "resim": "/media/denge/pano.webp",
+      "ad": "Pano",
+      "ad_en": "Board"
+    }
+  ],
   "url": "/denge-site/",
   "repo": "https://github.com/oktubedirhan/denge-site"
 }

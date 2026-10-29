@@ -5,6 +5,7 @@ import FormattedDate from '../components/FormattedDate.astro';
 import Stack from '../components/Stack.astro';
 import ShuffleViz from '../components/ShuffleViz.astro';
 import LeitnerViz from '../components/LeitnerViz.astro';
+import Screens from '../components/Screens.astro';
 import { LINKS } from '../consts';
 import { getPosts, getProjects } from '../utils';
 import { ui, routes, other, localHref, type Lang } from '../i18n';
@@ -103,6 +104,9 @@ const [beforeRss, afterRss] = t.noPostsHome.split('{rss}');
             <p>{p.description}</p>
             {p.detay && <p class="detay">{p.detay}</p>}
             {p.gorsel === 'karistirma' && <ShuffleViz caption={t.shuffleCaption} />}
+            {p.ekranlar && p.ekranlar.length > 0 && (
+              <Screens project={p.name} ekranlar={p.ekranlar} caption={t.screensCaption} />
+            )}
             {p.gorsel === 'leitner' && (
               <LeitnerViz box={t.leitnerBox} intervals={t.leitnerGaps} caption={t.leitnerCaption} />
             )}

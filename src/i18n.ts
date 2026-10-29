@@ -53,6 +53,7 @@ export const ui = {
     howItWorks: 'Nasıl çalışıyor?',
     shuffleCaption:
       'Fisher–Yates, 8 kartla: sondan başlayarak her konuma, kendisi dahil önündeki kartlardan rastgele biri gelir. Oyun aynısını 52 kartla yapıyor.',
+    screensCaption: 'Uygulamadan gerçek ekranlar, Çini temasıyla.',
     leitnerBox: 'Kutu',
     leitnerGaps: ['bugün', '1 gün', '3 gün', '7 gün', '16 gün'],
     leitnerCaption:
@@ -97,6 +98,7 @@ export const ui = {
     howItWorks: 'How does it work?',
     shuffleCaption:
       'Fisher–Yates with 8 cards: working back from the end, each position gets a random card from those at or before it. The game does the same with 52.',
+    screensCaption: 'Real screens from the app, in the Çini theme.',
     leitnerBox: 'Box',
     leitnerGaps: ['today', '1 day', '3 days', '7 days', '16 days'],
     leitnerCaption:

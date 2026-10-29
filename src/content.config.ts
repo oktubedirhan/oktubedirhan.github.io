@@ -32,6 +32,8 @@ const projeler = defineCollection({
     katmanlar: z.array(z.object({ ad: z.string(), is: z.string(), is_en: z.string().optional() })).optional(),
     // Ana sayfada projenin altında çizilen algoritma canlandırması
     gorsel: z.enum(['karistirma', 'leitner']).optional(),
+    // Gerçek ekran görüntüleri (public/media altında)
+    ekranlar: z.array(z.object({ resim: z.string(), ad: z.string(), ad_en: z.string().optional() })).optional(),
     // Sitedeki yol (/karteikasten/) ya da tam adres (https://...)
     url: z.string().optional().transform((v) => v || undefined),
     repo: z.string().url().optional().or(z.literal('').transform(() => undefined)),

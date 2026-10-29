@@ -1,0 +1,65 @@
+---
+// Bir projenin gerçek ekran görüntüleri: küçük telefon ekranları yan yana.
+// Görseller panelden yüklenir (public/media), 360 px genişlik yeterli.
+interface Props {
+  project: string;
+  ekranlar: { resim: string; ad: string }[];
+  caption?: string;
+}
+
+const { project, ekranlar, caption } = Astro.props;
+---
+
+<figure class="screens">
+  <ol>
+    {
+      ekranlar.map((e) => (
+        <li>
+          <img src={e.resim} alt={`${project} · ${e.ad}`} width="360" height="780" loading="lazy" decoding="async" />
+          <span>{e.ad}</span>
+        </li>
+      ))
+    }
+  </ol>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .screens {
+    margin: var(--space-4) 0 0;
+  }
+  ol {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 6.5rem));
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  li {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    background: var(--paper-sunk);
+    box-shadow:
+      0 0 0 1px var(--rule),
+      var(--shadow-lift);
+  }
+  span {
+    font-size: 13px;
+    line-height: 18px;
+    color: var(--ink-muted);
+  }
+  figcaption {
+    margin-top: var(--space-2);
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--ink-muted);
+  }
+</style>

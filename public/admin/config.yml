@@ -83,6 +83,15 @@ collections:
         options:
           - { label: Fisher–Yates karıştırma, value: karistirma }
           - { label: Leitner kutuları, value: leitner }
+      - label: Ekran görüntüleri
+        name: ekranlar
+        widget: list
+        required: false
+        hint: 'Ana sayfada projenin altında yan yana gösterilir; en fazla 4 tane iyi durur. Dikey telefon ekranları için.'
+        fields:
+          - { label: Görüntü, name: resim, widget: image }
+          - { label: Ekran adı, name: ad, widget: string }
+          - { label: Ekran adı (English), name: ad_en, widget: string, required: false }
       - { label: Site adresi, name: url, widget: string, required: false, hint: 'Sitedeki yolu (/karteikasten/) ya da tam adresi (https://...)' }
       - { label: Kaynak kod, name: repo, widget: string, required: false, hint: 'GitHub reposu (https://github.com/...)' }
 

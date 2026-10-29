@@ -20,6 +20,7 @@ export async function getProjects(lang: Lang = 'tr') {
         description: (en && p.description_en) || p.description,
         detay: (en && p.detay_en) || p.detay,
         katmanlar: p.katmanlar?.map((k) => ({ ad: k.ad, is: (en && k.is_en) || k.is })),
+        ekranlar: p.ekranlar?.map((e) => ({ resim: e.resim, ad: (en && e.ad_en) || e.ad })),
       };
     })
     .sort((a, b) => a.order - b.order);
