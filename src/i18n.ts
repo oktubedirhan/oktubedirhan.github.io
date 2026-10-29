@@ -17,7 +17,7 @@ export const ui = {
   tr: {
     locale: 'tr-TR',
     description: 'ODTÜ Matematik öğrencisi. Yazılar, projeler ve notlar.',
-    ogAlt: 'Merhaba, ben Bedirhan. ODTÜ · Matematik · Swift ve TypeScript.',
+    ogAlt: 'Bedirhan Oktu. ODTÜ · Matematik · Swift ve TypeScript.',
     nav: { blog: 'Blog', projects: 'Projeler', about: 'Hakkımda', cv: 'CV' },
     navLabel: 'Ana menü',
     skip: 'İçeriğe geç',
@@ -55,7 +55,7 @@ export const ui = {
   en: {
     locale: 'en-GB',
     description: 'Mathematics student at METU. Writing, projects and notes.',
-    ogAlt: "Hi, I'm Bedirhan. METU · Mathematics · Swift & TypeScript.",
+    ogAlt: 'Bedirhan Oktu. METU · Mathematics · Swift & TypeScript.',
     nav: { blog: 'Blog', projects: 'Projects', about: 'About', cv: 'CV' },
     navLabel: 'Main menu',
     skip: 'Skip to content',
