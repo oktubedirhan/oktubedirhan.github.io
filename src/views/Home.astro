@@ -30,7 +30,8 @@ const [beforeRss, afterRss] = t.noPostsHome.split('{rss}');
 <Base lang={lang} alternate={routes.home[other(lang)]}>
   <section class:list={['hero', { 'has-now': intro.now }]} slot="hero">
     <div class="intro">
-      <h1>{t.hello} <em>{home.name}</em>.</h1>
+      <!-- Ad her iki dilde de ikinci satırda başlar; böylece hero yüksekliği dilden dile değişmez. -->
+      <h1>{t.hello}<br /><em>{home.name}</em>.</h1>
       <p class="lead">{intro.lead}</p>
       <div class="links">
         <a class="btn btn-primary" href="#projeler">{t.seeProjects}</a>
