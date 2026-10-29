@@ -17,7 +17,7 @@ const { Content } = await render(page);
 
 <Base title={page.data.title} description={t.kopruDescription} lang={lang} alternate={routes.kopru[other(lang)]}>
   <header class="page-head">
-    <p class="label">{t.kopruKicker}</p>
+    <p class="label">{t.kopruKicker} · <span class="keep-case">macOS</span></p>
     <h1>{page.data.title}</h1>
     <div class="links">
       <a class="btn btn-primary" href="https://github.com/oktubedirhan/kopru">{t.kopruGithub}</a>
@@ -31,6 +31,10 @@ const { Content } = await render(page);
 </Base>
 
 <style>
+  /* .label büyük harfe çevirir; ürün adı özgün yazımıyla kalır */
+  .keep-case {
+    text-transform: none;
+  }
   .links {
     display: flex;
     flex-wrap: wrap;
