@@ -75,6 +75,14 @@ collections:
           - { label: Ad, name: ad, widget: string }
           - { label: Görevi, name: is, widget: string }
           - { label: Görevi (English), name: is_en, widget: string, required: false }
+      - label: Algoritma görseli
+        name: gorsel
+        widget: select
+        required: false
+        hint: 'Ana sayfada projenin altında küçük bir canlandırma gösterir.'
+        options:
+          - { label: Fisher–Yates karıştırma, value: karistirma }
+          - { label: Leitner kutuları, value: leitner }
       - { label: Site adresi, name: url, widget: string, required: false, hint: 'Sitedeki yolu (/karteikasten/) ya da tam adresi (https://...)' }
       - { label: Kaynak kod, name: repo, widget: string, required: false, hint: 'GitHub reposu (https://github.com/...)' }
 

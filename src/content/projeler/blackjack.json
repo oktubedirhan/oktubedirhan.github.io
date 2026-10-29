@@ -8,6 +8,7 @@
   ],
   "detay": "Deste bitince Fisher–Yates ile yeniden karıştırılıyor; rastgelelik crypto.getRandomValues'tan, modulo sapması olmadan.",
   "detay_en": "When the deck runs out it's reshuffled with Fisher–Yates, using crypto.getRandomValues without modulo bias.",
+  "gorsel": "karistirma",
   "url": "/blackjack/",
   "repo": "https://github.com/oktubedirhan/blackjack"
 }

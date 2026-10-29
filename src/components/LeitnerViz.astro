@@ -1,0 +1,162 @@
+---
+// Leitner kutuları: Karteikasten'daki leitnerLogic.ts ile aynı kurallar.
+// Doğru → bir sonraki kutu, yanlış → Kutu 1. Aralıklar 0, 1, 3, 7, 16 gün.
+interface Props {
+  box: string;
+  intervals: readonly string[];
+  caption: string;
+}
+
+const { box, intervals, caption } = Astro.props;
+---
+
+<figure class="viz" data-leitner>
+  <div class="track" aria-hidden="true">
+    <ol class="boxes">
+      {
+        intervals.map((gap, i) => (
+          <li class="box">
+            <span class="box-name">
+              {box} {i + 1}
+            </span>
+            <span class="box-gap">{gap}</span>
+          </li>
+        ))
+      }
+    </ol>
+    <span class="token"></span>
+  </div>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<script>
+  const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+  const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.querySelectorAll<HTMLElement>('[data-leitner]').forEach((fig) => {
+    const boxes = [...fig.querySelectorAll<HTMLElement>('.box')];
+    const token = fig.querySelector<HTMLElement>('.token')!;
+    let visible = false;
+    let wake: (() => void) | null = null;
+    const whenVisible = () => (visible ? Promise.resolve() : new Promise<void>((r) => (wake = r)));
+
+    // Kartı k. kutunun ortasına koy; ok: doğru (mavi) ya da yanlış (pas rengi)
+    const moveTo = (k: number, mood: 'ok' | 'miss' | null) => {
+      const b = boxes[k];
+      token.style.setProperty('--x', `${b.offsetLeft + b.offsetWidth / 2}px`);
+      token.dataset.mood = mood ?? '';
+      boxes.forEach((x, i) => x.classList.toggle('is-here', i === k));
+    };
+
+    if (calm) {
+      moveTo(2, null);
+      return;
+    }
+
+    const run = async () => {
+      for (;;) {
+        await whenVisible();
+        moveTo(0, null);
+        await wait(1000);
+        // Dört kez doğru: Kutu 1 → 5
+        for (let k = 1; k < boxes.length; k++) {
+          await whenVisible();
+          moveTo(k, 'ok');
+          await wait(900);
+        }
+        await wait(600);
+        // Bir kez yanlış: doğrudan Kutu 1'e
+        moveTo(0, 'miss');
+        await wait(2000);
+      }
+    };
+
+    new IntersectionObserver(([e]) => {
+      visible = e.isIntersecting;
+      if (visible && wake) {
+        wake();
+        wake = null;
+      }
+    }).observe(fig);
+    addEventListener('resize', () => {
+      const here = boxes.findIndex((b) => b.classList.contains('is-here'));
+      if (here >= 0) moveTo(here, (token.dataset.mood as 'ok' | 'miss') || null);
+    });
+    run();
+  });
+</script>
+
+<style>
+  .viz {
+    margin: var(--space-4) 0 0;
+  }
+  .track {
+    position: relative;
+    padding-top: 22px;
+  }
+  .boxes {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .box {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 8px 7px;
+    border-radius: 0 0 8px 8px;
+    background: var(--paper-raised);
+    box-shadow: inset 0 0 0 1px var(--rule);
+    transition: background 0.3s;
+  }
+  .box.is-here {
+    background: var(--accent-soft);
+  }
+  .box-name {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 18px;
+    white-space: nowrap;
+  }
+  .box-gap {
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--ink-muted);
+    white-space: nowrap;
+  }
+  /* Kutunun üstünde duran kart */
+  .token {
+    --x: 0px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 26px;
+    height: 18px;
+    border-radius: 4px;
+    background: var(--ink);
+    transform: translateX(calc(var(--x) - 50%));
+    transition:
+      transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+      background 0.2s;
+  }
+  .token[data-mood='ok'] {
+    background: var(--accent);
+  }
+  /* Yanlış: geri dönüş daha uzun ve belirgin */
+  .token[data-mood='miss'] {
+    background: var(--accent-2);
+    transition:
+      transform 0.9s cubic-bezier(0.65, 0, 0.35, 1),
+      background 0.2s;
+  }
+  figcaption {
+    margin-top: var(--space-2);
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--ink-muted);
+  }
+</style>

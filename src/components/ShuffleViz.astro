@@ -1,0 +1,168 @@
+---
+// Fisher–Yates karıştırmanın küçük bir canlandırması: 8 kartla, sondan başa.
+// Blackjack oyunundaki shuffle() ile aynı döngü (oyun 52 kartla yapıyor).
+interface Props {
+  caption: string;
+}
+
+const { caption } = Astro.props;
+const cards = ['A♠', '2♥', '3♠', '4♥', '5♠', '6♥', '7♠', '8♥'];
+---
+
+<figure class="viz" data-shuffle>
+  <ol class="cards" aria-hidden="true">
+    {
+      cards.map((c) => (
+        <li class:list={['card', { red: c.endsWith('♥') }]}>
+          <span>{c.slice(0, -1)}</span>
+          <span class="suit">{c.slice(-1)}</span>
+        </li>
+      ))
+    }
+  </ol>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<script>
+  const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+  const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Yerdeki iki kartı DOM'da değiştir, sonra eski yerlerinden kayarak gelsinler (FLIP)
+  function swap(list: HTMLElement, i: number, j: number) {
+    const a = list.children[i] as HTMLElement;
+    const b = list.children[j] as HTMLElement;
+    const ax = a.getBoundingClientRect().left;
+    const bx = b.getBoundingClientRect().left;
+    const tmp = document.createElement('li');
+    list.replaceChild(tmp, a);
+    list.replaceChild(a, b);
+    list.replaceChild(b, tmp);
+    const ease = 'cubic-bezier(0.16, 1, 0.3, 1)';
+    a.animate([{ transform: `translateX(${ax - bx}px)` }, { transform: 'none' }], { duration: 480, easing: ease });
+    b.animate([{ transform: `translateX(${bx - ax}px) translateY(-6px)` }, { transform: 'none' }], {
+      duration: 480,
+      easing: ease,
+    });
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-shuffle]').forEach((fig) => {
+    const list = fig.querySelector<HTMLElement>('.cards')!;
+    const original = [...list.children];
+    const n = original.length;
+    let visible = false;
+    let wake: (() => void) | null = null;
+    const whenVisible = () => (visible ? Promise.resolve() : new Promise<void>((r) => (wake = r)));
+
+    const reset = () => {
+      original.forEach((c) => {
+        c.classList.remove('is-i', 'is-j', 'is-done');
+        list.append(c);
+      });
+    };
+
+    if (calm) {
+      // Hareket yok: tek seferde karıştırılmış son hâli göster
+      const cards = [...original];
+      for (let i = n - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [cards[i], cards[j]] = [cards[j], cards[i]];
+      }
+      cards.forEach((c) => {
+        c.classList.add('is-done');
+        list.append(c);
+      });
+      return;
+    }
+
+    const run = async () => {
+      for (;;) {
+        await whenVisible();
+        reset();
+        await wait(900);
+        for (let i = n - 1; i > 0; i--) {
+          await whenVisible();
+          const j = Math.floor(Math.random() * (i + 1));
+          const ci = list.children[i];
+          const cj = list.children[j];
+          ci.classList.add('is-i');
+          cj.classList.add('is-j');
+          await wait(420);
+          if (i !== j) swap(list, i, j);
+          await wait(520);
+          ci.classList.remove('is-i');
+          cj.classList.remove('is-j');
+          list.children[i].classList.add('is-done');
+        }
+        list.children[0].classList.add('is-done');
+        await wait(2600);
+      }
+    };
+
+    new IntersectionObserver(([e]) => {
+      visible = e.isIntersecting;
+      if (visible && wake) {
+        wake();
+        wake = null;
+      }
+    }).observe(fig);
+    run();
+  });
+</script>
+
+<style>
+  .viz {
+    margin: var(--space-4) 0 0;
+  }
+  .cards {
+    display: flex;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 0 1 40px;
+    min-width: 0;
+    aspect-ratio: 5 / 7;
+    padding: 4px 5px;
+    border-radius: 6px;
+    background: var(--paper-raised);
+    box-shadow: inset 0 0 0 1px var(--rule);
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1;
+    transition:
+      box-shadow 0.2s,
+      background 0.2s,
+      opacity 0.3s;
+  }
+  .card.red {
+    color: var(--accent-2);
+  }
+  .suit {
+    align-self: flex-end;
+    font-size: 13px;
+  }
+  /* i: sıradaki konum, j: rastgele seçilen kart, done: yerine oturdu */
+  .card.is-i {
+    box-shadow: inset 0 0 0 2px var(--accent);
+  }
+  .card.is-j {
+    box-shadow: inset 0 0 0 2px var(--accent-2);
+  }
+  .card.is-done {
+    background: var(--paper-sunk);
+    box-shadow: none;
+  }
+  figcaption {
+    margin-top: var(--space-2);
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--ink-muted);
+  }
+</style>

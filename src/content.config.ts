@@ -30,6 +30,8 @@ const projeler = defineCollection({
     detay_en: z.string().optional(),
     // Öne çıkan projede üstten alta yığın şeması olarak çizilir.
     katmanlar: z.array(z.object({ ad: z.string(), is: z.string(), is_en: z.string().optional() })).optional(),
+    // Ana sayfada projenin altında çizilen algoritma canlandırması
+    gorsel: z.enum(['karistirma', 'leitner']).optional(),
     // Sitedeki yol (/karteikasten/) ya da tam adres (https://...)
     url: z.string().optional().transform((v) => v || undefined),
     repo: z.string().url().optional().or(z.literal('').transform(() => undefined)),

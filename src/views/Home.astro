@@ -3,6 +3,8 @@ import Base from '../layouts/Base.astro';
 import PostList from '../components/PostList.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Stack from '../components/Stack.astro';
+import ShuffleViz from '../components/ShuffleViz.astro';
+import LeitnerViz from '../components/LeitnerViz.astro';
 import { LINKS } from '../consts';
 import { getPosts, getProjects } from '../utils';
 import { ui, routes, other, localHref, type Lang } from '../i18n';
@@ -100,6 +102,10 @@ const [beforeRss, afterRss] = t.noPostsHome.split('{rss}');
           <div class="index-body">
             <p>{p.description}</p>
             {p.detay && <p class="detay">{p.detay}</p>}
+            {p.gorsel === 'karistirma' && <ShuffleViz caption={t.shuffleCaption} />}
+            {p.gorsel === 'leitner' && (
+              <LeitnerViz box={t.leitnerBox} intervals={t.leitnerGaps} caption={t.leitnerCaption} />
+            )}
           </div>
           <div class="index-meta">
             {p.tags.map((t) => <span class="tag tag-tech">{t}</span>)}

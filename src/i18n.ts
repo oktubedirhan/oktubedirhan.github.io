@@ -51,6 +51,12 @@ export const ui = {
     kopruGithub: "GitHub'da incele →",
     kopruInstall: 'Kurulum',
     howItWorks: 'Nasıl çalışıyor?',
+    shuffleCaption:
+      'Fisher–Yates, 8 kartla: sondan başlayarak her konuma, kendisi dahil önündeki kartlardan rastgele biri gelir. Oyun aynısını 52 kartla yapıyor.',
+    leitnerBox: 'Kutu',
+    leitnerGaps: ['bugün', '1 gün', '3 gün', '7 gün', '16 gün'],
+    leitnerCaption:
+      "Doğru bilinen kart bir sonraki kutuya geçer ve daha seyrek sorulur; yanlış bilinen kart hangi kutuda olursa olsun Kutu 1'e döner.",
   },
   en: {
     locale: 'en-GB',
@@ -89,6 +95,12 @@ export const ui = {
     kopruGithub: 'View on GitHub →',
     kopruInstall: 'Install guide (Turkish)',
     howItWorks: 'How does it work?',
+    shuffleCaption:
+      'Fisher–Yates with 8 cards: working back from the end, each position gets a random card from those at or before it. The game does the same with 52.',
+    leitnerBox: 'Box',
+    leitnerGaps: ['today', '1 day', '3 days', '7 days', '16 days'],
+    leitnerCaption:
+      'A card you get right moves to the next box and comes back less often; a card you get wrong drops to Box 1, wherever it was.',
   },
 } as const;
 
