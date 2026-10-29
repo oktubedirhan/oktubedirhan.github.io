@@ -43,7 +43,7 @@ Matematik okuyan biri olup gerçekten çalışan yazılımı kendi başına yaza
 
 ## Evidence on Hand
 
-- CV verisi: `src/data/cv.json` (eğitim, YKS sayısalda ilk %0,84, projeler, diller, yüzgeçli yüzme 400 m İstanbul ikinciliği).
+- CV verisi: `src/data/cv.json` (eğitim, YKS sayısalda ilk %0,84, projeler, diller).
 - Dört proje ve açıklamaları: `src/content/projeler/`. Köprü'nün uzun tanıtım metni: `src/content/sayfalar/kopru.md`.
 - Denge'nin gerçek ekran görüntüleri var (denge-site reposundaki `img/`, sitede `public/media/denge/`). Başka proje ekran görüntüsü, fotoğraf ya da portre yok. Uydurma yapılmamalı; görsel gerekirse kullanıcıdan istenmeli ya da açıkça örnek diye etiketlenmeli.
 - Referans, müşteri ya da sayı iddiası yok; eklenmemeli.

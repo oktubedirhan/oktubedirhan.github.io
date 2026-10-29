@@ -69,23 +69,25 @@ const sections: { heading: string; entries: Entry[] }[] = [
         </section>
 
         {
-          sections.map((s) => (
-            <section>
-              <h2>{s.heading}</h2>
-              {s.entries.map((e) => (
-                <div class="entry">
-                  <div class="entry-head">
-                    <h3>{e.url ? <a href={e.url}>{e.title}</a> : e.title}</h3>
-                    {e.date && <span class="entry-date">{e.date}</span>}
+          sections
+            .filter((s) => s.entries.length > 0)
+            .map((s) => (
+              <section>
+                <h2>{s.heading}</h2>
+                {s.entries.map((e) => (
+                  <div class="entry">
+                    <div class="entry-head">
+                      <h3>{e.url ? <a href={e.url}>{e.title}</a> : e.title}</h3>
+                      {e.date && <span class="entry-date">{e.date}</span>}
+                    </div>
+                    {e.sub && <p class="entry-sub">{e.sub}</p>}
+                    {e.text && <p>{e.text}</p>}
+                    {e.note && <p class="note">{e.note}</p>}
+                    {e.stack && <p class="stack">{e.stack}</p>}
                   </div>
-                  {e.sub && <p class="entry-sub">{e.sub}</p>}
-                  {e.text && <p>{e.text}</p>}
-                  {e.note && <p class="note">{e.note}</p>}
-                  {e.stack && <p class="stack">{e.stack}</p>}
-                </div>
-              ))}
-            </section>
-          ))
+                ))}
+              </section>
+            ))
         }
       </div>
     </div>

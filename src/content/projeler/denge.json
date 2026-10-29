@@ -1,8 +1,8 @@
 {
   "name": "Denge",
   "order": 2,
-  "description": "Ekran süresi dengesi: okumaya ya da çalışmaya ayırdığın süre, belirlediğin oranla telefon süresi kazandırıyor. Günlük sınır, odak oturumları ve ilerleme görünümü var.",
-  "description_en": "A screen-time balance app: time spent reading or working earns phone time at a set ratio, with a daily cap, focus sessions and a progress view.",
+  "description": "Ekran süresi dengesi: okumaya ya da çalışmaya ayırdığın süre, belirlediğin oranla telefon süresi kazandırıyor. Günlük sınır, odak oturumları ve ilerleme görünümü var. Şimdilik bir deneme bakiyesi; uygulamaları henüz kısıtlamıyor.",
+  "description_en": "A screen-time balance app: time spent reading or working earns phone time at a set ratio, with a daily cap, focus sessions and a progress view. For now it's a trial balance; it doesn't restrict apps yet.",
   "tags": [
     "iOS",
     "HTML"
