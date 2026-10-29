@@ -1,12 +1,14 @@
 {
   "name": "Denge",
   "order": 2,
-  "description": "Denge iPhone uygulaması ve onun tanıtım / gizlilik sayfaları.",
-  "description_en": "The Denge iPhone app and its product and privacy pages.",
+  "description": "Ekran süresi dengesi: okumaya ya da çalışmaya ayırdığın süre, belirlediğin oranla telefon süresi kazandırıyor. Günlük sınır, odak oturumları ve ilerleme görünümü var.",
+  "description_en": "A screen-time balance app: time spent reading or working earns phone time at a set ratio, with a daily cap, focus sessions and a progress view.",
   "tags": [
     "iOS",
     "HTML"
   ],
+  "detay": "Beş görsel temalı, çalışan bir iPhone prototipi. Bütün veriler cihazda kalıyor; hesap ya da sunucu yok.",
+  "detay_en": "A working iPhone prototype with five visual themes. All data stays on the device; no accounts, no servers.",
   "url": "/denge-site/",
   "repo": "https://github.com/oktubedirhan/denge-site"
 }

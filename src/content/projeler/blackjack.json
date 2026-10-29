@@ -1,13 +1,13 @@
 {
   "name": "Blackjack",
   "order": 3,
-  "description": "Tarayıcıda oynanan basit bir blackjack oyunu.",
-  "description_en": "A simple blackjack game that runs in the browser.",
+  "description": "Tarayıcıda blackjack: rastgele kart yerine gerçek, sonlu 52 kartlık desteden dağıtıyor; bölme, ikiye katlama ve el geçmişi var.",
+  "description_en": "Blackjack in the browser that deals from a real, finite 52-card deck instead of random cards, with splits, doubling down and a round history.",
   "tags": [
     "JavaScript"
   ],
-  "detay": "Gerçek 52 kartlık deste; her elden önce Fisher–Yates ile karıştırılıyor.",
-  "detay_en": "A real 52-card deck, shuffled with Fisher–Yates before every hand.",
-  "repo": "https://github.com/oktubedirhan/blackjack",
-  "url": "/blackjack/"
+  "detay": "Deste bitince Fisher–Yates ile yeniden karıştırılıyor; rastgelelik crypto.getRandomValues'tan, modulo sapması olmadan.",
+  "detay_en": "When the deck runs out it's reshuffled with Fisher–Yates, using crypto.getRandomValues without modulo bias.",
+  "url": "/blackjack/",
+  "repo": "https://github.com/oktubedirhan/blackjack"
 }

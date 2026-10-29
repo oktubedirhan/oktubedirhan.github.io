@@ -50,6 +50,7 @@ export const ui = {
     kopruDescription: "Windows oyunlarını Apple Silicon Mac'te çalıştıran başlatıcı.",
     kopruGithub: "GitHub'da incele →",
     kopruInstall: 'Kurulum',
+    howItWorks: 'Nasıl çalışıyor?',
   },
   en: {
     locale: 'en-GB',
@@ -87,6 +88,7 @@ export const ui = {
     kopruDescription: 'A launcher that runs Windows games on Apple Silicon Macs.',
     kopruGithub: 'View on GitHub →',
     kopruInstall: 'Install guide (Turkish)',
+    howItWorks: 'How does it work?',
   },
 } as const;
 

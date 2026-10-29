@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import PostList from '../components/PostList.astro';
 import FormattedDate from '../components/FormattedDate.astro';
+import Stack from '../components/Stack.astro';
 import { LINKS } from '../consts';
 import { getPosts, getProjects } from '../utils';
 import { ui, routes, other, localHref, type Lang } from '../i18n';
@@ -82,17 +83,7 @@ const [beforeRss, afterRss] = t.noPostsHome.split('{rss}');
         </div>
         {
           featured.katmanlar && featured.katmanlar.length > 0 && (
-            <figure class="stack">
-              <ol>
-                {featured.katmanlar.map((k) => (
-                  <li>
-                    <span class="stack-name">{k.ad}</span>
-                    <span class="stack-role">{k.is}</span>
-                  </li>
-                ))}
-              </ol>
-              <figcaption>{t.stackCaption}</figcaption>
-            </figure>
+            <Stack katmanlar={featured.katmanlar} caption={t.stackCaption} />
           )
         }
       </article>
@@ -312,64 +303,6 @@ const [beforeRss, afterRss] = t.noPostsHome.split('{rss}');
     text-decoration: underline;
   }
 
-  /* Katman yığını: her katman bir öncekinin altına biraz içeriden oturur */
-  .stack {
-    margin: 0;
-  }
-  .stack ol {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 6px;
-  }
-  .stack li {
-    --i: 0;
-    display: grid;
-    grid-template-columns: 7.5rem 1fr;
-    align-items: baseline;
-    gap: var(--space-4);
-    margin-left: calc(var(--i) * 20px);
-    padding: var(--space-3) var(--space-4);
-    border-radius: var(--radius-md);
-    background: var(--paper-raised);
-    box-shadow: inset 0 0 0 1px var(--rule);
-  }
-  .stack li:nth-child(2) {
-    --i: 1;
-  }
-  .stack li:nth-child(3) {
-    --i: 2;
-  }
-  .stack li:nth-child(n + 4) {
-    --i: 3;
-  }
-  .stack li:first-child {
-    background: var(--accent);
-    box-shadow: none;
-  }
-  .stack li:first-child .stack-name,
-  .stack li:first-child .stack-role {
-    color: var(--on-accent);
-  }
-  .stack-name {
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 17px;
-    line-height: 22px;
-  }
-  .stack-role {
-    font-size: 14px;
-    line-height: 20px;
-    color: var(--ink-muted);
-  }
-  .stack figcaption {
-    margin-top: var(--space-3);
-    font-size: 14px;
-    line-height: 20px;
-    color: var(--ink-muted);
-  }
-
   /* Diğer projeler: defter dizini gibi satırlar */
   .index {
     list-style: none;
@@ -463,11 +396,6 @@ const [beforeRss, afterRss] = t.noPostsHome.split('{rss}');
     .featured h3 {
       font-size: 34px;
       line-height: 38px;
-    }
-    .stack li {
-      grid-template-columns: minmax(0, 1fr);
-      gap: 2px;
-      margin-left: calc(var(--i) * 10px);
     }
   }
 </style>

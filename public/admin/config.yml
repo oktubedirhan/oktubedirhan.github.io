@@ -70,7 +70,7 @@ collections:
         name: katmanlar
         widget: list
         required: false
-        hint: 'Sırası 1 olan proje ana sayfada öne çıkar; katmanları varsa üstten alta yığın şeması olarak çizilir.'
+        hint: 'Sırası 1 olan proje ana sayfada öne çıkar; katmanları varsa üstten alta yığın şeması olarak çizilir. Köprü''nün katmanları Köprü sayfasındaki şemayı da oluşturur.'
         fields:
           - { label: Ad, name: ad, widget: string }
           - { label: Görevi, name: is, widget: string }

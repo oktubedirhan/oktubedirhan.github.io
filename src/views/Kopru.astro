@@ -1,6 +1,8 @@
 ---
 import { getEntry, render } from 'astro:content';
 import Base from '../layouts/Base.astro';
+import Stack from '../components/Stack.astro';
+import { getProjects } from '../utils';
 import { ui, routes, other, type Lang } from '../i18n';
 
 interface Props {
@@ -13,6 +15,8 @@ const id = lang === 'en' ? 'en/kopru' : 'kopru';
 const page = await getEntry('sayfalar', id);
 if (!page) throw new Error(`src/content/sayfalar/${id}.md bulunamadı`);
 const { Content } = await render(page);
+// Şema, Projeler'deki Köprü kaydının Katmanlar alanından çiziliyor.
+const katmanlar = (await getProjects(lang)).find((p) => p.url === routes.kopru.tr)?.katmanlar ?? [];
 ---
 
 <Base title={page.data.title} description={t.kopruDescription} lang={lang} alternate={routes.kopru[other(lang)]}>
@@ -24,8 +28,18 @@ const { Content } = await render(page);
       <a class="btn" href="https://github.com/oktubedirhan/kopru/blob/main/docs/KURULUM.md">{t.kopruInstall}</a>
     </div>
   </header>
-  <div class="prose">
-    <Content />
+  <div class="body">
+    {
+      katmanlar.length > 0 && (
+        <aside class="how" aria-labelledby="how-title">
+          <h2 id="how-title">{t.howItWorks}</h2>
+          <Stack katmanlar={katmanlar} caption={t.stackCaption} />
+        </aside>
+      )
+    }
+    <div class="prose">
+      <Content />
+    </div>
   </div>
   <a class="back-link" href={routes.projects[lang]}>{t.allProjects}</a>
 </Base>
@@ -34,6 +48,42 @@ const { Content } = await render(page);
   /* .label büyük harfe çevirir; ürün adı özgün yazımıyla kalır */
   .keep-case {
     text-transform: none;
+  }
+  /* Geniş ekranda şema metnin sağında sabit durur; dar ekranda metnin üstünde */
+  .body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 19rem;
+    gap: var(--space-7);
+    align-items: start;
+  }
+  .how {
+    grid-column: 2;
+    grid-row: 1;
+    position: sticky;
+    top: var(--space-6);
+  }
+  .how h2 {
+    margin: 0 0 var(--space-4);
+    font-size: 20px;
+    line-height: 26px;
+  }
+  .prose {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  @media (max-width: 900px) {
+    .body {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-6);
+    }
+    .how,
+    .prose {
+      grid-column: auto;
+      grid-row: auto;
+    }
+    .how {
+      position: static;
+    }
   }
   .links {
     display: flex;
