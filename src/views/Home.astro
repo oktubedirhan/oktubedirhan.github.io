@@ -30,8 +30,7 @@ const [beforeRss, afterRss] = t.noPostsHome.split('{rss}');
 <Base lang={lang} alternate={routes.home[other(lang)]}>
   <section class:list={['hero', { 'has-now': intro.now }]} slot="hero">
     <div class="intro">
-      <!-- Ad her iki dilde de ikinci satırda başlar; böylece hero yüksekliği dilden dile değişmez. -->
-      <h1>{t.hello}<br /><em>{home.name}</em>.</h1>
+      <h1>{home.name}<span class="dot">.</span></h1>
       <p class="lead">{intro.lead}</p>
       <div class="links">
         <a class="btn btn-primary" href="#projeler">{t.seeProjects}</a>
@@ -218,11 +217,9 @@ const [beforeRss, afterRss] = t.noPostsHome.split('{rss}');
     font-size: 56px;
     line-height: 58px;
     letter-spacing: -0.025em;
-    max-width: 14ch;
   }
-  h1 em {
-    font-style: italic;
-    font-weight: 500;
+  /* Logodaki gibi mavi nokta */
+  h1 .dot {
     color: var(--accent);
   }
   .lead {

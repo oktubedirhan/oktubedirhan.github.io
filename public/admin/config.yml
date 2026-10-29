@@ -88,7 +88,7 @@ collections:
         fields:
           - { label: Üst etiket, name: eyebrow, widget: string }
           - { label: Üst etiket (English), name: eyebrow_en, widget: string, required: false }
-          - { label: Ad (başlıkta vurgulanır), name: name, widget: string, hint: '"Merhaba, ben ___." cümlesindeki ad' }
+          - { label: Ad, name: name, widget: string, hint: 'Ana sayfanın büyük başlığı; iki dilde de aynı.' }
           - { label: Tanıtım paragrafı, name: lead, widget: text }
           - { label: Tanıtım paragrafı (English), name: lead_en, widget: text, required: false }
           - { label: Şu an, name: now, widget: text, required: false, hint: 'Şu an ne üzerinde çalıştığın; boş bırakırsan kutu görünmez.' }
