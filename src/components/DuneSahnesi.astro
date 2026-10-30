@@ -1,0 +1,274 @@
+---
+// Dune sahnesi (footer'ın hemen üstü): yalnızca <html data-mevsim="dune"> varken görünür.
+// Sağdaki tepede bir thumper ritimle kuma vurur; kumun altından bir dalga ona doğru ilerler,
+// sonra Shai-Hulud (kum solucanı) yay çizerek kumdan çıkıp geri dalar. Solda Korkuya Karşı Litani'den bir satır.
+import type { Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const litany = { tr: 'Korku zihin öldürücüdür.', en: 'Fear is the mind-killer.' }[lang];
+
+// Solucan, kumun altındaki bir merkez etrafında dönen bir çember yayı: dönerken önce başı çıkar, sonra kuyruğu dalar.
+const cx = 640;
+const cy = 250;
+const R = 210;
+const pt = (deg: number) => {
+  const a = (deg * Math.PI) / 180;
+  return [cx + R * Math.cos(a), cy + R * Math.sin(a)].map((n) => n.toFixed(1)).join(' ');
+};
+const body = `M${pt(-228)}A${R} ${R} 0 0 1 ${pt(-155)}`;
+const [hx, hy] = pt(-155).split(' ').map(Number);
+// Ağzın içindeki kristal dişler
+const teeth = Array.from({ length: 18 }, (_, i) => {
+  const a = (i / 18) * Math.PI * 2;
+  const p = (r: number) => `${(hx + r * Math.cos(a)).toFixed(1)} ${(hy + r * Math.sin(a)).toFixed(1)}`;
+  return `M${p(19)}L${p(9)}`;
+}).join('');
+---
+
+<div class="sahne" aria-hidden="true">
+  <svg viewBox="0 -30 1200 200" preserveAspectRatio="xMidYMax slice">
+    <path class="tepe-arka" d="M0 104C140 70 260 74 380 96s240 6 360-18 280-10 460 22V170H0Z" />
+
+    <g class="solucan">
+      <path class="beden" d={body} />
+      <path class="halka" d={body} />
+      <circle class="agiz" cx={hx} cy={hy} r="22" />
+      <path class="dis" d={teeth} />
+    </g>
+
+    <path class="tepe-on" d="M0 128c120-14 230-10 330 0s200 8 300-2 210-12 330-4 170 10 240 2V170H0Z" />
+
+    <ellipse class="dalga" cx="70" cy="128" rx="34" ry="5" />
+    <ellipse class="toz toz-giris" cx="471" cy="124" rx="44" ry="10" />
+    <ellipse class="toz toz-cikis" cx="809" cy="124" rx="44" ry="10" />
+
+    <g class="thumper" transform="translate(980 113)">
+      <ellipse class="halka-ses" cx="0" cy="8" rx="30" ry="6" />
+      <ellipse class="halka-ses h2" cx="0" cy="8" rx="30" ry="6" />
+      <g class="tokmak">
+        <rect x="-2.5" y="-30" width="5" height="34" rx="1.5" />
+        <rect x="-6" y="-34" width="12" height="6" rx="2" />
+      </g>
+      <path class="ayaklar" d="M-10 8 0 0l10 8" />
+    </g>
+  </svg>
+  <p class="litani container-wide" lang={lang}>{litany}</p>
+</div>
+
+<style>
+  .sahne {
+    display: none;
+    position: relative;
+    margin-top: var(--space-8);
+    height: clamp(150px, 16vw, 260px);
+    overflow: hidden;
+    pointer-events: none;
+    --kum-arka: #e4d1aa;
+    --kum-on: #d6bb88;
+    --solucan: #8c6a44;
+    --solucan-halka: #6f5132;
+  }
+  :global(:root[data-mevsim='dune']) .sahne {
+    display: block;
+  }
+  /* Footer kumun hemen altından başlasın */
+  :global(:root[data-mevsim='dune'] .site-footer) {
+    margin-top: 0;
+  }
+  :global(:root[data-theme='dark']) .sahne {
+    --kum-arka: #2f2418;
+    --kum-on: #3d2e1e;
+    --solucan: #6e5136;
+    --solucan-halka: #4f3923;
+  }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) .sahne {
+      --kum-arka: #2f2418;
+      --kum-on: #3d2e1e;
+      --solucan: #6e5136;
+      --solucan-halka: #4f3923;
+    }
+  }
+  .sahne svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .tepe-arka {
+    fill: var(--kum-arka);
+  }
+  .tepe-on {
+    fill: var(--kum-on);
+  }
+
+  /* 16 saniyelik döngü: 0–5 sn kumda dalga, 5–9 sn solucan, sonra sessizlik */
+  .solucan {
+    transform-box: view-box;
+    transform-origin: 640px 250px;
+    animation: solucan 16s infinite;
+  }
+  .beden,
+  .halka {
+    fill: none;
+    stroke-width: 44;
+    stroke-linecap: round;
+  }
+  .beden {
+    stroke: var(--solucan);
+  }
+  .halka {
+    stroke: var(--solucan-halka);
+    stroke-dasharray: 3 13;
+    stroke-linecap: butt;
+  }
+  .agiz {
+    fill: #2a1a0e;
+    stroke: var(--solucan);
+    stroke-width: 3;
+  }
+  .dis {
+    stroke: #f4ead6;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+  }
+  @keyframes solucan {
+    0%,
+    31% {
+      transform: rotate(0deg);
+      animation-timing-function: cubic-bezier(0.35, 0.1, 0.55, 0.95);
+    }
+    58%,
+    100% {
+      transform: rotate(192deg);
+    }
+  }
+
+  .dalga {
+    fill: var(--kum-arka);
+    stroke: var(--solucan-halka);
+    stroke-width: 1;
+    stroke-opacity: 0.4;
+    animation: dalga 16s infinite;
+  }
+  @keyframes dalga {
+    0% {
+      opacity: 0;
+      translate: 0 0;
+    }
+    4%,
+    28% {
+      opacity: 1;
+    }
+    32%,
+    100% {
+      opacity: 0;
+      translate: 400px 0;
+    }
+  }
+
+  .toz {
+    fill: var(--kum-arka);
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+  }
+  .toz-giris {
+    animation: toz 16s infinite;
+  }
+  .toz-cikis {
+    animation: toz 16s infinite 3.5s;
+  }
+  @keyframes toz {
+    0%,
+    32% {
+      opacity: 0;
+      scale: 0.4;
+    }
+    35% {
+      opacity: 0.9;
+      scale: 1.1;
+    }
+    44%,
+    100% {
+      opacity: 0;
+      scale: 1.6;
+    }
+  }
+
+  /* Thumper: tokmak düzenli vurur, kumda halkalar yayılır */
+  .tokmak {
+    fill: var(--ink);
+    animation: vur 0.8s cubic-bezier(0.6, 0, 0.9, 0.4) infinite;
+  }
+  .ayaklar {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+  .halka-ses {
+    fill: none;
+    stroke: var(--ink-muted);
+    stroke-width: 1.2;
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: ses 1.6s ease-out infinite;
+  }
+  .h2 {
+    animation-delay: 0.8s;
+  }
+  @keyframes vur {
+    0% {
+      translate: 0 -5px;
+    }
+    85% {
+      translate: 0 0;
+    }
+    100% {
+      translate: 0 -5px;
+    }
+  }
+  @keyframes ses {
+    0% {
+      opacity: 0.7;
+      scale: 0.3;
+    }
+    100% {
+      opacity: 0;
+      scale: 1.6;
+    }
+  }
+
+  .litani {
+    position: absolute;
+    top: var(--space-4);
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 20px;
+    letter-spacing: 0.02em;
+    color: var(--ink-muted);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .solucan,
+    .dalga,
+    .toz,
+    .tokmak,
+    .halka-ses {
+      animation: none;
+    }
+  }
+  @media print {
+    .sahne {
+      display: none !important;
+    }
+  }
+</style>

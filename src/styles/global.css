@@ -126,6 +126,62 @@
   }
 }
 
+/* Dune: Part Three (18 Aralık). Arrakis: kum rengi kâğıt, baharat turuncusu; "B." noktası Fremen gözü mavisi.
+   Koyu tema çöl gecesi. Yazdırmaya karışmaz. */
+@media screen {
+  :root[data-mevsim='dune'] {
+    --paper: #f3ebdc;
+    --paper-raised: #fbf6ec;
+    --paper-sunk: #e9dcc4;
+    --ink: #22180f;
+    --ink-muted: #6b5a46;
+    --rule: #dccbac;
+    --grid: #e6d6b9;
+    --accent: #a3420c;
+    --accent-soft: #f6e0cc;
+    --accent-2: #1f5fbf;
+    --accent-2-soft: #dde8f8;
+    --fosfor: #f2c98a;
+    --mark-dot: #2f8cff;
+  }
+}
+@media screen and (prefers-color-scheme: dark) {
+  :root[data-mevsim='dune']:not([data-theme='light']) {
+    --paper: #16110c;
+    --paper-raised: #1f1811;
+    --paper-sunk: #2a2017;
+    --ink: #f1e6d3;
+    --ink-muted: #b8a68c;
+    --rule: #3a2e21;
+    --grid: #241c14;
+    --accent: #f2a453;
+    --accent-soft: #3d2614;
+    --on-accent: #1a0e04;
+    --accent-2: #6ab8ff;
+    --accent-2-soft: #142a44;
+    --fosfor: #6e4314;
+    --mark-dot: #4aa8ff;
+  }
+}
+@media screen {
+  :root[data-mevsim='dune'][data-theme='dark'] {
+    --paper: #16110c;
+    --paper-raised: #1f1811;
+    --paper-sunk: #2a2017;
+    --ink: #f1e6d3;
+    --ink-muted: #b8a68c;
+    --rule: #3a2e21;
+    --grid: #241c14;
+    --accent: #f2a453;
+    --accent-soft: #3d2614;
+    --on-accent: #1a0e04;
+    --accent-2: #6ab8ff;
+    --accent-2-soft: #142a44;
+    --fosfor: #6e4314;
+    --mark-dot: #4aa8ff;
+  }
+}
+
 *,
 *::before,
 *::after {

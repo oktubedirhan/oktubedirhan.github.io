@@ -3,6 +3,8 @@ import '../styles/fonts.css';
 import '../styles/global.css';
 import Hayalet from '../components/Hayalet.astro';
 import CadilarSusleri from '../components/CadilarSusleri.astro';
+import DuneSusleri from '../components/DuneSusleri.astro';
+import DuneSahnesi from '../components/DuneSahnesi.astro';
 import { SITE_TITLE, LINKS } from '../consts';
 import { ui, routes, other, type Lang } from '../i18n';
 
@@ -58,10 +60,15 @@ const switchHref = alternate ?? routes.home[otherLang];
         const t = localStorage.getItem('tema');
         if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
       } catch {}
-      // 31 Ekim'de (ziyaretçinin saatine göre) Cadılar Bayramı teması; ?cadilar ile her gün denenebilir.
+      // Özel günlerin teması (ziyaretçinin saatine göre): 31 Ekim Cadılar Bayramı, 18 Aralık Dune: Part Three.
+      // ?cadilar ya da ?dune ile her gün denenebilir.
+      const gunler = { cadilar: [9, 31], dune: [11, 18] };
       const d = new Date();
-      if ((d.getMonth() === 9 && d.getDate() === 31) || /[?&]cadilar\b/.test(location.search))
-        document.documentElement.dataset.mevsim = 'cadilar';
+      const adlar = Object.keys(gunler);
+      const mevsim =
+        adlar.find((k) => new RegExp('[?&]' + k + '\\b').test(location.search)) ??
+        adlar.find((k) => gunler[k][0] === d.getMonth() && gunler[k][1] === d.getDate());
+      if (mevsim) document.documentElement.dataset.mevsim = mevsim;
     </script>
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
@@ -116,6 +123,7 @@ const switchHref = alternate ?? routes.home[otherLang];
     <main id="icerik" class="container-wide">
       <slot />
     </main>
+    <DuneSahnesi lang={lang} />
     <footer class="container-wide site-footer">
       <span>© {new Date().getFullYear()} {SITE_TITLE}</span>
       <nav aria-label={t.footerLabel}>
@@ -126,6 +134,7 @@ const switchHref = alternate ?? routes.home[otherLang];
       </nav>
     </footer>
     <CadilarSusleri />
+    <DuneSusleri />
     <Hayalet />
   </body>
 </html>
