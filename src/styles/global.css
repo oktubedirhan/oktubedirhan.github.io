@@ -91,6 +91,41 @@
   background-color: var(--paper-sunk) !important;
 }
 
+/* Cadılar Bayramı (31 Ekim, Base.astro <html data-mevsim="cadilar"> yazar).
+   Mürekkep mavisi yerine balkabağı turuncusu, ikinci vurgu mor. Yazdırmaya karışmaz. */
+@media screen {
+  :root[data-mevsim='cadilar'] {
+    --accent: #b04a0c;
+    --accent-soft: #f8e4d4;
+    --accent-2: #6a3d9a;
+    --accent-2-soft: #ece4f5;
+    --fosfor: #f7c27a;
+    --mark-dot: #f08a24;
+  }
+}
+@media screen and (prefers-color-scheme: dark) {
+  :root[data-mevsim='cadilar']:not([data-theme='light']) {
+    --accent: #ffa463;
+    --accent-soft: #3d2414;
+    --on-accent: #1a0d04;
+    --accent-2: #c4a3f0;
+    --accent-2-soft: #2e2142;
+    --fosfor: #6b3d12;
+    --mark-dot: #e8761a;
+  }
+}
+@media screen {
+  :root[data-mevsim='cadilar'][data-theme='dark'] {
+    --accent: #ffa463;
+    --accent-soft: #3d2414;
+    --on-accent: #1a0d04;
+    --accent-2: #c4a3f0;
+    --accent-2-soft: #2e2142;
+    --fosfor: #6b3d12;
+    --mark-dot: #e8761a;
+  }
+}
+
 *,
 *::before,
 *::after {

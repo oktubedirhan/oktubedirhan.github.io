@@ -1,6 +1,8 @@
 ---
 import '../styles/fonts.css';
 import '../styles/global.css';
+import Hayalet from '../components/Hayalet.astro';
+import CadilarSusleri from '../components/CadilarSusleri.astro';
 import { SITE_TITLE, LINKS } from '../consts';
 import { ui, routes, other, type Lang } from '../i18n';
 
@@ -56,6 +58,10 @@ const switchHref = alternate ?? routes.home[otherLang];
         const t = localStorage.getItem('tema');
         if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
       } catch {}
+      // 31 Ekim'de (ziyaretçinin saatine göre) Cadılar Bayramı teması; ?cadilar ile her gün denenebilir.
+      const d = new Date();
+      if ((d.getMonth() === 9 && d.getDate() === 31) || /[?&]cadilar\b/.test(location.search))
+        document.documentElement.dataset.mevsim = 'cadilar';
     </script>
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
@@ -119,6 +125,8 @@ const switchHref = alternate ?? routes.home[otherLang];
         <a href={routes.rss[lang]}>RSS</a>
       </nav>
     </footer>
+    <CadilarSusleri />
+    <Hayalet />
   </body>
 </html>
 

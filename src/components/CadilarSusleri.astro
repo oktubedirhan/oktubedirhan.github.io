@@ -1,0 +1,286 @@
+---
+// Cadılar Bayramı süsleri: yalnızca <html data-mevsim="cadilar"> varken görünür.
+// Üst köşelerde örümcek ağı ve sarkan örümcek, ilk ekranda uçan yarasalar, sol altta balkabağı.
+// Hepsi tıklamayı geçirir, yazdırmada ve azaltılmış harekette sakinleşir.
+
+// Çeyrek örümcek ağı: köşeden çıkan 6 tel, aralarında içe doğru sarkan halkalar.
+const R = 160;
+const spokes = [4, 20, 36, 52, 68, 84].map((a) => (a * Math.PI) / 180);
+const at = (r: number, a: number) => `${(r * Math.cos(a)).toFixed(1)} ${(r * Math.sin(a)).toFixed(1)}`;
+const web = [
+  ...spokes.map((a) => `M0 0L${at(R, a)}`),
+  ...[34, 64, 96, 130].flatMap((r) =>
+    spokes.slice(1).map((a, i) => {
+      const b = spokes[i];
+      return `M${at(r, b)}Q${at(r * 0.82, (a + b) / 2)} ${at(r, a)}`;
+    }),
+  ),
+].join('');
+
+const bat = 'M30 10c-2 0-3 2-3 2l-2-3 1 5C22 9 14 6 2 9c5 2 7 6 7 10 3-3 7-3 9 0 2-2 5-2 7 1 1-2 3-3 5-3s4 1 5 3c2-3 5-3 7-1 2-3 6-3 9 0 0-4 2-8 7-10-12-3-20 0-24 5l1-5-2 3s-1-2-3-2Z';
+// Her yarasanın yüksekliği, boyu, gecikmesi ve hızı
+const bats = [
+  { top: 70, size: 46, delay: 0, dur: 11 },
+  { top: 130, size: 32, delay: 1.6, dur: 13 },
+  { top: 40, size: 24, delay: 6.5, dur: 15 },
+];
+---
+
+<div class="susler" aria-hidden="true">
+  <svg class="ag ag-sol" viewBox="0 0 160 160"><path d={web} /></svg>
+  <svg class="ag ag-sag" viewBox="0 0 160 160"><path d={web} /></svg>
+
+  <div class="orumcek">
+    <svg viewBox="0 0 40 60" width="34" height="51">
+      <line class="ip" x1="20" y1="-600" x2="20" y2="30" />
+      <g class="bacaklar">
+        <path d="M14 34 6 28 2 34M14 38 4 37 1 44M26 34l8-6 4 6M26 38l10-1 3 7M15 42l-7 6-1 7M25 42l7 6 1 7M16 30l-6-8-6-1M24 30l6-8 6-1" />
+      </g>
+      <ellipse class="beden" cx="20" cy="40" rx="8" ry="9" />
+      <circle class="beden" cx="20" cy="30" r="5" />
+      <circle class="goz" cx="18" cy="29.5" r="1.3" />
+      <circle class="goz" cx="22" cy="29.5" r="1.3" />
+    </svg>
+  </div>
+
+  {
+    bats.map((b) => (
+      <div class="yarasa" style={`top:${b.top}px;animation-delay:${b.delay}s;animation-duration:${b.dur}s`}>
+        <div class="dalga" style={`animation-delay:${b.delay}s`}>
+          <svg viewBox="0 0 60 30" width={b.size * 1.8} height={b.size}>
+            <path d={bat} />
+          </svg>
+        </div>
+      </div>
+    ))
+  }
+</div>
+
+<div class="balkabagi" aria-hidden="true">
+  <svg viewBox="0 0 80 72" width="72" height="65">
+    <path class="sap" d="M38 16c0-6 2-10 7-13l3 3c-4 2-5 6-5 10Z" />
+    <path class="kabuk" d="M40 16c-8-3-17-2-24 3C7 25 4 36 6 48c2 11 10 19 21 20 5 1 9-1 13-1s8 2 13 1c11-1 19-9 21-20 2-12-1-23-10-29-7-5-16-6-24-3Z" />
+    <path class="dilim" d="M40 16c-6 10-6 41 0 51M40 16c6 10 6 41 0 51M24 18c-8 12-8 36 3 50M56 18c8 12 8 36-3 50" />
+    <g class="yuz">
+      <path d="M22 34l9-2-5 9ZM58 34l-9-2 5 9Z" />
+      <path d="M38 41h4l-2 5Z" />
+      <path d="M20 50c6 7 34 7 40 0l-3 6-4-3-4 5-5-4-4 4-5-4-4 3Z" />
+    </g>
+  </svg>
+</div>
+
+<style>
+  .susler,
+  .balkabagi {
+    display: none;
+    pointer-events: none;
+  }
+  :global(:root[data-mevsim='cadilar']) .susler,
+  :global(:root[data-mevsim='cadilar']) .balkabagi {
+    display: block;
+  }
+
+  /* İlk ekranı kaplar, sayfayla birlikte kayıp gider; taşan yarasalar yatay kaydırma açmaz */
+  .susler {
+    position: absolute;
+    inset: 0 0 auto;
+    height: 100vh;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .ag {
+    position: absolute;
+    top: 0;
+    width: 150px;
+    height: 150px;
+    fill: none;
+    stroke: var(--ink-muted);
+    stroke-width: 0.9;
+    opacity: 0.45;
+  }
+  .ag-sol {
+    left: 0;
+  }
+  .ag-sag {
+    right: 0;
+    transform: scaleX(-1);
+  }
+
+  .orumcek {
+    position: absolute;
+    top: 70px;
+    right: 64px;
+    animation: sark 7s ease-in-out infinite;
+  }
+  .orumcek svg {
+    display: block;
+    overflow: visible;
+  }
+  .ip {
+    stroke: var(--ink-muted);
+    stroke-width: 0.8;
+    opacity: 0.7;
+  }
+  .bacaklar {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transform-origin: 20px 36px;
+    animation: kipir 0.9s ease-in-out infinite;
+  }
+  .beden {
+    fill: var(--ink);
+  }
+  .goz {
+    fill: var(--accent);
+  }
+  @keyframes sark {
+    0%,
+    100% {
+      translate: 0 -40px;
+    }
+    45%,
+    55% {
+      translate: 0 90px;
+    }
+  }
+  @keyframes kipir {
+    50% {
+      transform: scaleX(0.9);
+    }
+  }
+
+  /* Sağdan sola geçer, sonra ekran dışında bekler */
+  .yarasa {
+    position: absolute;
+    left: 0;
+    translate: calc(100vw + 20px) 0;
+    animation: uc 11s linear infinite;
+  }
+  .dalga {
+    animation: dalga 1.4s ease-in-out infinite alternate;
+  }
+  .yarasa svg {
+    display: block;
+    fill: var(--ink);
+    opacity: 0.85;
+    animation: kanat 0.22s ease-in-out infinite alternate;
+  }
+  @keyframes uc {
+    0% {
+      translate: calc(100vw + 20px) 0;
+    }
+    55%,
+    100% {
+      translate: -90px 0;
+    }
+  }
+  @keyframes dalga {
+    to {
+      translate: 0 26px;
+    }
+  }
+  @keyframes kanat {
+    to {
+      transform: scaleY(0.55);
+    }
+  }
+
+  /* Sol alt köşede; içindeki ışık mum gibi titrer */
+  .balkabagi {
+    position: fixed;
+    left: var(--space-4);
+    bottom: var(--space-3);
+    z-index: 2;
+  }
+  .balkabagi svg {
+    display: block;
+    filter: drop-shadow(0 6px 10px rgba(25, 28, 36, 0.25));
+  }
+  .sap {
+    fill: #4f5b2a;
+  }
+  .kabuk {
+    fill: #e8761a;
+  }
+  .dilim {
+    fill: none;
+    stroke: #b4500f;
+    stroke-width: 1.4;
+    opacity: 0.7;
+  }
+  .yuz {
+    fill: #ffd56b;
+    filter: drop-shadow(0 0 4px #ffb02e);
+    animation: mum 2.6s steps(1) infinite;
+  }
+  @keyframes mum {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    12% {
+      opacity: 0.78;
+    }
+    18% {
+      opacity: 0.95;
+    }
+    41% {
+      opacity: 0.7;
+    }
+    47% {
+      opacity: 1;
+    }
+    76% {
+      opacity: 0.85;
+    }
+  }
+  /* Koyu temada kabuk biraz daha parlak dursun, gölge zemine karışmasın */
+  :global(:root[data-theme='dark']) .balkabagi svg {
+    filter: drop-shadow(0 0 18px rgba(232, 118, 26, 0.35));
+  }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) .balkabagi svg {
+      filter: drop-shadow(0 0 18px rgba(232, 118, 26, 0.35));
+    }
+  }
+
+  /* Dar ekranda metnin üstüne binmesinler: yalnızca sağ ağ kalır */
+  @media (max-width: 760px) {
+    .ag-sol,
+    .orumcek {
+      display: none;
+    }
+    .ag {
+      width: 84px;
+      height: 84px;
+      opacity: 0.35;
+    }
+  }
+  /* Balkabağı sadece içeriğin yanında boşluk varken */
+  @media (max-width: 1180px) {
+    :global(:root[data-mevsim='cadilar']) .balkabagi {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .yarasa {
+      display: none;
+    }
+    .orumcek,
+    .bacaklar,
+    .yuz {
+      animation: none;
+    }
+  }
+  @media print {
+    .susler,
+    .balkabagi {
+      display: none !important;
+    }
+  }
+</style>
