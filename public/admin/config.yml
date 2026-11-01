@@ -143,6 +143,22 @@ collections:
         fields:
           - { label: Başlık, name: title, widget: string }
           - { label: İçerik, name: body, widget: markdown }
+      - name: ev_butcem
+        label: Ev Bütçem proje sayfası
+        file: src/content/sayfalar/ev-butcem.md
+        format: frontmatter
+        preview_path: /ev-butcem/
+        fields:
+          - { label: Başlık, name: title, widget: string }
+          - { label: İçerik, name: body, widget: markdown }
+      - name: ev_butcem_en
+        label: Ev Bütçem proje sayfası (English)
+        file: src/content/sayfalar/en/ev-butcem.md
+        format: frontmatter
+        preview_path: /en/ev-butcem/
+        fields:
+          - { label: Başlık, name: title, widget: string }
+          - { label: İçerik, name: body, widget: markdown }
       - name: cv
         label: CV
         file: src/data/cv.json

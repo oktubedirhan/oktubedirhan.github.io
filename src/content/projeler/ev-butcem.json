@@ -1,0 +1,41 @@
+{
+  "name": "Ev Bütçem",
+  "order": 2,
+  "description": "Evin bütçesini iki telefondan birlikte tutmak için bir uygulama: gelir, gider, bütçe, taksit ve kredi kartı borcu tek yerde. Mağazaya hazırlanıyor; henüz indirilemiyor.",
+  "description_en": "An app for keeping a household budget together from two phones: income, spending, budgets, instalments and credit card debt in one place. Being prepared for the app stores; not available to download yet.",
+  "tags": [
+    "JavaScript",
+    "PWA",
+    "Supabase"
+  ],
+  "detay": "Kayıtlar telefonda duruyor; hane paylaşımı hesapsız, 12 karakterlik bir kodla çalışıyor ve sunucu kodun kendisini değil, yalnızca SHA-256 özetini tutuyor.",
+  "detay_en": "Records stay on the phone. Household sharing needs no account, just a 12-character code, and the server stores only its SHA-256 hash, never the code itself.",
+  "katmanlar": [
+    {
+      "ad": "PWA",
+      "is": "HTML, CSS ve JavaScript; derleme adımı yok, çevrimdışı çalışan PWA",
+      "is_en": "HTML, CSS and JavaScript with no build step; a PWA that works offline"
+    },
+    {
+      "ad": "veri.js",
+      "is": "Bütçe, denge puanı, taksit ve bakiyeler saf fonksiyonlarda; 350 birim testi",
+      "is_en": "Budgets, the balance score, instalments and balances as pure functions; 350 unit tests"
+    },
+    {
+      "ad": "localStorage",
+      "is": "Kayıtlar, planlar ve hesaplar cihazda (localStorage)",
+      "is_en": "Records, plans and accounts stay on the device (localStorage)"
+    },
+    {
+      "ad": "Supabase",
+      "is": "Yalnızca hane paylaşımı açıksa: üç RPC, son yazan kazanır",
+      "is_en": "Only when household sharing is on: three RPCs, last write wins"
+    },
+    {
+      "ad": "Edge Function",
+      "is": "Koç: yapay zekâya yalnızca aylık özet gider, kayıtlar gitmez",
+      "is_en": "Coach: only a monthly summary goes to the AI model, never the records"
+    }
+  ],
+  "url": "/ev-butcem/"
+}

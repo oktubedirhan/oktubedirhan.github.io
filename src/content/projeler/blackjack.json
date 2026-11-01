@@ -1,6 +1,6 @@
 {
   "name": "Blackjack",
-  "order": 3,
+  "order": 4,
   "description": "Tarayıcıda blackjack: rastgele kart yerine gerçek, sonlu 52 kartlık desteden dağıtıyor; bölme, ikiye katlama ve el geçmişi var.",
   "description_en": "Blackjack in the browser that deals from a real, finite 52-card deck instead of random cards, with splits, doubling down and a round history.",
   "tags": [

@@ -7,6 +7,7 @@ export const routes = {
   projects: { tr: '/projeler/', en: '/en/projects/' },
   about: { tr: '/hakkimda/', en: '/en/about/' },
   kopru: { tr: '/kopru/', en: '/en/kopru/' },
+  evButcem: { tr: '/ev-butcem/', en: '/en/ev-butcem/' },
   cv: { tr: '/en/cv/', en: '/en/cv/' },
   rss: { tr: '/rss.xml', en: '/en/rss.xml' },
 } as const;
@@ -50,6 +51,10 @@ export const ui = {
     kopruDescription: "Windows oyunlarını Apple Silicon Mac'te çalıştıran başlatıcı.",
     kopruGithub: "GitHub'da incele →",
     kopruInstall: 'Kurulum',
+    evButcemDescription: 'Evin bütçesini iki telefondan birlikte tutmak için bir uygulama.',
+    evButcemStatus: 'Mağazaya hazırlanıyor; henüz indirilemiyor.',
+    evButcemScreens: 'Uygulamadan gerçek ekranlar, örnek verilerle.',
+    evButcemStack: 'Veri üstten aşağı iner; sunucu yalnızca hane paylaşımı açıksa ve koça soru sorulduğunda devreye girer.',
     howItWorks: 'Nasıl çalışıyor?',
     shuffleCaption:
       'Fisher–Yates, 8 kartla: sondan başlayarak her konuma, kendisi dahil önündeki kartlardan rastgele biri gelir. Oyun aynısını 52 kartla yapıyor.',
@@ -95,6 +100,10 @@ export const ui = {
     kopruDescription: 'A launcher that runs Windows games on Apple Silicon Macs.',
     kopruGithub: 'View on GitHub →',
     kopruInstall: 'Install guide (Turkish)',
+    evButcemDescription: 'An app for keeping a household budget together from two phones.',
+    evButcemStatus: 'Being prepared for the app stores; not available to download yet.',
+    evButcemScreens: 'Real screens from the app, with sample data. The app is in Turkish.',
+    evButcemStack: 'Data flows from the top down; the server only comes in when household sharing is on or the coach is asked something.',
     howItWorks: 'How does it work?',
     shuffleCaption:
       'Fisher–Yates with 8 cards: working back from the end, each position gets a random card from those at or before it. The game does the same with 52.',
@@ -108,7 +117,8 @@ export const ui = {
 
 export const other = (lang: Lang): Lang => (lang === 'tr' ? 'en' : 'tr');
 
-// Köprü'nün sayfası iki dilde var; öbür proje siteleri (/karteikasten/ vb.) tek dilli.
-export const localHref = (lang: Lang, href?: string) => (href === routes.kopru.tr ? routes.kopru[lang] : href);
+// Köprü'nün ve Ev Bütçem'in sayfası iki dilde var; öbür proje siteleri (/karteikasten/ vb.) tek dilli.
+export const localHref = (lang: Lang, href?: string) =>
+  href === routes.kopru.tr ? routes.kopru[lang] : href === routes.evButcem.tr ? routes.evButcem[lang] : href;
 
 export const postHref = (lang: Lang, id: string) => `${routes.blog[lang]}${id}/`;
