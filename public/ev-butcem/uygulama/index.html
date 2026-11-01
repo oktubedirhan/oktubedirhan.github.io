@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Ev Bütçem</title>
+  <meta name="description" content="Evin parası nereden geliyor, nereye gidiyor: gelir, gider ve kalan para tek ekranda.">
+  <meta name="theme-color" content="#F6EFE6" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1A110C" media="(prefers-color-scheme: dark)">
+  <script>
+    // Tema ilk boyamadan önce uygulanır (kaydedilmiş seçim yoksa telefonun ayarı izlenir).
+    try { const t = localStorage.getItem('ev-butcem:tema'); if (t === 'acik' || t === 'koyu') document.documentElement.dataset.tema = t; } catch {}
+  </script>
+  <link rel="preload" href="fonts/bricolage-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Ev Bütçem">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/ikon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/ikon-180.png">
+  <link rel="stylesheet" href="css/app.css">
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="bakir" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e9a86b"/><stop offset=".55" stop-color="#c8763a"/><stop offset="1" stop-color="#8e4a1c"/></linearGradient>
+      <symbol id="i-ozet" viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6M9 16h3"/></symbol>
+      <symbol id="i-aylar" viewBox="0 0 24 24"><path d="M4 20h16"/><path d="M7 17v-5M12 17V7M17 17v-8"/></symbol>
+      <symbol id="i-kayitlar" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></symbol>
+      <symbol id="i-ayarlar" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></symbol>
+      <symbol id="i-arti" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="i-sol" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+      <symbol id="i-sag" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+      <symbol id="i-begen" viewBox="0 0 24 24"><path d="M7 10.5v9.5H4v-9.5z"/><path d="M7 10.5 10.6 4c1.4 0 2.4 1.1 2.1 2.5l-.6 3.2h5.6a2 2 0 0 1 2 2.4l-1.3 6.2a2 2 0 0 1-2 1.7H7"/></symbol>
+      <symbol id="i-begenme" viewBox="0 0 24 24"><g transform="rotate(180 12 12)"><path d="M7 10.5v9.5H4v-9.5z"/><path d="M7 10.5 10.6 4c1.4 0 2.4 1.1 2.1 2.5l-.6 3.2h5.6a2 2 0 0 1 2 2.4l-1.3 6.2a2 2 0 0 1-2 1.7H7"/></g></symbol>
+      <symbol id="i-nakit" viewBox="0 0 24 24"><rect x="3" y="6.5" width="18" height="11" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6.5 9.5v5M17.5 9.5v5"/></symbol>
+      <symbol id="i-aktar" viewBox="0 0 24 24"><path d="M4 8h14l-3.5-3.5M20 16H6l3.5 3.5"/></symbol>
+      <symbol id="i-ara" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></symbol>
+      <symbol id="i-yukari" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></symbol>
+      <symbol id="i-asagi" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+      <symbol id="i-kapat" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+      <symbol id="i-hane" viewBox="0 0 24 24"><path d="M4 11l8-6 8 6v9H4z"/><path d="M10 20v-5h4v5"/></symbol>
+      <symbol id="i-ekran" viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M9.5 7.5h5M9.5 11h5M9.5 14.5h3"/></symbol>
+      <symbol id="i-koc" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 8.5 8.5"/><circle cx="12" cy="12" r="3"/></symbol>
+      <symbol id="i-tekrar" viewBox="0 0 24 24"><path d="M5 11v-1a3 3 0 0 1 3-3h10"/><path d="M15 4l3 3-3 3"/><path d="M19 13v1a3 3 0 0 1-3 3H6"/><path d="M9 20l-3-3 3-3"/></symbol>
+      <symbol id="i-yorum" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12.5h5"/></symbol>
+      <symbol id="k-maas" viewBox="0 0 24 24"><rect x="3.5" y="7.5" width="17" height="12" rx="2.5"/><path d="M9 7.5V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1.5M3.5 12.5h17M11 12.5v2h2v-2"/></symbol>
+      <symbol id="k-ek-gelir" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 8v8M8 12h8"/></symbol>
+      <symbol id="k-harclik" viewBox="0 0 24 24"><path d="M5 10.5h14v9H5zM4 7.5h16v3H4zM12 7.5v12"/><path d="M12 7.5c-1.5-3-5-3.5-5-1.2 0 1.2 1.5 1.2 5 1.2Zm0 0c1.5-3 5-3.5 5-1.2 0 1.2-1.5 1.2-5 1.2Z"/></symbol>
+      <symbol id="k-diger-gelir" viewBox="0 0 24 24"><path d="M4 8.5 12 4l8 4.5v7L12 20l-8-4.5z"/><path d="M4 8.5 12 13l8-4.5M12 13v7"/></symbol>
+      <symbol id="k-kira" viewBox="0 0 24 24"><path d="M4 11 12 4.5l8 6.5"/><path d="M6 9.5V19.5h12V9.5"/><path d="M10 19.5v-5h4v5"/></symbol>
+      <symbol id="k-market" viewBox="0 0 24 24"><path d="M3 4h2.2l2.3 10.2a1.6 1.6 0 0 0 1.6 1.3h8.2a1.6 1.6 0 0 0 1.6-1.2L20.5 8H6.2"/><circle cx="9.5" cy="19.5" r="1.4"/><circle cx="17" cy="19.5" r="1.4"/><path d="M10 11h7"/></symbol>
+      <symbol id="k-fatura" viewBox="0 0 24 24"><path d="M9.2 17.5h5.6M9.8 20.5h4.4"/><path d="M12 3.5a6 6 0 0 0-3.6 10.8c.5.4.8 1 .8 1.6v1.6h5.6v-1.6c0-.6.3-1.2.8-1.6A6 6 0 0 0 12 3.5Z"/><path d="M12 7.5l-1.6 3h3.2L12 13.5"/></symbol>
+      <symbol id="k-iletisim" viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 17.5h2"/><path d="M9.5 9.2a3.5 3.5 0 0 1 5 0M10.7 11a1.7 1.7 0 0 1 2.6 0"/></symbol>
+      <symbol id="k-ulasim" viewBox="0 0 24 24"><path d="M5 15.5V12l1.8-4.5A2 2 0 0 1 8.7 6.2h6.6a2 2 0 0 1 1.9 1.3L19 12v3.5"/><path d="M4 12h16v4H4z"/><path d="M6.5 16v2.5M17.5 16v2.5"/><circle cx="7.5" cy="14" r=".6"/><circle cx="16.5" cy="14" r=".6"/></symbol>
+      <symbol id="k-disarida" viewBox="0 0 24 24"><path d="M7 3.5v17M4.5 3.5V8a2.5 2.5 0 0 0 5 0V3.5"/><path d="M17 20.5v-17c-2 1-3 3.5-3 6.5 0 2 1 3 3 3"/></symbol>
+      <symbol id="k-giyim" viewBox="0 0 24 24"><path d="M8.5 4 4 6.5l1.8 4L8 9.5v10h8v-10l2.2 1 1.8-4L15.5 4c-.6 1.5-1.9 2.5-3.5 2.5S9.1 5.5 8.5 4Z"/></symbol>
+      <symbol id="k-saglik" viewBox="0 0 24 24"><rect x="3.5" y="9" width="17" height="6" rx="3" transform="rotate(-45 12 12)"/><path d="M9.2 9.2l5.6 5.6"/></symbol>
+      <symbol id="k-egitim" viewBox="0 0 24 24"><path d="M4 6.5c2.5-1 5.5-1 8 .8 2.5-1.8 5.5-1.8 8-.8v12c-2.5-1-5.5-1-8 .8-2.5-1.8-5.5-1.8-8-.8z"/><path d="M12 7.3v12"/></symbol>
+      <symbol id="k-eglence" viewBox="0 0 24 24"><path d="M4 8.5a2 2 0 0 0 0 4v4.5h16v-4.5a2 2 0 0 0 0-4V4.5H4z" transform="translate(0 1)"/><path d="M14 6v2.5M14 11v2M14 15.5v2"/></symbol>
+      <symbol id="k-abonelik" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="11.5" rx="2.5"/><path d="M8.5 20h7"/><path d="M10.5 8.8v5l4-2.5z"/></symbol>
+      <symbol id="k-kredi" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12.5" rx="2.5"/><path d="M3 10h18M6.5 15h4"/></symbol>
+      <symbol id="k-cocuk" viewBox="0 0 24 24"><circle cx="12" cy="13" r="6.5"/><circle cx="6.5" cy="6.5" r="2.3"/><circle cx="17.5" cy="6.5" r="2.3"/><path d="M10 12.5h.01M14 12.5h.01"/><path d="M10.3 15.5a2.4 2.4 0 0 0 3.4 0"/></symbol>
+      <symbol id="k-evcil" viewBox="0 0 24 24"><circle cx="7" cy="10" r="1.8"/><circle cx="10.5" cy="6.5" r="1.8"/><circle cx="13.5" cy="6.5" r="1.8"/><circle cx="17" cy="10" r="1.8"/><path d="M8.5 17c0-2.5 1.7-4.5 3.5-4.5s3.5 2 3.5 4.5c0 1.5-1.4 2.2-3.5 1.5-2.1.7-3.5 0-3.5-1.5Z"/></symbol>
+      <symbol id="k-hediye" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10A4.2 4.2 0 0 1 12 7.5 4.2 4.2 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10Z"/></symbol>
+      <symbol id="k-diger-gider" viewBox="0 0 24 24"><path d="M6 3.5h12v17l-2.4-1.6-2.4 1.6-2.4-1.6-2.4 1.6L6 20.5z"/><path d="M9 8.5h6M9 12h6M9 15.5h3.5"/></symbol>
+      <symbol id="k-baslangic" viewBox="0 0 24 24"><path d="M4 9.5 12 4.5l8 5"/><path d="M5.5 9.5v8M9.5 9.5v8M14.5 9.5v8M18.5 9.5v8M3.5 19.5h17"/></symbol>
+    </defs>
+  </svg>
+
+  <div class="uygulama">
+    <header class="bant">
+      <div class="bant-ust" id="bant-ust">
+        <button type="button" class="ornek-rozet" id="ornek-rozet" hidden>Örnek veriler · <u>Kaldır</u></button>
+        <span class="uyari-notu" id="uyari-notu" hidden>(yatırım tavsiyesi değildir)</span>
+        <span class="hane-rozet" id="hane-rozet" hidden><svg class="ikon"><use href="#i-hane"/></svg><span></span></span>
+      </div>
+      <div class="ay-secici" id="ay-secici">
+        <button class="ay-ok" data-ay="-1" aria-label="Önceki ay"><svg class="ikon"><use href="#i-sol"/></svg></button>
+        <h1 id="ay-baslik">Ekim 2026</h1>
+        <button class="ay-ok" data-ay="1" aria-label="Sonraki ay"><svg class="ikon"><use href="#i-sag"/></svg></button>
+      </div>
+    </header>
+
+    <main id="ekran" tabindex="-1"></main>
+
+
+    <nav class="sekmeler" aria-label="Bölümler">
+      <a href="#ozet" data-sekme="ozet"><svg class="ikon"><use href="#i-ozet"/></svg>Özet</a>
+      <a href="#koc" data-sekme="koc"><svg class="ikon"><use href="#i-koc"/></svg>Koç</a>
+      <button class="ekle" id="ekle-dugme" type="button" aria-label="Kayıt ekle"><svg class="ikon"><use href="#i-arti"/></svg></button>
+      <a href="#aylar" data-sekme="aylar"><svg class="ikon"><use href="#i-aylar"/></svg>Aylar</a>
+      <a href="#kayitlar" data-sekme="kayitlar"><svg class="ikon"><use href="#i-kayitlar"/></svg>Kayıtlar</a>
+      <a href="#ayarlar" data-sekme="ayarlar"><svg class="ikon"><use href="#i-ayarlar"/></svg>Ayarlar</a>
+    </nav>
+  </div>
+
+  <dialog class="sayfa" id="kayit-sayfasi" aria-labelledby="sayfa-baslik">
+    <div class="tutamak" aria-hidden="true"></div>
+    <form method="dialog" id="kayit-formu" autocomplete="off" novalidate>
+      <div class="sayfa-ust">
+        <h2 id="sayfa-baslik">Yeni kayıt</h2>
+        <button type="button" class="kapat" data-kapat aria-label="Kapat"><svg class="ikon"><use href="#i-kapat"/></svg></button>
+      </div>
+      <p class="son-kayit" id="son-kayit" hidden><button type="button" class="baglanti" id="son-kayit-dugme"></button></p>
+      <p class="plan-bilgi" id="plan-bilgi" hidden><span id="plan-bilgi-metin"></span> <button type="button" class="baglanti" id="plan-duzenle">Planı düzenle</button></p>
+      <div class="tur-secici" role="radiogroup" aria-label="Tür">
+        <label><input type="radio" name="tur" value="gider" checked><span>Gider</span></label>
+        <label><input type="radio" name="tur" value="gelir"><span>Gelir</span></label>
+      </div>
+      <button type="button" class="foto-dugme" id="foto-dugme"><svg class="ikon"><use href="#i-ekran"/></svg>Banka ekran görüntüsünden ekle</button>
+      <input type="file" id="foto-giris" accept="image/*" hidden>
+      <label class="tutar-alani" id="tutar-alani">
+        <span class="gorunmez" id="tutar-etiket">Tutar</span>
+        <input id="tutar" name="tutar" inputmode="decimal" placeholder="0" required aria-describedby="tutar-hata">
+        <span class="tl-isareti" aria-hidden="true">₺</span>
+      </label>
+      <p class="hata" id="tutar-hata" hidden>Tutarı yaz; ondalık için virgül kullanabilirsin.</p>
+      <div class="son-kat" id="son-kat" hidden></div>
+      <fieldset class="kategori-izgara" id="kategori-izgara"><legend class="gorunmez">Kategori</legend></fieldset>
+      <p class="hata" id="kategori-hata" hidden>Bir kategori seç.</p>
+      <div class="sayfa-alt-alanlar">
+        <label class="kucuk-alan"><span>Tarih</span><input type="date" id="tarih" name="tarih" required></label>
+        <label class="kucuk-alan genis"><span>Not</span><input id="not" name="not" maxlength="60" placeholder="Örneğin Migros" aria-describedby="tahmin-not"></label>
+      </div>
+      <p class="tahmin-not" id="tahmin-not" aria-live="polite" hidden></p>
+      <fieldset class="hesap-secici" id="hesap-secici" hidden><legend>Hesap</legend><div class="hesap-cipler" id="hesap-cipler"></div></fieldset>
+      <div class="tekrar-bolum" id="tekrar-bolum">
+        <div class="tur-secici uclu" role="radiogroup" aria-label="Tekrar">
+          <label><input type="radio" name="tekrar" value="tek" checked><span>Tek sefer</span></label>
+          <label><input type="radio" name="tekrar" value="ay"><span>Her ay</span></label>
+          <label><input type="radio" name="tekrar" value="taksit"><span>Taksit</span></label>
+        </div>
+        <p class="tekrar-not" id="tekrar-not" hidden></p>
+        <div class="taksit-alan" id="taksit-alan" hidden>
+          <div class="adet-satir">
+            <span id="adet-etiket">Kaç taksit</span>
+            <div class="adet-kontrol" role="group" aria-labelledby="adet-etiket">
+              <button type="button" id="adet-eksi" aria-label="Taksit sayısını azalt">−</button>
+              <input id="adet" inputmode="numeric" maxlength="2" value="6" aria-label="Taksit sayısı, 2 ile 36 arası">
+              <button type="button" id="adet-arti" aria-label="Taksit sayısını artır">+</button>
+            </div>
+          </div>
+        </div>
+        <p class="taksit-hesap" id="taksit-hesap" aria-live="polite" hidden></p>
+      </div>
+      <div class="sayfa-dugmeler">
+        <button type="button" class="sil-dugme" id="sil-dugme" hidden>Sil</button>
+        <button type="submit" class="kaydet-dugme" id="kaydet-dugme">Kaydet</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="sayfa" id="plan-sayfasi" aria-labelledby="plan-baslik">
+    <div class="tutamak" aria-hidden="true"></div>
+    <form method="dialog" id="plan-formu" autocomplete="off" novalidate>
+      <div class="sayfa-ust">
+        <div class="plan-baslik-kutu">
+          <h2 id="plan-baslik">Plan</h2>
+          <p class="plan-alt" id="plan-alt"></p>
+        </div>
+        <button type="button" class="kapat" data-kapat aria-label="Kapat"><svg class="ikon"><use href="#i-kapat"/></svg></button>
+      </div>
+      <div class="plan-alanlar">
+        <label class="kucuk-alan"><span id="plan-tutar-etiket">Tutar</span><input id="plan-tutar" inputmode="decimal" aria-describedby="plan-hata"></label>
+        <label class="kucuk-alan"><span>Ayın günü</span><input id="plan-gun" inputmode="numeric" maxlength="2" aria-describedby="plan-hata"></label>
+      </div>
+      <label class="kucuk-alan plan-not"><span>Not</span><input id="plan-not" maxlength="60" placeholder="İsteğe bağlı"></label>
+      <p class="hata" id="plan-hata" hidden></p>
+      <div class="sayfa-dugmeler">
+        <button type="submit" class="kaydet-dugme" id="plan-kaydet">Kaydet</button>
+      </div>
+      <p class="plan-aciklama">Bundan sonraki aylar değişir; geçmiş kayıtlar aynı kalır.</p>
+      <div class="plan-eylemler" id="plan-eylemler">
+        <button type="button" class="dugme" id="plan-durdur">Durdur</button>
+        <button type="button" class="sil-dugme" id="plan-sil">Sil</button>
+      </div>
+      <div class="plan-onay" id="plan-onay" role="alert" hidden>
+        <p id="plan-onay-metin"></p>
+        <div class="plan-eylemler">
+          <button type="button" class="dugme" id="plan-vazgec">Vazgeç</button>
+          <button type="button" class="sil-dugme" id="plan-onayla">Evet</button>
+        </div>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="sayfa" id="kategori-sayfasi" aria-labelledby="kategori-baslik">
+    <div class="tutamak" aria-hidden="true"></div>
+    <div class="sayfa-ust">
+      <div class="kategori-baslik-kutu">
+        <button type="button" class="geri-ok" id="kategori-geri" aria-label="Kategorilere dön" hidden><svg class="ikon"><use href="#i-sol"/></svg></button>
+        <h2 id="kategori-baslik" tabindex="-1">Kategoriler</h2>
+      </div>
+      <button type="button" class="kapat" data-kapat aria-label="Kapat"><svg class="ikon"><use href="#i-kapat"/></svg></button>
+    </div>
+    <div id="kategori-icerik"></div>
+  </dialog>
+
+  <dialog class="sayfa" id="hesap-sayfasi" aria-labelledby="hesap-baslik">
+    <div class="tutamak" aria-hidden="true"></div>
+    <div class="sayfa-ust">
+      <div class="kategori-baslik-kutu">
+        <button type="button" class="geri-ok" id="hesap-geri" aria-label="Hesaplara dön" hidden><svg class="ikon"><use href="#i-sol"/></svg></button>
+        <h2 id="hesap-baslik" tabindex="-1">Hesaplar</h2>
+      </div>
+      <button type="button" class="kapat" data-kapat aria-label="Kapat"><svg class="ikon"><use href="#i-kapat"/></svg></button>
+    </div>
+    <div id="hesap-icerik"></div>
+  </dialog>
+
+  <dialog class="sayfa" id="ai-sayfasi" aria-labelledby="ai-baslik">
+    <form method="dialog" id="ai-formu" autocomplete="off" novalidate>
+      <div class="sayfa-ust">
+        <h2 id="ai-baslik">Ekran görüntüsünden</h2>
+        <button type="button" class="kapat" data-kapat aria-label="Kapat"><svg class="ikon"><use href="#i-kapat"/></svg></button>
+      </div>
+      <div id="ai-icerik"></div>
+      <div class="sayfa-dugmeler" id="ai-dugmeler" hidden>
+        <button type="submit" class="kaydet-dugme" id="ai-ekle">Ekle</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="gorunmez" id="duyuru" aria-live="polite"></div>
+  <div class="bildirim" id="bildirim" role="status" aria-live="polite" hidden><span></span><button type="button">Geri al</button></div>
+</body>
+</html>
