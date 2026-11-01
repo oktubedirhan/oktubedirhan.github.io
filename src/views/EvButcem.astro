@@ -1,7 +1,7 @@
 ---
 // Ev Bütçem proje sayfası. Mağazaya çıkınca kaldırılacak (geçici): bu dosya, src/pages/ev-butcem.astro,
 // src/pages/en/ev-butcem.astro, src/content/sayfalar/(en/)ev-butcem.md, src/content/projeler/ev-butcem.json,
-// public/media/ev-butcem/, i18n.ts'deki evButcem anahtarları ve public/admin/config.yml'deki ev_butcem girdileri.
+// public/media/ev-butcem/, public/ev-butcem/uygulama/ (deneme sürümü), i18n.ts'deki evButcem anahtarları ve public/admin/config.yml'deki ev_butcem girdileri.
 import { getEntry, render } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import Stack from '../components/Stack.astro';
@@ -36,6 +36,10 @@ const ekranlar = [
     <p class="label">{t.kopruKicker} · <span class="keep-case">PWA</span></p>
     <h1>{page.data.title}</h1>
     <p class="lead">{t.evButcemStatus}</p>
+    <div class="links">
+      <a class="btn btn-primary" href="/ev-butcem/uygulama/">{t.evButcemOpen}</a>
+    </div>
+    <p class="note">{t.evButcemNote}</p>
     <Screens project={page.data.title} ekranlar={ekranlar} caption={t.evButcemScreens} />
   </header>
   <div class="body">
@@ -55,6 +59,19 @@ const ekranlar = [
 </Base>
 
 <style>
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-5);
+  }
+  .note {
+    max-width: 38rem;
+    margin: var(--space-3) 0 0;
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--ink-muted);
+  }
   /* .label büyük harfe çevirir; kısaltma özgün yazımıyla kalır */
   .keep-case {
     text-transform: none;

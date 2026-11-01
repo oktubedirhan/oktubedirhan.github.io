@@ -1,8 +1,8 @@
 {
   "name": "Ev Bütçem",
   "order": 2,
-  "description": "Evin bütçesini iki telefondan birlikte tutmak için bir uygulama: gelir, gider, bütçe, taksit ve kredi kartı borcu tek yerde. Mağazaya hazırlanıyor; henüz indirilemiyor.",
-  "description_en": "An app for keeping a household budget together from two phones: income, spending, budgets, instalments and credit card debt in one place. Being prepared for the app stores; not available to download yet.",
+  "description": "Evin bütçesini iki telefondan birlikte tutmak için bir uygulama: gelir, gider, bütçe, taksit ve kredi kartı borcu tek yerde. Mağazaya hazırlanıyor; deneme sürümü bu sitede açık.",
+  "description_en": "An app for keeping a household budget together from two phones: income, spending, budgets, instalments and credit card debt in one place. Being prepared for the app stores; a trial version runs on this site.",
   "tags": [
     "JavaScript",
     "PWA",

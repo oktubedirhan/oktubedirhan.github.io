@@ -2,7 +2,7 @@
 title: Ev Bütçem
 ---
 
-Ev Bütçem, evin parasını iki telefondan birlikte tutmak için yazdığım bir uygulama. Her kategori bir fatura gibi okunuyor: bu ayki tutar, son altı ayın küçük çubukları ve kesik çizgiyle bütçe. Şu an telefonda çalışan bir web uygulaması (PWA); mağazalara hazırlanıyor, o yüzden henüz indirilemiyor.
+Ev Bütçem, evin parasını iki telefondan birlikte tutmak için yazdığım bir uygulama. Her kategori bir fatura gibi okunuyor: bu ayki tutar, son altı ayın küçük çubukları ve kesik çizgiyle bütçe. Şu an telefonda çalışan bir web uygulaması (PWA) ve mağazalara hazırlanıyor. O zamana kadar en güncel deneme sürümü yukarıdaki düğmeyle açılıyor; her yeni özellikten sonra güncelleniyor.
 
 ## Neler yapıyor
 

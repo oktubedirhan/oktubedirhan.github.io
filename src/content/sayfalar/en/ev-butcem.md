@@ -2,7 +2,7 @@
 title: Ev Bütçem
 ---
 
-Ev Bütçem ("my household budget" in Turkish) is an app I'm writing for keeping a household's money together from two phones. Each category reads like a utility bill: this month's amount, small bars for the last six months and a dashed budget line. Right now it's a web app that runs on the phone (a PWA). It's being prepared for the app stores, so it isn't available to download yet.
+Ev Bütçem ("my household budget" in Turkish) is an app I'm writing for keeping a household's money together from two phones. Each category reads like a utility bill: this month's amount, small bars for the last six months and a dashed budget line. Right now it's a web app that runs on the phone (a PWA). It's being prepared for the app stores; until then the latest trial version opens from the button above and is updated after each new feature.
 
 ## What it does
 
