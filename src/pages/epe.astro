@@ -829,8 +829,20 @@ import Base from '../layouts/Base.astro';
           .map((h) => `<li><span class="w-old">${esc(h.alinti)}</span> → <span class="w-new">${esc(h.duzeltme)}</span><span class="w-why">${esc(h.aciklama)}</span></li>`)
           .join('')}</ul>`
       : '';
-    const oneriler = ham.oneriler.length
-      ? `<h3 class="sub">Puanını yükseltmek için</h3><ul class="w-list">${ham.oneriler.map((o) => `<li>${esc(o)}</li>`).join('')}</ul>`
+    const kirildi = KRITERLER.filter((k) => !r.tekPuan && ham.kirilan?.[k]?.neden)
+      .map((k) => {
+        const x = ham.kirilan[k];
+        return `<li class="w-k">
+          <p class="w-k-head"><b>${KRITER_AD[k]}</b> <span class="muted">${r.puanlar[k]}/5</span></p>
+          ${x.alinti ? `<p class="w-k-q">“${esc(x.alinti)}”</p>` : ''}
+          <p class="w-k-why"><span class="w-k-lbl">Neden kırıldı</span>${esc(x.neden)}</p>
+          ${x.daha_iyi ? `<p class="w-k-fix"><span class="w-k-lbl">Şöyle yazsan</span>${esc(x.daha_iyi)}</p>` : ''}
+        </li>`;
+      })
+      .join('');
+    const kirilanBlok = kirildi ? `<h3 class="sub">Puanı nerede kaybettin</h3><ol class="w-kl">${kirildi}</ol>` : '';
+    const birDahaki = ham.bir_dahaki?.length
+      ? `<h3 class="sub">Bir dahakine</h3><ul class="w-check">${ham.bir_dahaki.map((o) => `<li>${esc(o)}</li>`).join('')}</ul>`
       : '';
     govde.innerHTML = `
       <div class="verdict${r.toplam20 >= 15 ? ' ok' : r.toplam20 <= 9 ? ' bad' : ''}">
@@ -844,8 +856,9 @@ import Base from '../layouts/Base.astro';
       ${kesinti ? `<h3 class="sub">Kesintiler</h3>${kesinti}` : ''}
       <p class="hint">${ham.kelime} kelime${lim > 0 ? ` · sınır ${lim}${az ? ' (sınırın altında; Content etkilenebilir)' : ''}` : ''} · ${ham.major_sayisi} ana fikir</p>
       ${r.uyarilar.map((u) => `<p class="hint">${esc(u)}</p>`).join('')}
+      ${kirilanBlok}
       ${hatalar}
-      ${oneriler}
+      ${birDahaki}
       <p class="hint">Yapay zeka değerlendirmesidir, resmi not değildir; aynı yazı farklı denemelerde bir iki puan oynayabilir.</p>`;
     sonuc.dataset.dolu = '1';
     sonuc.hidden = false;
@@ -1447,6 +1460,72 @@ import Base from '../layouts/Base.astro';
     display: block;
     font-size: 14px;
     color: var(--ink-muted);
+  }
+
+  .mt .w-kl {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-3);
+  }
+  .mt .w-k {
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-md);
+    display: grid;
+    gap: var(--space-2);
+    font-size: 15px;
+    line-height: 23px;
+    overflow-wrap: anywhere;
+  }
+  .mt .w-k p {
+    margin: 0;
+  }
+  .mt .w-k-q {
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--ink-muted);
+  }
+  .mt .w-k-lbl {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 16px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+  .mt .w-k-fix {
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    background: var(--accent-soft);
+    font-family: var(--font-serif);
+  }
+  .mt .w-k-fix .w-k-lbl {
+    font-family: var(--font-mono);
+  }
+  .mt .w-check {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: var(--space-2);
+    font-size: 15px;
+    line-height: 23px;
+  }
+  .mt .w-check li {
+    display: grid;
+    grid-template-columns: 22px 1fr;
+    gap: var(--space-2);
+  }
+  .mt .w-check li::before {
+    content: '';
+    width: 16px;
+    height: 16px;
+    margin-top: 4px;
+    border: 1.5px solid var(--ink-muted);
+    border-radius: var(--radius-sm);
   }
 
   /* İsim ve sıralama */

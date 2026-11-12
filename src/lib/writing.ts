@@ -24,8 +24,10 @@ export interface HamDegerlendirme {
   fazla_girinti: boolean; // paragrafta birden fazla girinti / paragraf bölünmüş
   gayri_resmi: boolean; // emoji, gonna, wanna, stuff… yazı boyunca
   outline_var: boolean;
+  /** Puanın kırıldığı yer: öğrencinin cümlesi, neden, daha iyi yazılmış hali (5 alan kriterde boş). */
+  kirilan: Record<Kriter, { alinti: string; neden: string; daha_iyi: string }>;
   hatalar: { alinti: string; duzeltme: string; aciklama: string }[];
-  oneriler: string[];
+  bir_dahaki: string[];
   ozet: string;
 }
 
