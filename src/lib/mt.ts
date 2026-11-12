@@ -37,18 +37,45 @@ export function normalizeOcrText(text: string): string {
     .replace(/(^|[^A-Z0-9])5A(?=[0-9])/g, '$1SA');
 }
 
-const ROW_RE = /(?:^|[^A-Z0-9])(AT|QZ|WA|SA|MT|MD)\s*(\d{0,2})\s*[:\-]?\s*(\d{1,3}(?:[.,]\d+)?)(?![.,]?\d)/g;
+const CODE_RE = /(AT|QZ|WA|SA|MT|MD)$/;
+const isNum = (t: string | undefined) => t != null && /^\d/.test(t);
+const toVal = (t: string) => Number.parseFloat(t.replace(',', '.'));
 
 /* "AT01 12 QZ00 84,5 …" biçimindeki metni satırlara çevirir.
+   Kodlar hep harf + 2 hanedir (QZ00, WA01). Metin harf ve sayı parçalarına bölünür;
+   OCR'ın araya soktuğu fazladan rakam ("WA001 60", "WAO01 60") ya da yapıştırdığı not
+   ("QZ0084", "SA01100") bu kurala göre ayrılır.
    Aynı kod iki kez gelirse sonuncusu kalır; 0–100 dışı notlar atılır. */
 export function parseGrades(text: string): GradeRow[] {
   const rows = new Map<string, number>();
-  const s = normalizeOcrText(text);
-  for (const m of s.matchAll(ROW_RE)) {
-    const code = m[1] + (m[2] ?? '');
-    const value = Number.parseFloat(m[3].replace(',', '.'));
+  const tokens = normalizeOcrText(text).match(/[A-Z]+|\d+(?:[.,]\d+)?/g) ?? [];
+  for (let i = 0; i < tokens.length; i++) {
+    const kind = CODE_RE.exec(tokens[i])?.[1];
+    const digits = tokens[i + 1];
+    if (!kind || !isNum(digits) || /[.,]/.test(digits)) continue;
+    const next = tokens[i + 2];
+    let num: string;
+    let value: number;
+    if (isNum(next) && digits.length <= 3) {
+      // "WA01 60" ya da fazladan rakamlı "WA001 60": son iki hane kod numarası.
+      num = digits.slice(-2);
+      value = toVal(next);
+      i += 2;
+    } else if (digits.length >= 3) {
+      // Not koda yapışmış: "QZ0084", "SA01100". 100'ü aşıyorsa OCR başa fazladan
+      // rakam sokmuştur ("ATO0112" = AT01 12): ilk haneyi at.
+      num = digits.slice(0, 2);
+      value = toVal(digits.slice(2));
+      if (value > 100 && digits.length >= 5) {
+        num = digits.slice(1, 3);
+        value = toVal(digits.slice(3));
+      }
+      i += 1;
+    } else {
+      continue;
+    }
     if (!Number.isFinite(value) || value < 0 || value > 100) continue;
-    rows.set(code, value);
+    rows.set(kind + num.padStart(2, '0'), value);
   }
   return [...rows].map(([code, value]) => ({ code, value }));
 }

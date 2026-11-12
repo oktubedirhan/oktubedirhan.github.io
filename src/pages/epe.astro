@@ -35,6 +35,10 @@ import Base from '../layouts/Base.astro';
         <label for="dosya" class="btn btn-primary drop-btn">Ekran görüntüsü seç</label>
         <p class="hint">Bilgisayarda görüntüyü buraya sürükleyebilir ya da <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>V</kbd> ile yapıştırabilirsin. Görüntü telefonunda/bilgisayarında okunur, hiçbir yere gönderilmez.</p>
         <p class="ocr-durum" id="ocr-durum" role="status" hidden></p>
+        <details class="ocr-ham" id="ocr-ham" hidden>
+          <summary>Görüntüden okunan ham metin</summary>
+          <pre id="ocr-ham-metin"></pre>
+        </details>
       </div>
 
       <details class="paste">
@@ -375,6 +379,8 @@ import Base from '../layouts/Base.astro';
       });
       const { data } = await worker.recognize(canvas);
       await worker.terminate();
+      $('ocr-ham-metin').textContent = data.text.trim();
+      $('ocr-ham').hidden = false;
       const rows = parseGrades(data.text);
       if (rows.length) {
         setRows(rows);
@@ -966,6 +972,26 @@ import Base from '../layouts/Base.astro';
   }
   .mt .rule-box p {
     margin: 0 0 var(--space-2);
+  }
+
+  .mt .ocr-ham {
+    font-size: 14px;
+    color: var(--ink-muted);
+    max-width: 100%;
+  }
+  .mt .ocr-ham summary {
+    cursor: pointer;
+    min-height: 32px;
+  }
+  .mt .ocr-ham pre {
+    margin: var(--space-2) 0 0;
+    padding: var(--space-3);
+    border-radius: var(--radius-sm);
+    background: var(--paper-sunk);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
   }
 
   /* İsim ve sıralama */
