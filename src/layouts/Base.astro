@@ -14,9 +14,11 @@ interface Props {
   lang?: Lang;
   // Aynı sayfanın öbür dildeki adresi; yoksa dil düğmesi o dilin ana sayfasına gider.
   alternate?: string;
+  // true ise arama motorlarına kapat (ör. /epe sayfası).
+  noindex?: boolean;
 }
 
-const { title, lang = 'tr', alternate } = Astro.props;
+const { title, lang = 'tr', alternate, noindex } = Astro.props;
 const t = ui[lang];
 const otherLang = other(lang);
 const description = Astro.props.description ?? t.description;
@@ -40,6 +42,7 @@ const switchHref = alternate ?? routes.home[otherLang];
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="alternate" type="application/rss+xml" title={SITE_TITLE} href={routes.rss[lang]} />

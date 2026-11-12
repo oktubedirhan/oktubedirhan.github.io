@@ -9,6 +9,8 @@ export default defineConfig({
   integrations: [
     sitemap({
       i18n: { defaultLocale: 'tr', locales: { tr: 'tr-TR', en: 'en-GB' } },
+      // /epe sınıf içi araç sayfası; noindex olduğu için haritadan da çıkar.
+      filter: (page) => !page.includes('/epe/'),
     }),
   ],
   markdown: {

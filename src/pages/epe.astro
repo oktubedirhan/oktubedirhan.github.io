@@ -1,0 +1,1088 @@
+---
+// Sınıf içi araç: ODTÜ DBE 501, Ocak İYS II için ara sınavlardan kaç lazım. Arama motorlarına kapalı, menüde yok.
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="İYS II hesaplayıcı" description="DBE 501: İYS II'ye girmek için ara sınavlardan kaç almalısın?" noindex>
+  <header class="page-head">
+    <p class="label">DBE 501 · Ocak İYS II</p>
+    <h1>İYS II'ye girmek için kaç lazım?</h1>
+    <p class="lead">Not ekranının görüntüsünü yükle ya da notları yapıştır; ara sınavlardan ortalama kaç alman gerektiğini hemen hesaplayayım.</p>
+  </header>
+
+  <div class="mt">
+    <section class="card gate" id="kapi" aria-labelledby="h-kapi" hidden>
+      <h2 id="h-kapi" class="card-title">Önce adın</h2>
+      <form id="kapi-form" class="gate-form">
+        <label for="ad" class="field-label">Adın ve soyadın</label>
+        <input id="ad" name="ad" autocomplete="name" minlength="2" maxlength="40" required placeholder="ör. Ayşe Yılmaz" />
+        <button type="submit" class="btn btn-primary">Başla</button>
+      </form>
+      <p class="hint">Ortalaman bu adla sınıf sıralamasına eklenir. Sıralamada herkes yalnızca ad, sıra ve ortalamayı görür; tek tek quiz, writing, speaking notların kimseye görünmez. İstediğin zaman sıralamadan çıkabilirsin.</p>
+      <p class="gate-err" id="kapi-hata" role="alert" hidden></p>
+    </section>
+
+    <div class="hello" id="merhaba" hidden>
+      <span>Merhaba, <b id="merhaba-ad"></b></span>
+      <button type="button" class="link-btn" id="ad-degistir">Adı değiştir</button>
+    </div>
+
+    <section class="card" aria-labelledby="h-giris" data-kapili>
+      <h2 id="h-giris" class="card-title">1 · Notların</h2>
+
+      <div class="drop" id="drop">
+        <input type="file" id="dosya" accept="image/*" class="sr-only" />
+        <label for="dosya" class="btn btn-primary drop-btn">Ekran görüntüsü seç</label>
+        <p class="hint">Bilgisayarda görüntüyü buraya sürükleyebilir ya da <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>V</kbd> ile yapıştırabilirsin. Görüntü telefonunda/bilgisayarında okunur, hiçbir yere gönderilmez.</p>
+        <p class="ocr-durum" id="ocr-durum" role="status" hidden></p>
+      </div>
+
+      <details class="paste">
+        <summary>ya da metin olarak yapıştır</summary>
+        <label for="metin" class="field-label">Not sayfasından kopyaladığın metin</label>
+        <textarea id="metin" rows="3" placeholder="AT01 12 AT02 8 QZ00 84 QZ01 91 QZ02 70 QZ03 81 SA01 100 WA01 60"></textarea>
+        <button type="button" class="btn" id="metin-oku">Metni oku</button>
+      </details>
+
+      <div class="rows-head">
+        <h3 class="sub">Okunan notlar</h3>
+        <span class="hint">Yanlış okunan varsa düzelt. <b>AT</b> (devam) hesaba girmez.</span>
+      </div>
+      <p class="empty" id="bos">Henüz not yok. Görüntü yükle, metin yapıştır ya da elle ekle.</p>
+      <ul class="rows" id="satirlar"></ul>
+      <button type="button" class="btn add" id="ekle">+ Satır ekle</button>
+      <p class="hint legend"><b>QZ</b> quiz · <b>WA</b> writing · <b>SA</b> speaking · <b>MT</b> ara sınav (aldıysan) · <b>AT</b> devam</p>
+    </section>
+
+    <section class="card" aria-labelledby="h-ayar" data-kapili>
+      <h2 id="h-ayar" class="card-title">2 · Ayarlar</h2>
+      <div class="settings">
+        <fieldset class="seg">
+          <legend class="field-label">Grup</legend>
+          <label><input type="radio" name="grup" value="501" checked /><span>501 · 74,50</span></label>
+          <label><input type="radio" name="grup" value="401" /><span>401 · 79,50</span></label>
+        </fieldset>
+        <fieldset class="seg">
+          <legend class="field-label">Güzde kaç ara sınav var?</legend>
+          <label><input type="radio" name="mtsayi" value="1" /><span>1</span></label>
+          <label><input type="radio" name="mtsayi" value="2" checked /><span>2</span></label>
+          <label><input type="radio" name="mtsayi" value="3" /><span>3</span></label>
+        </fieldset>
+      </div>
+      <div class="estimates" id="tahminler" hidden></div>
+    </section>
+
+    <section class="card result" id="sonuc" aria-live="polite" aria-labelledby="h-sonuc" data-kapili>
+      <h2 id="h-sonuc" class="card-title">3 · Sonuç</h2>
+      <div id="sonuc-govde"><p class="empty">Notlarını girince sonuç burada çıkacak.</p></div>
+    </section>
+
+    <section class="card" aria-labelledby="h-sira" data-kapili>
+      <div class="rank-head">
+        <h2 id="h-sira" class="card-title">4 · Sınıf sıralaması</h2>
+        <span class="save-state" id="kayit-durum" role="status"></span>
+      </div>
+      <p class="hint">Ara sınav %50, quiz %25, writing %15, speaking %10 ağırlıklı; henüz notu olmayan bileşen hesaba girmez. Tahmini notlar sayılmaz. Herkes kendi notunu girdiği için resmi değil.</p>
+      <p class="rank-me" id="sira-ben" hidden></p>
+      <ol class="rank" id="sira-liste"></ol>
+      <p class="empty" id="sira-bos" hidden></p>
+      <button type="button" class="link-btn leave" id="cik" hidden>Beni sıralamadan çıkar</button>
+    </section>
+
+    <section class="rule-box" aria-labelledby="h-kural" data-kapili>
+      <h2 id="h-kural" class="sub">Kural</h2>
+      <p><b>Özel güz ortalaması</b> = Ara sınavlar %50 + Quizler %25 + Writing %15 + Speaking %10. Yuvarlama geçerli: 501'de <b>74,50</b> ve üstü İYS II'ye girer, 74,49 ve altı DBE502'ye devam eder (401'de eşik 79,50).</p>
+      <p class="muted">Hesap şu anki notlarla; yeni quiz, writing ya da speaking notu gelince tekrar gir. Resmi değil, kendi hesabımız; son söz DBE'nin.</p>
+    </section>
+  </div>
+</Base>
+
+<script>
+  import { parseGrades, compute, scenarios, fmt, rankAverage, COMPONENTS, type GradeRow, type Group, type ComponentKey } from '../lib/mt';
+  import { epeHazir, kaydet, siralama, sil, EpeHata, type SiraSatiri } from '../lib/epe';
+
+  const KEY = 'mt-hesap';
+  const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+
+  type State = { rows: GradeRow[]; group: Group; count: number; est: Partial<Record<ComponentKey, number | null>> };
+  let state: State = { rows: [], group: '501', count: 2, est: {} };
+
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY) ?? 'null');
+    if (saved && Array.isArray(saved.rows)) state = { ...state, ...saved };
+  } catch {}
+
+  const save = () => {
+    try {
+      localStorage.setItem(KEY, JSON.stringify(state));
+    } catch {}
+  };
+
+  const list = $<HTMLUListElement>('satirlar');
+  const empty = $('bos');
+
+  const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+  const kind = (code: string) => code.slice(0, 2).toUpperCase();
+  const kindName: Record<string, string> = { QZ: 'quiz', WA: 'writing', SA: 'speaking', MT: 'ara sınav', MD: 'ara sınav', AT: 'devam · sayılmaz' };
+
+  function renderRows() {
+    empty.hidden = state.rows.length > 0;
+    list.innerHTML = state.rows
+      .map(
+        (r, i) => `<li class="row${kind(r.code) === 'AT' ? ' ignored' : ''}">
+          <label class="sr-only" for="kod-${i}">Kod</label>
+          <input id="kod-${i}" class="code" data-i="${i}" data-f="code" value="${esc(r.code)}" autocomplete="off" autocapitalize="characters" spellcheck="false" />
+          <label class="sr-only" for="not-${i}">Not</label>
+          <input id="not-${i}" class="val" data-i="${i}" data-f="value" type="number" inputmode="decimal" min="0" max="100" step="any" value="${Number.isFinite(r.value) ? r.value : ''}" />
+          <span class="kind">${kindName[kind(r.code)] ?? '?'}</span>
+          <button type="button" class="del" data-del="${i}" aria-label="${esc(r.code)} satırını sil">×</button>
+        </li>`,
+      )
+      .join('');
+  }
+
+  list.addEventListener('input', (e) => {
+    const el = e.target as HTMLInputElement;
+    const i = Number(el.dataset.i);
+    if (!state.rows[i]) return;
+    if (el.dataset.f === 'code') {
+      state.rows[i].code = el.value.toUpperCase().trim();
+      const li = el.closest('li')!;
+      li.classList.toggle('ignored', kind(state.rows[i].code) === 'AT');
+      li.querySelector('.kind')!.textContent = kindName[kind(state.rows[i].code)] ?? '?';
+    } else {
+      state.rows[i].value = el.value === '' ? NaN : Number(el.value);
+    }
+    update();
+  });
+  list.addEventListener('click', (e) => {
+    const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-del]');
+    if (!b) return;
+    state.rows.splice(Number(b.dataset.del), 1);
+    renderRows();
+    update();
+  });
+  $('ekle').addEventListener('click', () => {
+    state.rows.push({ code: 'QZ', value: NaN });
+    renderRows();
+    update();
+    (list.querySelector('li:last-child .code') as HTMLInputElement | null)?.focus();
+  });
+
+  function setRows(rows: GradeRow[]) {
+    // Yeni okunan satırlar eskilerin üstüne yazar (aynı kod), diğerleri kalır.
+    const map = new Map(state.rows.map((r) => [r.code, r.value]));
+    rows.forEach((r) => map.set(r.code, r.value));
+    state.rows = [...map].map(([code, value]) => ({ code, value }));
+    renderRows();
+    update();
+  }
+
+  $('metin-oku').addEventListener('click', () => {
+    const rows = parseGrades($<HTMLTextAreaElement>('metin').value);
+    if (rows.length) setRows(rows);
+    status(rows.length ? `${rows.length} not okundu.` : 'Metinde not bulamadım. "QZ01 91" gibi yazılmalı.');
+  });
+
+  // ---- Ayarlar
+  document.querySelectorAll<HTMLInputElement>('input[name="grup"]').forEach((r) => {
+    r.checked = r.value === state.group;
+    r.addEventListener('change', () => {
+      state.group = r.value as Group;
+      update();
+    });
+  });
+  document.querySelectorAll<HTMLInputElement>('input[name="mtsayi"]').forEach((r) => {
+    r.checked = Number(r.value) === state.count;
+    r.addEventListener('change', () => {
+      state.count = Number(r.value);
+      update();
+    });
+  });
+
+  const estBox = $('tahminler');
+  function renderEstimates(missing: ComponentKey[]) {
+    const keys = (['QZ', 'WA', 'SA'] as ComponentKey[]).filter((k) => missing.includes(k) || state.est[k] != null);
+    const present = new Set(state.rows.filter((r) => Number.isFinite(r.value)).map((r) => kind(r.code)));
+    const need = keys.filter((k) => !present.has(k));
+    estBox.hidden = need.length === 0;
+    const current = estBox.dataset.keys;
+    if (current === need.join(',')) return;
+    estBox.dataset.keys = need.join(',');
+    estBox.innerHTML =
+      `<p class="hint">Bunlardan henüz notun yok. Kaç almayı beklediğini yaz:</p>` +
+      need
+        .map(
+          (k) => `<label class="est"><span>${COMPONENTS[k].label}</span>
+            <input type="number" inputmode="decimal" min="0" max="100" step="any" data-est="${k}" value="${state.est[k] ?? ''}" placeholder="tahmini not" /></label>`,
+        )
+        .join('');
+  }
+  estBox.addEventListener('input', (e) => {
+    const el = e.target as HTMLInputElement;
+    const k = el.dataset.est as ComponentKey;
+    state.est[k] = el.value === '' ? null : Math.min(100, Math.max(0, Number(el.value)));
+    update();
+  });
+
+  // ---- Sonuç
+  const out = $('sonuc-govde');
+  const ceil = (n: number) => Math.max(0, Math.ceil(n - 1e-9));
+
+  function update() {
+    save();
+    queueSync();
+    const rows = state.rows.filter((r) => r.code && Number.isFinite(r.value) && r.value >= 0 && r.value <= 100);
+    const est = Object.fromEntries(
+      Object.entries(state.est).filter(([k]) => !rows.some((r) => kind(r.code) === k)),
+    );
+    const res = compute(rows, state.group, state.count, est);
+    renderEstimates(res.missing);
+    const thr = fmt(res.threshold);
+
+    if (!rows.length) {
+      out.innerHTML = `<p class="empty">Notlarını girince sonuç burada çıkacak.</p>`;
+      return;
+    }
+    if (res.missing.length) {
+      const names = res.missing.map((k) => COMPONENTS[k].label.toLowerCase()).join(', ');
+      out.innerHTML = `<p class="empty">Hesap için eksik: <b>${names}</b>. Yukarıdaki Ayarlar'a tahmini notunu yaz ya da satır ekle.</p>`;
+      return;
+    }
+
+    const r = res.r!;
+    let big = '';
+    if (res.status === 'settled') {
+      big = `<div class="verdict ${res.settledPass ? 'ok' : 'bad'}">
+        <p class="v-kicker">Bütün ara sınavlar girilmiş</p>
+        <p class="v-num">${fmt(res.settledFall!)}</p>
+        <p class="v-text">Güz ortalaman bu. ${res.settledPass ? `${thr} eşiğini geçiyorsun, İYS II'ye giriyorsun.` : `${thr} eşiğinin altında kalıyor.`}</p>
+      </div>`;
+    } else if (res.status === 'free') {
+      big = `<div class="verdict ok">
+        <p class="v-kicker">Müjde</p>
+        <p class="v-num">0</p>
+        <p class="v-text">Kalan ara sınavlardan 0 alsan bile ${thr}'ye ulaşıyorsun.</p>
+      </div>`;
+    } else if (res.status === 'impossible') {
+      big = `<div class="verdict bad">
+        <p class="v-kicker">Şu anki notlarla yetmiyor</p>
+        <p class="v-num">${fmt(res.averageIf100!)}</p>
+        <p class="v-text">Kalan ara sınavlardan 100 alsan bile güz ortalaman bu kadar olur, ${thr}'ye ulaşmıyor. Yeni quiz, writing ve speaking notları durumu değiştirebilir.</p>
+      </div>`;
+    } else if (res.remainingNeeded != null) {
+      const left = res.remainingCount;
+      big = `<div class="verdict">
+        <p class="v-kicker">Kalan ${left === 1 ? 'ara sınavdan' : `${left} ara sınavda ortalama`} en az</p>
+        <p class="v-num">${fmt(res.remainingNeeded)}</p>
+        <p class="v-text">almalısın. Yani ${left === 1 ? '' : 'her birinden '}<b>${ceil(res.remainingNeeded)}</b> alırsan garanti. (Bütün ara sınavların ortalaması en az ${fmt(res.m!)} olmalı; şu ana kadar ${fmt(res.midtermAvg!)}.)</p>
+      </div>`;
+    } else {
+      big = `<div class="verdict">
+        <p class="v-kicker">Ara sınav ortalaman en az</p>
+        <p class="v-num">${fmt(res.m!)}</p>
+        <p class="v-text">olmalı. Yani ${state.count === 1 ? 'ara sınavdan' : 'her ara sınavdan'} <b>${ceil(res.m!)}</b> alırsan garanti.</p>
+      </div>`;
+    }
+
+    const parts = [
+      ['Quiz', res.quiz!, COMPONENTS.QZ.weight],
+      ['Writing', res.writing!, COMPONENTS.WA.weight],
+      ['Speaking', res.speaking!, COMPONENTS.SA.weight],
+    ] as const;
+    const breakdown = parts
+      .map(
+        ([name, a, w]) => `<tr><th scope="row">${name} <span class="muted">%${Math.round(w * 100)}</span></th>
+          <td>${fmt(a.avg)}${a.estimated ? ' <span class="muted">(tahmin)</span>' : a.count > 1 ? ` <span class="muted">(${a.count} not)</span>` : ''}</td>
+          <td>+${fmt(a.contribution)}</td></tr>`,
+      )
+      .join('');
+
+    const table =
+      res.status === 'settled'
+        ? ''
+        : `<h3 class="sub">Ara sınav ortalaman şöyle olursa</h3>
+      <table class="scen"><thead><tr><th scope="col">Ara sınav ort.</th><th scope="col">Güz ort.</th><th scope="col">Sonuç</th></tr></thead><tbody>
+      ${scenarios(r, state.group)
+        .map((s) => `<tr class="${s.pass ? 'pass' : 'fail'}"><td>${s.midterm}</td><td>${fmt(s.fall)}</td><td>${s.pass ? 'Girer' : 'Giremez'}</td></tr>`)
+        .join('')}
+      </tbody></table>`;
+
+    out.innerHTML = `${big}
+      <h3 class="sub">Şu ana kadarki katkın</h3>
+      <table class="parts"><tbody>${breakdown}
+        <tr class="sum"><th scope="row">Toplam (ara sınavsız)</th><td></td><td>${fmt(r)} / 50</td></tr>
+      </tbody></table>
+      ${table}`;
+  }
+
+  // ---- OCR
+  const ocrStatus = $('ocr-durum');
+  function status(text: string) {
+    ocrStatus.hidden = !text;
+    ocrStatus.textContent = text;
+  }
+
+  let tesseract: Promise<any> | null = null;
+  function loadTesseract(): Promise<any> {
+    if ((window as any).Tesseract) return Promise.resolve((window as any).Tesseract);
+    tesseract ??= new Promise((ok, fail) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
+      s.onload = () => ok((window as any).Tesseract);
+      s.onerror = () => {
+        tesseract = null;
+        fail(new Error('yüklenemedi'));
+      };
+      document.head.append(s);
+    });
+    return tesseract;
+  }
+
+  // Kırmızı rakamlar açık gri zeminde: 2 kat büyüt, griye çevir, eşikle.
+  async function prepare(file: Blob): Promise<HTMLCanvasElement> {
+    const bmp = await createImageBitmap(file);
+    const scale = Math.min(2, 4000 / Math.max(bmp.width, bmp.height));
+    const c = document.createElement('canvas');
+    c.width = Math.round(bmp.width * scale);
+    c.height = Math.round(bmp.height * scale);
+    const ctx = c.getContext('2d')!;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(bmp, 0, 0, c.width, c.height);
+    const img = ctx.getImageData(0, 0, c.width, c.height);
+    const d = img.data;
+    for (let i = 0; i < d.length; i += 4) {
+      const y = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+      const v = y < 170 ? 0 : 255;
+      d[i] = d[i + 1] = d[i + 2] = v;
+    }
+    ctx.putImageData(img, 0, 0);
+    return c;
+  }
+
+  let busy = false;
+  async function readImage(file: Blob) {
+    if (busy) return;
+    busy = true;
+    try {
+      status('Okuyucu yükleniyor…');
+      const T = await loadTesseract();
+      const canvas = await prepare(file);
+      const worker = await T.createWorker('eng', 1, {
+        logger: (m: any) => {
+          if (m.status === 'recognizing text') status(`Görüntü okunuyor… %${Math.round(m.progress * 100)}`);
+        },
+      });
+      const { data } = await worker.recognize(canvas);
+      await worker.terminate();
+      const rows = parseGrades(data.text);
+      if (rows.length) {
+        setRows(rows);
+        status(`${rows.length} not okundu. Aşağıdan kontrol et.`);
+      } else {
+        status('Görüntüde not bulamadım. Daha net bir görüntü dene ya da notları elle gir.');
+      }
+    } catch {
+      status('Görüntü okunamadı (internet bağlantısını kontrol et). Notları metin olarak ya da elle girebilirsin.');
+    } finally {
+      busy = false;
+      $<HTMLInputElement>('dosya').value = '';
+    }
+  }
+
+  $<HTMLInputElement>('dosya').addEventListener('change', (e) => {
+    const f = (e.target as HTMLInputElement).files?.[0];
+    if (f) readImage(f);
+  });
+  document.addEventListener('paste', (e) => {
+    const item = [...(e.clipboardData?.items ?? [])].find((i) => i.type.startsWith('image/'));
+    if (item) {
+      e.preventDefault();
+      const f = item.getAsFile();
+      if (f) readImage(f);
+    }
+  });
+  const drop = $('drop');
+  drop.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    drop.classList.add('over');
+  });
+  drop.addEventListener('dragleave', () => drop.classList.remove('over'));
+  drop.addEventListener('drop', (e) => {
+    e.preventDefault();
+    drop.classList.remove('over');
+    const f = [...(e.dataTransfer?.files ?? [])].find((f) => f.type.startsWith('image/'));
+    if (f) readImage(f);
+  });
+
+  // ---- Kimlik ve sınıf sıralaması
+  const ID_KEY = 'mt-kimlik';
+  type Kimlik = { ad: string; token: string };
+  let kimlik: Kimlik | null = null;
+  try {
+    const k = JSON.parse(localStorage.getItem(ID_KEY) ?? 'null');
+    if (k && typeof k.ad === 'string' && typeof k.token === 'string') kimlik = k;
+  } catch {}
+  const yeniToken = () => crypto.randomUUID() + crypto.randomUUID();
+  const kimlikKaydet = () => {
+    try {
+      if (kimlik) localStorage.setItem(ID_KEY, JSON.stringify(kimlik));
+      else localStorage.removeItem(ID_KEY);
+    } catch {}
+  };
+
+  const gate = $('kapi');
+  const gateErr = $('kapi-hata');
+  const adInput = $<HTMLInputElement>('ad');
+  const kayitDurum = $('kayit-durum');
+  const temizAd = (s: string) => s.trim().replace(/\s+/g, ' ');
+
+  function showGate(on: boolean) {
+    gate.hidden = !on;
+    $('merhaba').hidden = on;
+    document.querySelectorAll<HTMLElement>('[data-kapili]').forEach((el) => (el.hidden = on));
+    if (on) {
+      adInput.value = kimlik?.ad ?? '';
+      adInput.focus();
+    } else {
+      $('merhaba-ad').textContent = kimlik!.ad;
+    }
+  }
+
+  const hataMetni: Record<string, string> = {
+    isim_alinmis: 'Bu isim başka bir cihazdan kaydedilmiş. Aynı kişiysen o cihazdan devam et; değilsen soyadının tamamını ya da bir harf ekle.',
+    kapasite_dolu: 'Sıralama dolu, yeni kayıt alınamıyor.',
+    baglanti: 'Sunucuya ulaşılamadı. Notların bu cihazda duruyor, sonra tekrar denerim.',
+    sunucu: 'Kaydederken bir sorun çıktı. Notların bu cihazda duruyor.',
+  };
+
+  $('kapi-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const ad = temizAd(adInput.value);
+    if (ad.length < 2) return;
+    gateErr.hidden = true;
+    const eski = kimlik;
+    // Ad değiştiyse eski kayıt silinir, aynı anahtarla yenisi açılır.
+    if (eski && eski.ad.toLocaleLowerCase('tr') !== ad.toLocaleLowerCase('tr') && epeHazir()) {
+      try {
+        await sil(eski.ad, eski.token);
+      } catch {}
+    }
+    kimlik = { ad, token: eski?.token ?? yeniToken() };
+    if (epeHazir()) {
+      try {
+        await kaydetSimdi(true);
+      } catch (err) {
+        const kod = err instanceof EpeHata ? err.kod : 'baglanti';
+        if (kod === 'isim_alinmis') {
+          kimlik = eski;
+          gateErr.textContent = hataMetni[kod];
+          gateErr.hidden = false;
+          return;
+        }
+      }
+    }
+    kimlikKaydet();
+    showGate(false);
+    yenileSiralama();
+  });
+  $('ad-degistir').addEventListener('click', () => showGate(true));
+
+  let syncTimer: number | undefined;
+  let sonGonderilen = '';
+  function queueSync() {
+    if (!kimlik || !epeHazir()) return;
+    clearTimeout(syncTimer);
+    syncTimer = window.setTimeout(() => kaydetSimdi().catch(() => {}), 1200);
+  }
+
+  // force: isim ekranından gelince ortalama olmasa da ismin müsait olduğunu kontrol etmek için.
+  async function kaydetSimdi(force = false) {
+    if (!kimlik) return;
+    const rows = state.rows.filter((r) => r.code && Number.isFinite(r.value) && r.value >= 0 && r.value <= 100);
+    const avg = rankAverage(rows);
+    if (avg == null && !force) {
+      kayitDurum.textContent = 'Not girince sıralamaya eklenirsin';
+      return;
+    }
+    const notlar = rows.filter((r) => /^(QZ|WA|SA|MT|MD)/.test(r.code));
+    const imza = JSON.stringify([kimlik.ad, state.group, notlar, avg]);
+    if (imza === sonGonderilen || avg == null) return;
+    kayitDurum.textContent = 'Kaydediliyor…';
+    try {
+      await kaydet(kimlik.ad, kimlik.token, state.group, notlar, avg);
+      sonGonderilen = imza;
+      kayitDurum.textContent = 'Kaydedildi ✓';
+      yenileSiralama();
+    } catch (err) {
+      const kod = err instanceof EpeHata ? err.kod : 'baglanti';
+      kayitDurum.textContent = '';
+      if (kod === 'isim_alinmis' && !force) {
+        gateErr.textContent = hataMetni[kod];
+        gateErr.hidden = false;
+        showGate(true);
+      } else {
+        sirayiGoster(null, hataMetni[kod] ?? hataMetni.sunucu);
+      }
+      throw err;
+    }
+  }
+
+  async function yenileSiralama() {
+    if (!epeHazir()) {
+      sirayiGoster(null, 'Sıralama henüz bağlanmadı.');
+      return;
+    }
+    try {
+      sirayiGoster(await siralama(state.group));
+    } catch {
+      sirayiGoster(null, hataMetni.baglanti);
+    }
+  }
+
+  function sirayiGoster(liste: SiraSatiri[] | null, mesaj?: string) {
+    const ol = $<HTMLOListElement>('sira-liste');
+    const bos = $('sira-bos');
+    const ben = $('sira-ben');
+    const benAd = kimlik?.ad.toLocaleLowerCase('tr');
+    if (!liste) {
+      if (mesaj) {
+        bos.textContent = mesaj;
+        bos.hidden = false;
+      }
+      return;
+    }
+    bos.hidden = liste.length > 0;
+    bos.textContent = 'Henüz kimse yok. İlk sen ol.';
+    const benimki = liste.find((s) => s.ad.toLocaleLowerCase('tr') === benAd);
+    ben.hidden = !benimki;
+    if (benimki) ben.innerHTML = `${liste.length} kişi içinde <b>${benimki.sira}.</b> sıradasın`;
+    $('cik').hidden = !benimki;
+    ol.innerHTML = liste
+      .map(
+        (s) => `<li class="${s.ad.toLocaleLowerCase('tr') === benAd ? 'me' : ''}">
+          <span class="r-no">${s.sira}</span><span class="r-ad">${esc(s.ad)}</span><span class="r-ort">${fmt(s.ortalama)}</span></li>`,
+      )
+      .join('');
+  }
+
+  $('cik').addEventListener('click', async () => {
+    if (!kimlik || !confirm('Adın ve ortalaman sıralamadan silinsin mi? Notların bu cihazda kalır.')) return;
+    try {
+      await sil(kimlik.ad, kimlik.token);
+      sonGonderilen = '';
+      kimlik = null;
+      kimlikKaydet();
+      showGate(true);
+    } catch {
+      sirayiGoster(null, hataMetni.baglanti);
+    }
+  });
+  document.querySelectorAll<HTMLInputElement>('input[name="grup"]').forEach((r) => r.addEventListener('change', yenileSiralama));
+
+  renderRows();
+  showGate(!kimlik);
+  update();
+  if (kimlik) yenileSiralama();
+</script>
+
+<style is:global>
+  .mt {
+    display: grid;
+    gap: var(--space-5);
+    max-width: 44rem;
+  }
+  .mt .card {
+    background: var(--paper-raised);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    min-width: 0;
+  }
+  .mt .card-title {
+    margin: 0 0 var(--space-4);
+    font-size: 20px;
+    line-height: 26px;
+  }
+  .mt .sub {
+    margin: var(--space-5) 0 var(--space-2);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 22px;
+    font-weight: 600;
+  }
+  .mt .hint {
+    margin: 0;
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--ink-muted);
+  }
+  .mt .empty {
+    margin: 0;
+    color: var(--ink-muted);
+  }
+  .mt .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .mt kbd {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 1px 5px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--rule);
+    background: var(--paper-sunk);
+  }
+
+  /* Görüntü alanı */
+  .mt .drop {
+    display: grid;
+    gap: var(--space-3);
+    justify-items: start;
+    padding: var(--space-4);
+    border: 1.5px dashed var(--rule);
+    border-radius: var(--radius-md);
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .mt .drop.over {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .mt .drop-btn {
+    min-height: 44px;
+    cursor: pointer;
+  }
+  .mt #dosya:focus-visible + .drop-btn {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .mt .ocr-durum {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  .mt .paste {
+    margin-top: var(--space-4);
+  }
+  .mt .paste summary {
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--accent);
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+  .mt .paste[open] {
+    display: grid;
+    gap: var(--space-2);
+    justify-items: start;
+  }
+  .mt .field-label {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
+    color: var(--ink-muted);
+    padding: 0;
+  }
+  .mt textarea,
+  .mt input[type='number'],
+  .mt .code {
+    font: inherit;
+    font-size: 16px;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
+    min-height: 44px;
+    box-sizing: border-box;
+  }
+  .mt textarea {
+    width: 100%;
+    resize: vertical;
+    font-family: var(--font-mono);
+    font-size: 16px;
+  }
+  .mt textarea:focus,
+  .mt input:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: -1px;
+    border-color: transparent;
+  }
+  .mt button.btn {
+    font: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    border: 0;
+    cursor: pointer;
+    min-height: 44px;
+  }
+
+  /* Not satırları */
+  .mt .rows-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-1) var(--space-3);
+    margin-top: var(--space-5);
+  }
+  .mt .rows-head .sub {
+    margin: 0 0 var(--space-2);
+  }
+  .mt .rows {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: var(--space-2);
+  }
+  .mt .row {
+    display: grid;
+    grid-template-columns: 5.5rem 4.75rem 1fr 44px;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .mt .row .code {
+    width: 100%;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+  .mt .row .val {
+    width: 100%;
+    font-variant-numeric: tabular-nums;
+    color: var(--accent-2);
+    font-weight: 600;
+  }
+  .mt .kind {
+    font-size: 13px;
+    color: var(--ink-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .mt .row.ignored .code,
+  .mt .row.ignored .val {
+    opacity: 0.5;
+    text-decoration: line-through;
+  }
+  .mt .del {
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--ink-muted);
+    font-size: 22px;
+    cursor: pointer;
+  }
+  .mt .del:hover {
+    background: var(--paper-sunk);
+    color: var(--ink);
+  }
+  .mt .add {
+    margin-top: var(--space-3);
+  }
+  .mt .legend {
+    margin-top: var(--space-3);
+  }
+
+  /* Ayarlar */
+  .mt .settings {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4) var(--space-6);
+  }
+  .mt .seg {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .mt .seg legend {
+    margin-bottom: var(--space-2);
+  }
+  .mt .seg label {
+    position: relative;
+  }
+  .mt .seg input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+  .mt .seg span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0 var(--space-4);
+    border-radius: var(--radius-pill);
+    box-shadow: inset 0 0 0 1px var(--rule);
+    font-size: 15px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-muted);
+  }
+  .mt .seg input:checked + span {
+    background: var(--ink);
+    color: var(--paper);
+    box-shadow: none;
+  }
+  .mt .seg input:focus-visible + span {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .mt .estimates {
+    display: grid;
+    gap: var(--space-3);
+    margin-top: var(--space-5);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--rule);
+  }
+  .mt .est {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    font-size: 15px;
+  }
+  .mt .est input {
+    width: 9rem;
+  }
+
+  /* Sonuç */
+  .mt .result {
+    border-width: 2px;
+    border-color: var(--ink);
+  }
+  .mt .verdict {
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--radius-md);
+    background: var(--accent-soft);
+    color: var(--ink);
+  }
+  .mt .verdict.bad {
+    background: var(--accent-2-soft);
+  }
+  .mt .v-kicker {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+  .mt .v-num {
+    margin: var(--space-1) 0;
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 72;
+    font-size: 64px;
+    line-height: 68px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    color: var(--accent);
+  }
+  .mt .verdict.bad .v-num {
+    color: var(--accent-2);
+  }
+  .mt .verdict.ok .v-num {
+    color: var(--accent);
+  }
+  .mt .v-text {
+    margin: 0;
+    font-size: 17px;
+    line-height: 26px;
+  }
+  .mt table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+    line-height: 22px;
+    font-variant-numeric: tabular-nums;
+  }
+  .mt th,
+  .mt td {
+    padding: var(--space-2) var(--space-2);
+    border-bottom: 1px solid var(--rule);
+    text-align: right;
+  }
+  .mt td {
+    white-space: nowrap;
+  }
+  .mt th:first-child,
+  .mt td:first-child {
+    text-align: left;
+    padding-left: 0;
+  }
+  .mt th:last-child,
+  .mt td:last-child {
+    padding-right: 0;
+  }
+  .mt th {
+    font-weight: 500;
+  }
+  .mt thead th {
+    font-size: 13px;
+    color: var(--ink-muted);
+  }
+  .mt .parts .sum th,
+  .mt .parts .sum td {
+    font-weight: 600;
+    border-bottom: 0;
+  }
+  .mt .scen .pass td:last-child {
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .mt .scen .fail td {
+    color: var(--ink-muted);
+  }
+
+  .mt .rule-box {
+    font-size: 15px;
+    line-height: 24px;
+  }
+  .mt .rule-box .sub {
+    margin-top: 0;
+  }
+  .mt .rule-box p {
+    margin: 0 0 var(--space-2);
+  }
+
+  /* İsim ve sıralama */
+  .mt .gate-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--space-2) var(--space-3);
+    margin-bottom: var(--space-3);
+  }
+  .mt .gate-form .field-label {
+    flex-basis: 100%;
+  }
+  .mt .gate-form input {
+    flex: 1 1 14rem;
+    font: inherit;
+    font-size: 16px;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
+    min-height: 44px;
+  }
+  .mt .gate-err {
+    margin: var(--space-3) 0 0;
+    color: var(--accent-2);
+    font-weight: 500;
+  }
+  .mt .hello {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-3);
+    font-size: 15px;
+  }
+  .mt .link-btn {
+    font: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--accent);
+    background: none;
+    border: 0;
+    padding: 0;
+    min-height: 44px;
+    cursor: pointer;
+  }
+  .mt .link-btn:hover {
+    text-decoration: underline;
+  }
+  .mt .rank-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-2);
+  }
+  .mt .save-state {
+    font-size: 13px;
+    color: var(--ink-muted);
+  }
+  .mt .rank-me {
+    margin: var(--space-4) 0 0;
+    font-size: 17px;
+  }
+  .mt .rank {
+    list-style: none;
+    margin: var(--space-3) 0 0;
+    padding: 0;
+    font-variant-numeric: tabular-nums;
+  }
+  .mt .rank li {
+    display: grid;
+    grid-template-columns: 2.25rem 1fr auto;
+    gap: var(--space-2);
+    align-items: baseline;
+    padding: var(--space-2) var(--space-2);
+    border-bottom: 1px solid var(--rule);
+    font-size: 15px;
+  }
+  .mt .rank li.me {
+    background: var(--accent-soft);
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+  }
+  .mt .r-no {
+    color: var(--ink-muted);
+  }
+  .mt .r-ad {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .mt .rank-head + .hint,
+  .mt #sira-bos {
+    margin-top: var(--space-2);
+  }
+  .mt .leave {
+    margin-top: var(--space-3);
+    color: var(--ink-muted);
+  }
+  .mt [hidden] {
+    display: none !important;
+  }
+
+  @media (max-width: 480px) {
+    .mt .card {
+      padding: var(--space-4);
+    }
+    .mt .verdict {
+      padding: var(--space-4);
+    }
+    .mt .v-num {
+      font-size: 52px;
+      line-height: 56px;
+    }
+    .mt .rows {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
