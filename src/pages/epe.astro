@@ -7,7 +7,7 @@ import Base from '../layouts/Base.astro';
   <header class="page-head">
     <p class="label">DBE 501 · Ocak İYS II</p>
     <h1>İYS II'ye girmek için kaç lazım?</h1>
-    <p class="lead">Not ekranının görüntüsünü yükle ya da notları yapıştır; ara sınavlardan ortalama kaç alman gerektiğini hemen hesaplayayım.</p>
+    <p class="lead">Not ekranının görüntüsünü ekle ya da notlarını yaz; henüz girilmemiş notları da söyleyebilirsin. Ara sınavlardan ortalama kaç alman gerektiğini hemen hesaplayayım.</p>
   </header>
 
   <div class="mt">
@@ -30,29 +30,31 @@ import Base from '../layouts/Base.astro';
     <section class="card" aria-labelledby="h-giris" data-kapili>
       <h2 id="h-giris" class="card-title">1 · Notların</h2>
 
-      <div class="drop" id="drop">
-        <input type="file" id="dosya" accept="image/*" class="sr-only" />
-        <label for="dosya" class="btn btn-primary drop-btn">Ekran görüntüsü seç</label>
-        <p class="hint">Bilgisayarda görüntüyü buraya sürükleyebilir ya da <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>V</kbd> ile yapıştırabilirsin. Görüntü telefonunda/bilgisayarında okunur, hiçbir yere gönderilmez.</p>
-        <p class="ocr-durum" id="ocr-durum" role="status" hidden></p>
-        <details class="ocr-ham" id="ocr-ham" hidden>
-          <summary>Görüntüden okunan ham metin</summary>
-          <pre id="ocr-ham-metin"></pre>
-        </details>
+      <div class="ai" id="drop">
+        <ol class="chat" id="sohbet" aria-live="polite">
+          <li class="msg bot">Not ekranının görüntüsünü ekle ya da notlarını yaz. Henüz girilmemiş notları da söyleyebilirsin: <i>"WA02'den 70 alırsam?"</i>, <i>"speaking'den 85 aldım"</i>.</li>
+        </ol>
+        <form class="composer" id="ai-form">
+          <div class="thumb" id="onizleme" hidden>
+            <img id="onizleme-img" alt="Eklenen ekran görüntüsü" />
+            <button type="button" class="thumb-x" id="onizleme-sil" aria-label="Görüntüyü kaldır">×</button>
+          </div>
+          <label for="mesaj" class="sr-only">Mesajın</label>
+          <textarea id="mesaj" rows="2" maxlength="1000" placeholder="ör. QZ04'ten 75 aldım, WA02 için 70 varsay"></textarea>
+          <div class="composer-row">
+            <input type="file" id="dosya" accept="image/*" class="sr-only" />
+            <label for="dosya" class="btn attach">Görüntü ekle</label>
+            <button type="submit" class="btn btn-primary" id="gonder">Gönder</button>
+          </div>
+        </form>
+        <p class="hint">Görüntü ve mesajın notları çıkarmak için Mistral'a gönderilir; ortalamayı ve eşiği sayfa kendisi hesaplar. Bilgisayarda görüntüyü sürükleyebilir ya da <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>V</kbd> ile yapıştırabilirsin.</p>
       </div>
-
-      <details class="paste">
-        <summary>ya da metin olarak yapıştır</summary>
-        <label for="metin" class="field-label">Not sayfasından kopyaladığın metin</label>
-        <textarea id="metin" rows="3" placeholder="AT01 12 AT02 8 QZ00 84 QZ01 91 QZ02 70 QZ03 81 SA01 100 WA01 60"></textarea>
-        <button type="button" class="btn" id="metin-oku">Metni oku</button>
-      </details>
 
       <div class="rows-head">
-        <h3 class="sub">Okunan notlar</h3>
-        <span class="hint">Yanlış okunan varsa düzelt. <b>AT</b> (devam) hesaba girmez.</span>
+        <h3 class="sub">Notların</h3>
+        <span class="hint">Yanlış olan varsa düzelt. <b>AT</b> (devam) hesaba girmez; <b>tahmin</b> işaretliler sıralamaya girmez.</span>
       </div>
-      <p class="empty" id="bos">Henüz not yok. Görüntü yükle, metin yapıştır ya da elle ekle.</p>
+      <p class="empty" id="bos">Henüz not yok. Görüntü ekle, yaz ya da elle ekle.</p>
       <ul class="rows" id="satirlar"></ul>
       <button type="button" class="btn add" id="ekle">+ Satır ekle</button>
       <p class="hint legend"><b>QZ</b> quiz · <b>WA</b> writing · <b>SA</b> speaking · <b>MT</b> ara sınav (aldıysan) · <b>AT</b> devam</p>
@@ -103,7 +105,7 @@ import Base from '../layouts/Base.astro';
 
 <script>
   import { parseGrades, compute, scenarios, fmt, rankAverage, COMPONENTS, type GradeRow, type Group, type ComponentKey } from '../lib/mt';
-  import { epeHazir, kaydet, siralama, sil, EpeHata, type SiraSatiri } from '../lib/epe';
+  import { epeHazir, kaydet, siralama, sil, EpeHata, EPE_URL, type SiraSatiri } from '../lib/epe';
 
   const KEY = 'mt-hesap';
   const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -133,12 +135,12 @@ import Base from '../layouts/Base.astro';
     empty.hidden = state.rows.length > 0;
     list.innerHTML = state.rows
       .map(
-        (r, i) => `<li class="row${kind(r.code) === 'AT' ? ' ignored' : ''}">
+        (r, i) => `<li class="row${kind(r.code) === 'AT' ? ' ignored' : ''}${r.tahmin ? ' guess' : ''}">
           <label class="sr-only" for="kod-${i}">Kod</label>
           <input id="kod-${i}" class="code" data-i="${i}" data-f="code" value="${esc(r.code)}" autocomplete="off" autocapitalize="characters" spellcheck="false" />
           <label class="sr-only" for="not-${i}">Not</label>
           <input id="not-${i}" class="val" data-i="${i}" data-f="value" type="number" inputmode="decimal" min="0" max="100" step="any" value="${Number.isFinite(r.value) ? r.value : ''}" />
-          <span class="kind">${kindName[kind(r.code)] ?? '?'}</span>
+          <span class="kind">${kindName[kind(r.code)] ?? '?'}${r.tahmin ? ' · tahmin' : ''}</span>
           <button type="button" class="del" data-del="${i}" aria-label="${esc(r.code)} satırını sil">×</button>
         </li>`,
       )
@@ -153,7 +155,7 @@ import Base from '../layouts/Base.astro';
       state.rows[i].code = el.value.toUpperCase().trim();
       const li = el.closest('li')!;
       li.classList.toggle('ignored', kind(state.rows[i].code) === 'AT');
-      li.querySelector('.kind')!.textContent = kindName[kind(state.rows[i].code)] ?? '?';
+      li.querySelector('.kind')!.textContent = (kindName[kind(state.rows[i].code)] ?? '?') + (state.rows[i].tahmin ? ' · tahmin' : '');
     } else {
       state.rows[i].value = el.value === '' ? NaN : Number(el.value);
     }
@@ -174,19 +176,13 @@ import Base from '../layouts/Base.astro';
   });
 
   function setRows(rows: GradeRow[]) {
-    // Yeni okunan satırlar eskilerin üstüne yazar (aynı kod), diğerleri kalır.
-    const map = new Map(state.rows.map((r) => [r.code, r.value]));
-    rows.forEach((r) => map.set(r.code, r.value));
-    state.rows = [...map].map(([code, value]) => ({ code, value }));
+    // Asistana ulaşılamadığında yazılı notlar yerelde ayrıştırılıp listeye eklenir (aynı kod üstüne yazar).
+    const map = new Map(state.rows.map((r) => [r.code, r]));
+    rows.forEach((r) => map.set(r.code, r));
+    state.rows = [...map.values()];
     renderRows();
     update();
   }
-
-  $('metin-oku').addEventListener('click', () => {
-    const rows = parseGrades($<HTMLTextAreaElement>('metin').value);
-    if (rows.length) setRows(rows);
-    status(rows.length ? `${rows.length} not okundu.` : 'Metinde not bulamadım. "QZ01 91" gibi yazılmalı.');
-  });
 
   // ---- Ayarlar
   document.querySelectorAll<HTMLInputElement>('input[name="grup"]').forEach((r) => {
@@ -255,6 +251,7 @@ import Base from '../layouts/Base.astro';
     }
 
     const r = res.r!;
+    const tahminli = rows.some((x) => x.tahmin);
     let big = '';
     if (res.status === 'settled') {
       big = `<div class="verdict ${res.settledPass ? 'ok' : 'bad'}">
@@ -312,7 +309,7 @@ import Base from '../layouts/Base.astro';
         .join('')}
       </tbody></table>`;
 
-    out.innerHTML = `${big}
+    out.innerHTML = `${big}${tahminli ? '<p class="hint guess-note">Tahmini notlar dahil hesaplandı; sıralamaya yalnızca gerçek notlar girer.</p>' : ''}
       <h3 class="sub">Şu ana kadarki katkın</h3>
       <table class="parts"><tbody>${breakdown}
         <tr class="sum"><th scope="row">Toplam (ara sınavsız)</th><td></td><td>${fmt(r)} / 50</td></tr>
@@ -320,92 +317,137 @@ import Base from '../layouts/Base.astro';
       ${table}`;
   }
 
-  // ---- OCR
-  const ocrStatus = $('ocr-durum');
-  function status(text: string) {
-    ocrStatus.hidden = !text;
-    ocrStatus.textContent = text;
+  // ---- Yapay zeka asistanı (Supabase edge function "epe-ai" üzerinden Mistral; anahtar sunucuda)
+  const AI_URL = `${EPE_URL}/functions/v1/epe-ai`;
+  const sohbet = $<HTMLOListElement>('sohbet');
+  const mesaj = $<HTMLTextAreaElement>('mesaj');
+  const gonder = $<HTMLButtonElement>('gonder');
+  const onizleme = $('onizleme');
+  const onizlemeImg = $<HTMLImageElement>('onizleme-img');
+  let ekli: string | null = null;
+
+  function balon(text: string, who: 'me' | 'bot' | 'err', img?: string) {
+    const li = document.createElement('li');
+    li.className = `msg ${who}`;
+    if (img) {
+      const im = document.createElement('img');
+      im.src = img;
+      im.alt = 'Gönderilen ekran görüntüsü';
+      li.append(im);
+    }
+    if (text) {
+      const sp = document.createElement('span');
+      sp.textContent = text;
+      li.append(sp);
+    }
+    sohbet.append(li);
+    sohbet.scrollTop = sohbet.scrollHeight;
+    return li;
   }
 
-  let tesseract: Promise<any> | null = null;
-  function loadTesseract(): Promise<any> {
-    if ((window as any).Tesseract) return Promise.resolve((window as any).Tesseract);
-    tesseract ??= new Promise((ok, fail) => {
-      const s = document.createElement('script');
-      s.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
-      s.onload = () => ok((window as any).Tesseract);
-      s.onerror = () => {
-        tesseract = null;
-        fail(new Error('yüklenemedi'));
-      };
-      document.head.append(s);
-    });
-    return tesseract;
-  }
-
-  // Kırmızı rakamlar açık gri zeminde: 2 kat büyüt, griye çevir, eşikle.
-  async function prepare(file: Blob): Promise<HTMLCanvasElement> {
+  // Görüntüyü en uzun kenarı 1600 px olacak şekilde küçültüp JPEG yapar (istek küçük kalsın).
+  async function kucult(file: Blob): Promise<string> {
     const bmp = await createImageBitmap(file);
-    const scale = Math.min(2, 4000 / Math.max(bmp.width, bmp.height));
+    const k = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
     const c = document.createElement('canvas');
-    c.width = Math.round(bmp.width * scale);
-    c.height = Math.round(bmp.height * scale);
+    c.width = Math.round(bmp.width * k);
+    c.height = Math.round(bmp.height * k);
     const ctx = c.getContext('2d')!;
-    ctx.imageSmoothingQuality = 'high';
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, c.width, c.height);
     ctx.drawImage(bmp, 0, 0, c.width, c.height);
-    const img = ctx.getImageData(0, 0, c.width, c.height);
-    const d = img.data;
-    for (let i = 0; i < d.length; i += 4) {
-      const y = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
-      const v = y < 170 ? 0 : 255;
-      d[i] = d[i + 1] = d[i + 2] = v;
-    }
-    ctx.putImageData(img, 0, 0);
-    return c;
+    return c.toDataURL('image/jpeg', 0.85);
   }
 
-  let busy = false;
-  async function readImage(file: Blob) {
-    if (busy) return;
-    busy = true;
+  async function gorselEkle(file: Blob) {
     try {
-      status('Okuyucu yükleniyor…');
-      const T = await loadTesseract();
-      const canvas = await prepare(file);
-      const worker = await T.createWorker('eng', 1, {
-        logger: (m: any) => {
-          if (m.status === 'recognizing text') status(`Görüntü okunuyor… %${Math.round(m.progress * 100)}`);
-        },
-      });
-      const { data } = await worker.recognize(canvas);
-      await worker.terminate();
-      $('ocr-ham-metin').textContent = data.text.trim();
-      $('ocr-ham').hidden = false;
-      const rows = parseGrades(data.text);
-      if (rows.length) {
-        setRows(rows);
-        status(`${rows.length} not okundu. Aşağıdan kontrol et.`);
-      } else {
-        status('Görüntüde not bulamadım. Daha net bir görüntü dene ya da notları elle gir.');
-      }
+      ekli = await kucult(file);
     } catch {
-      status('Görüntü okunamadı (internet bağlantısını kontrol et). Notları metin olarak ya da elle girebilirsin.');
+      balon('Bu görüntü açılamadı, başka bir görüntü dene.', 'err');
+      return;
+    }
+    onizlemeImg.src = ekli;
+    onizleme.hidden = false;
+    mesaj.focus();
+  }
+  function ekiKaldir() {
+    ekli = null;
+    onizleme.hidden = true;
+    onizlemeImg.removeAttribute('src');
+    $<HTMLInputElement>('dosya').value = '';
+  }
+  $('onizleme-sil').addEventListener('click', ekiKaldir);
+
+  const aiHata: Record<string, string> = {
+    anahtar_yok: 'Asistan henüz ayarlanmadı. Notları aşağıdan elle girebilirsin.',
+    sinir: 'Bugünkü asistan kullanım sınırı doldu, yarın tekrar dene. Notları aşağıdan elle girebilirsin.',
+    mistral_sinir: 'Asistan şu an yoğun, biraz sonra tekrar dene.',
+    buyuk: 'Görüntü çok büyük, kırpıp tekrar dene.',
+  };
+
+  let mesgul = false;
+  async function sor() {
+    const text = mesaj.value.trim();
+    if (mesgul || (!text && !ekli)) return;
+    mesgul = true;
+    gonder.disabled = true;
+    const image = ekli;
+    balon(text, 'me', image ?? undefined);
+    mesaj.value = '';
+    ekiKaldir();
+    const bekle = balon(image ? 'Görüntüye bakıyorum…' : 'Bakıyorum…', 'bot');
+    bekle.classList.add('wait');
+    try {
+      const res = await fetch(AI_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image, message: text, rows: state.rows.filter((r) => r.code && Number.isFinite(r.value)) }),
+      });
+      const j = await res.json().catch(() => ({}));
+      if (!res.ok || !Array.isArray(j.rows)) throw new Error(j.hata ?? 'baglanti');
+      state.rows = j.rows.map((r: GradeRow) => ({ code: r.code, value: r.value, ...(r.tahmin ? { tahmin: true } : {}) }));
+      renderRows();
+      update();
+      bekle.remove();
+      balon(j.yanit || 'Listeyi güncelledim.', 'bot');
+    } catch (err) {
+      bekle.remove();
+      const kod = err instanceof Error ? err.message : 'baglanti';
+      // Asistana ulaşılamazsa yazılı notları ("QZ04 75") yerelde ayrıştır.
+      const varsayim = /alırsam|alsam|olursa|varsay|tahmin|diyelim/i.test(text);
+      const yerel = (text ? parseGrades(text) : []).map((r) => (varsayim ? { ...r, tahmin: true } : r));
+      if (yerel.length) {
+        setRows(yerel);
+        balon(`Asistana ulaşılamadı; yazdığın ${yerel.length} notu listeye ekledim.`, 'err');
+      } else {
+        balon(aiHata[kod] ?? 'Asistana ulaşılamadı. Notları aşağıdan elle girebilirsin.', 'err');
+      }
     } finally {
-      busy = false;
-      $<HTMLInputElement>('dosya').value = '';
+      mesgul = false;
+      gonder.disabled = false;
     }
   }
 
+  $('ai-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    sor();
+  });
+  mesaj.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && matchMedia('(pointer: fine)').matches) {
+      e.preventDefault();
+      sor();
+    }
+  });
   $<HTMLInputElement>('dosya').addEventListener('change', (e) => {
     const f = (e.target as HTMLInputElement).files?.[0];
-    if (f) readImage(f);
+    if (f) gorselEkle(f);
   });
   document.addEventListener('paste', (e) => {
     const item = [...(e.clipboardData?.items ?? [])].find((i) => i.type.startsWith('image/'));
     if (item) {
       e.preventDefault();
       const f = item.getAsFile();
-      if (f) readImage(f);
+      if (f) gorselEkle(f);
     }
   });
   const drop = $('drop');
@@ -418,7 +460,7 @@ import Base from '../layouts/Base.astro';
     e.preventDefault();
     drop.classList.remove('over');
     const f = [...(e.dataTransfer?.files ?? [])].find((f) => f.type.startsWith('image/'));
-    if (f) readImage(f);
+    if (f) gorselEkle(f);
   });
 
   // ---- Kimlik ve sınıf sıralaması
@@ -511,7 +553,7 @@ import Base from '../layouts/Base.astro';
       kayitDurum.textContent = 'Not girince sıralamaya eklenirsin';
       return;
     }
-    const notlar = rows.filter((r) => /^(QZ|WA|SA|MT|MD)/.test(r.code));
+    const notlar = rows.filter((r) => !r.tahmin && /^(QZ|WA|SA|MT|MD)/.test(r.code)).map(({ code, value }) => ({ code, value }));
     const imza = JSON.stringify([kimlik.ad, state.group, notlar, avg]);
     if (imza === sonGonderilen || avg == null) return;
     kayitDurum.textContent = 'Kaydediliyor…';
@@ -647,52 +689,7 @@ import Base from '../layouts/Base.astro';
     background: var(--paper-sunk);
   }
 
-  /* Görüntü alanı */
-  .mt .drop {
-    display: grid;
-    gap: var(--space-3);
-    justify-items: start;
-    padding: var(--space-4);
-    border: 1.5px dashed var(--rule);
-    border-radius: var(--radius-md);
-    transition: border-color 0.15s, background 0.15s;
-  }
-  .mt .drop.over {
-    border-color: var(--accent);
-    background: var(--accent-soft);
-  }
-  .mt .drop-btn {
-    min-height: 44px;
-    cursor: pointer;
-  }
-  .mt #dosya:focus-visible + .drop-btn {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
-  .mt .ocr-durum {
-    margin: 0;
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--accent);
-  }
 
-  .mt .paste {
-    margin-top: var(--space-4);
-  }
-  .mt .paste summary {
-    cursor: pointer;
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--accent);
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-  }
-  .mt .paste[open] {
-    display: grid;
-    gap: var(--space-2);
-    justify-items: start;
-  }
   .mt .field-label {
     font-size: 14px;
     line-height: 20px;
@@ -974,24 +971,117 @@ import Base from '../layouts/Base.astro';
     margin: 0 0 var(--space-2);
   }
 
-  .mt .ocr-ham {
-    font-size: 14px;
-    color: var(--ink-muted);
-    max-width: 100%;
-  }
-  .mt .ocr-ham summary {
-    cursor: pointer;
-    min-height: 32px;
-  }
-  .mt .ocr-ham pre {
-    margin: var(--space-2) 0 0;
+
+  /* Yapay zeka sohbeti */
+  .mt .ai {
+    display: grid;
+    gap: var(--space-3);
     padding: var(--space-3);
-    border-radius: var(--radius-sm);
-    background: var(--paper-sunk);
-    font-family: var(--font-mono);
-    font-size: 13px;
-    white-space: pre-wrap;
+    border: 1.5px dashed var(--rule);
+    border-radius: var(--radius-md);
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .mt .ai.over {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .mt .chat {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    max-height: 22rem;
+    overflow-y: auto;
+  }
+  .mt .msg {
+    max-width: 88%;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    font-size: 15px;
+    line-height: 22px;
     overflow-wrap: anywhere;
+  }
+  .mt .msg.bot {
+    align-self: flex-start;
+    background: var(--paper-sunk);
+  }
+  .mt .msg.me {
+    align-self: flex-end;
+    background: var(--accent-soft);
+    display: grid;
+    gap: var(--space-2);
+    justify-items: end;
+  }
+  .mt .msg.err {
+    align-self: flex-start;
+    background: var(--accent-2-soft);
+  }
+  .mt .msg.wait {
+    color: var(--ink-muted);
+  }
+  .mt .msg img {
+    display: block;
+    max-width: 100%;
+    max-height: 9rem;
+    border-radius: var(--radius-sm);
+  }
+  .mt .composer {
+    display: grid;
+    gap: var(--space-2);
+  }
+  .mt .composer-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-2);
+  }
+  .mt .attach {
+    min-height: 44px;
+    cursor: pointer;
+  }
+  .mt #dosya:focus-visible + .attach {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .mt #gonder:disabled {
+    opacity: 0.6;
+    cursor: progress;
+  }
+  .mt .thumb {
+    position: relative;
+    justify-self: start;
+  }
+  .mt .thumb img {
+    display: block;
+    max-height: 6rem;
+    max-width: 12rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--rule);
+  }
+  .mt .thumb-x {
+    position: absolute;
+    top: -12px;
+    right: -12px;
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 18px;
+    cursor: pointer;
+  }
+  .mt .row.guess .val,
+  .mt .row.guess .code {
+    border-style: dashed;
+  }
+  .mt .row.guess .kind {
+    color: var(--accent-2);
+  }
+  .mt .guess-note {
+    margin-top: var(--space-2);
   }
 
   /* İsim ve sıralama */

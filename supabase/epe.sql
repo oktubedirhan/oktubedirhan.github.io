@@ -96,3 +96,39 @@ revoke all on function public.mt_sil(text, text) from public;
 grant execute on function public.mt_kaydet(text, text, text, jsonb, numeric) to anon, authenticated;
 grant execute on function public.mt_siralama(text) to anon, authenticated;
 grant execute on function public.mt_sil(text, text) to anon, authenticated;
+
+-- Yapay zeka asistanı (edge function epe-ai, supabase/functions/epe-ai) için günlük kullanım sınırı.
+-- Yalnızca edge function (service_role) çağırır; kişi IP özetiyle tutulur, ham IP saklanmaz.
+create table public.ai_kullanim (
+  gun date not null default (now() at time zone 'Europe/Istanbul')::date,
+  anahtar text not null,
+  sayi int not null default 0,
+  primary key (gun, anahtar)
+);
+alter table public.ai_kullanim enable row level security;
+revoke all on public.ai_kullanim from anon, authenticated;
+
+create or replace function public.ai_hak(p_kisi text, p_kisi_sinir int, p_toplam_sinir int)
+returns boolean
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_gun date := (now() at time zone 'Europe/Istanbul')::date;
+  v_kisi int;
+  v_toplam int;
+begin
+  insert into public.ai_kullanim (gun, anahtar, sayi) values (v_gun, '*', 1)
+  on conflict (gun, anahtar) do update set sayi = public.ai_kullanim.sayi + 1
+  returning sayi into v_toplam;
+  insert into public.ai_kullanim (gun, anahtar, sayi) values (v_gun, p_kisi, 1)
+  on conflict (gun, anahtar) do update set sayi = public.ai_kullanim.sayi + 1
+  returning sayi into v_kisi;
+  delete from public.ai_kullanim where gun < v_gun - 7;
+  return v_kisi <= p_kisi_sinir and v_toplam <= p_toplam_sinir;
+end;
+$$;
+
+revoke all on function public.ai_hak(text, int, int) from public, anon, authenticated;
+grant execute on function public.ai_hak(text, int, int) to service_role;

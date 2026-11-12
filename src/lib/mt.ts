@@ -4,6 +4,8 @@
 export interface GradeRow {
   code: string;
   value: number;
+  /** Henüz alınmamış, varsayılan not: hesaba girer, sıralamaya girmez. */
+  tahmin?: boolean;
 }
 
 export type Group = '501' | '401';
@@ -240,7 +242,7 @@ export function rankAverage(rows: GradeRow[]): number | null {
   let sum = 0;
   let w = 0;
   for (const [re, weight] of parts) {
-    const vals = rows.filter((r) => re.test(r.code) && Number.isFinite(r.value)).map((r) => r.value);
+    const vals = rows.filter((r) => !r.tahmin && re.test(r.code) && Number.isFinite(r.value)).map((r) => r.value);
     if (!vals.length) continue;
     sum += weight * (vals.reduce((a, b) => a + b, 0) / vals.length);
     w += weight;
