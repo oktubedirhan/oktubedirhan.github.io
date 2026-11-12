@@ -27,7 +27,12 @@ import Base from '../layouts/Base.astro';
       <button type="button" class="link-btn" id="ad-degistir">Adı değiştir</button>
     </div>
 
-    <section class="card" aria-labelledby="h-giris" data-kapili>
+    <nav class="tabs" role="tablist" aria-label="Bölümler" data-kapili>
+      <button type="button" role="tab" class="tab" data-tab="not" aria-selected="true">Not hesabı</button>
+      <button type="button" role="tab" class="tab" data-tab="yazi" aria-selected="false">Writing değerlendirme</button>
+    </nav>
+
+    <section class="card" aria-labelledby="h-giris" data-kapili data-sekme="not">
       <h2 id="h-giris" class="card-title">1 · Notların</h2>
 
       <div class="ai" id="drop">
@@ -60,7 +65,7 @@ import Base from '../layouts/Base.astro';
       <p class="hint legend"><b>QZ</b> quiz · <b>WA</b> writing · <b>SA</b> speaking · <b>MT</b> ara sınav (aldıysan) · <b>AT</b> devam</p>
     </section>
 
-    <section class="card" aria-labelledby="h-ayar" data-kapili>
+    <section class="card" aria-labelledby="h-ayar" data-kapili data-sekme="not">
       <h2 id="h-ayar" class="card-title">2 · Ayarlar</h2>
       <div class="settings">
         <fieldset class="seg">
@@ -78,12 +83,12 @@ import Base from '../layouts/Base.astro';
       <div class="estimates" id="tahminler" hidden></div>
     </section>
 
-    <section class="card result" id="sonuc" aria-live="polite" aria-labelledby="h-sonuc" data-kapili>
+    <section class="card result" id="sonuc" aria-live="polite" aria-labelledby="h-sonuc" data-kapili data-sekme="not">
       <h2 id="h-sonuc" class="card-title">3 · Sonuç</h2>
       <div id="sonuc-govde"><p class="empty">Notlarını girince sonuç burada çıkacak.</p></div>
     </section>
 
-    <section class="card" aria-labelledby="h-sira" data-kapili>
+    <section class="card" aria-labelledby="h-sira" data-kapili data-sekme="not">
       <div class="rank-head">
         <h2 id="h-sira" class="card-title">4 · Sınıf sıralaması</h2>
         <span class="save-state" id="kayit-durum" role="status"></span>
@@ -95,10 +100,39 @@ import Base from '../layouts/Base.astro';
       <button type="button" class="link-btn leave" id="cik" hidden>Beni sıralamadan çıkar</button>
     </section>
 
-    <section class="rule-box" aria-labelledby="h-kural" data-kapili>
+    <section class="rule-box" aria-labelledby="h-kural" data-kapili data-sekme="not">
       <h2 id="h-kural" class="sub">Kural</h2>
       <p><b>Özel güz ortalaması</b> = Ara sınavlar %50 + Quizler %25 + Writing %15 + Speaking %10. Yuvarlama geçerli: 501'de <b>74,50</b> ve üstü İYS II'ye girer, 74,49 ve altı DBE502'ye devam eder (401'de eşik 79,50).</p>
       <p class="muted">Hesap şu anki notlarla; yeni quiz, writing ya da speaking notu gelince tekrar gir. Resmi değil, kendi hesabımız; son söz DBE'nin.</p>
+    </section>
+
+    <section class="card" aria-labelledby="h-yazi" data-kapili data-sekme="yazi">
+      <h2 id="h-yazi" class="card-title">Writing değerlendirme</h2>
+      <p class="hint">DBE 501 bağımsız yazma (paragraf) rubric'iyle: Content, Organization, Grammar ve Vocabulary 1–5, toplam 20. Yazın kaydedilmez; değerlendirme için Mistral'a gönderilir. Resmi not değildir.</p>
+      <form id="yazi-form" class="w-form">
+        <label class="field-label" for="w-soru">Soru (writing prompt)</label>
+        <textarea id="w-soru" rows="2" maxlength="1000" placeholder="ör. What are the disadvantages of online shopping?"></textarea>
+        <div class="w-limit">
+          <label class="field-label" for="w-sinir">Kelime sınırı (varsa)</label>
+          <input id="w-sinir" type="number" inputmode="numeric" min="1" max="1000" step="1" placeholder="ör. 120" />
+        </div>
+        <div class="w-head">
+          <label class="field-label" for="w-metin">Paragrafın</label>
+          <span class="hint" id="w-sayac">0 kelime</span>
+        </div>
+        <textarea id="w-metin" rows="10" maxlength="6000" placeholder="Paragrafını yapıştır ya da el yazısı kâğıdının fotoğrafını ekle."></textarea>
+        <p class="w-durum" id="w-durum" role="status" hidden></p>
+        <div class="composer-row">
+          <input type="file" id="w-dosya" accept="image/*" class="sr-only" />
+          <label for="w-dosya" class="btn attach">Fotoğraftan oku</label>
+          <button type="submit" class="btn btn-primary" id="w-gonder">Değerlendir</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="card result" id="w-sonuc" aria-live="polite" aria-labelledby="h-wsonuc" data-kapili data-sekme="yazi" hidden>
+      <h2 id="h-wsonuc" class="card-title">Değerlendirme</h2>
+      <div id="w-govde"></div>
     </section>
   </div>
 </Base>
@@ -485,6 +519,27 @@ import Base from '../layouts/Base.astro';
   const kayitDurum = $('kayit-durum');
   const temizAd = (s: string) => s.trim().replace(/\s+/g, ' ');
 
+  // ---- Sekmeler: Not hesabı / Writing. #writing ile doğrudan Writing açılır.
+  let sekme: 'not' | 'yazi' = location.hash === '#writing' ? 'yazi' : 'not';
+  try {
+    if (location.hash !== '#writing' && localStorage.getItem('epe-sekme') === 'yazi') sekme = 'yazi';
+  } catch {}
+  function sekmeUygula() {
+    document.querySelectorAll<HTMLElement>('[data-sekme]').forEach((el) => {
+      el.hidden = el.dataset.sekme !== sekme || (el.id === 'w-sonuc' && !el.dataset.dolu);
+    });
+    document.querySelectorAll<HTMLButtonElement>('[data-tab]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === sekme)));
+  }
+  document.querySelectorAll<HTMLButtonElement>('[data-tab]').forEach((b) =>
+    b.addEventListener('click', () => {
+      sekme = b.dataset.tab === 'yazi' ? 'yazi' : 'not';
+      try {
+        localStorage.setItem('epe-sekme', sekme);
+      } catch {}
+      sekmeUygula();
+    }),
+  );
+
   function showGate(on: boolean) {
     gate.hidden = !on;
     $('merhaba').hidden = on;
@@ -494,6 +549,7 @@ import Base from '../layouts/Base.astro';
       adInput.focus();
     } else {
       $('merhaba-ad').textContent = kimlik!.ad;
+      sekmeUygula();
     }
   }
 
@@ -633,6 +689,170 @@ import Base from '../layouts/Base.astro';
   update();
   if (kimlik) yenileSiralama();
 </script>
+
+<script>
+  // Writing değerlendirme sekmesi: yazı "epe-writing" fonksiyonuna gider, model ham puanları ve bayrakları
+  // döndürür; rubric'in tavanları ve kesintileri burada (src/lib/writing.ts) uygulanır. Taslak yalnızca bu cihazda.
+  import { EPE_URL } from '../lib/epe';
+  import { puanla, kelimeSay, KRITERLER, KRITER_AD, type HamDegerlendirme } from '../lib/writing';
+
+  const URL_W = `${EPE_URL}/functions/v1/epe-writing`;
+  const TASLAK = 'epe-yazi';
+  const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+  const soru = $<HTMLTextAreaElement>('w-soru');
+  const sinir = $<HTMLInputElement>('w-sinir');
+  const metin = $<HTMLTextAreaElement>('w-metin');
+  const sayac = $('w-sayac');
+  const durum = $('w-durum');
+  const gonder = $<HTMLButtonElement>('w-gonder');
+  const sonuc = $('w-sonuc');
+  const govde = $('w-govde');
+
+  const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+  const hataMetni: Record<string, string> = {
+    anahtar_yok: 'Değerlendirici henüz ayarlanmadı.',
+    sinir: 'Bugünkü writing değerlendirme sınırı doldu, yarın tekrar dene.',
+    mistral_sinir: 'Değerlendirici şu an yoğun, biraz sonra tekrar dene.',
+    buyuk: 'Fotoğraf çok büyük, kırpıp tekrar dene.',
+    bos: 'Önce paragrafını yaz ya da fotoğrafını ekle.',
+  };
+
+  try {
+    const t = JSON.parse(localStorage.getItem(TASLAK) ?? 'null');
+    if (t) {
+      soru.value = t.soru ?? '';
+      sinir.value = t.sinir ?? '';
+      metin.value = t.metin ?? '';
+    }
+  } catch {}
+  const kaydet = () => {
+    try {
+      localStorage.setItem(TASLAK, JSON.stringify({ soru: soru.value, sinir: sinir.value, metin: metin.value }));
+    } catch {}
+  };
+  const say = () => {
+    const n = kelimeSay(metin.value);
+    const lim = Number(sinir.value);
+    sayac.textContent = `${n} kelime` + (lim > 0 ? ` / sınır ${lim}` : '');
+    sayac.classList.toggle('az', lim > 0 && n < lim);
+  };
+  [soru, sinir, metin].forEach((el) => el.addEventListener('input', () => (kaydet(), say())));
+  say();
+
+  function bildir(text: string, hata = false) {
+    durum.hidden = !text;
+    durum.textContent = text;
+    durum.classList.toggle('err', hata);
+  }
+
+  async function istek(body: Record<string, unknown>) {
+    const res = await fetch(URL_W, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    const j = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(j.hata ?? 'baglanti');
+    return j;
+  }
+
+  async function kucult(file: Blob): Promise<string> {
+    const bmp = await createImageBitmap(file);
+    const k = Math.min(1, 2000 / Math.max(bmp.width, bmp.height));
+    const c = document.createElement('canvas');
+    c.width = Math.round(bmp.width * k);
+    c.height = Math.round(bmp.height * k);
+    const ctx = c.getContext('2d')!;
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, c.width, c.height);
+    ctx.drawImage(bmp, 0, 0, c.width, c.height);
+    return c.toDataURL('image/jpeg', 0.88);
+  }
+
+  let mesgul = false;
+  $<HTMLInputElement>('w-dosya').addEventListener('change', async (e) => {
+    const inp = e.target as HTMLInputElement;
+    const f = inp.files?.[0];
+    inp.value = '';
+    if (!f || mesgul) return;
+    mesgul = true;
+    gonder.disabled = true;
+    bildir('Fotoğraftaki yazı okunuyor…');
+    try {
+      const j = await istek({ is: 'oku', image: await kucult(f) });
+      metin.value = j.metin ?? '';
+      kaydet();
+      say();
+      bildir(
+        (j.okunamayan ? `${j.okunamayan} kelime okunamadı ve [?] ile işaretlendi. ` : '') +
+          'Okunan metni kontrol et, yanlış okunan yer varsa düzelt; sonra Değerlendir\'e bas.',
+      );
+      metin.focus();
+    } catch (err) {
+      bildir(hataMetni[(err as Error).message] ?? 'Fotoğraf okunamadı. Paragrafı yazarak da girebilirsin.', true);
+    } finally {
+      mesgul = false;
+      gonder.disabled = false;
+    }
+  });
+
+  $('yazi-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (mesgul) return;
+    if (!metin.value.trim()) return bildir(hataMetni.bos, true);
+    mesgul = true;
+    gonder.disabled = true;
+    bildir('Değerlendiriliyor… (yarım dakika kadar sürebilir)');
+    try {
+      const ham = (await istek({ is: 'puanla', soru: soru.value, metin: metin.value, sinir: Number(sinir.value) || null })) as HamDegerlendirme & { kelime: number };
+      bildir('');
+      goster(ham);
+    } catch (err) {
+      bildir(hataMetni[(err as Error).message] ?? 'Değerlendiriciye ulaşılamadı, biraz sonra tekrar dene.', true);
+    } finally {
+      mesgul = false;
+      gonder.disabled = false;
+    }
+  });
+
+  function goster(ham: HamDegerlendirme & { kelime: number }) {
+    const r = puanla(ham);
+    const lim = Number(sinir.value);
+    const az = lim > 0 && ham.kelime < lim;
+    const satirlar = KRITERLER.map((k) => {
+      const once = ham.puanlar[k];
+      const son = r.puanlar[k];
+      const p = once !== son && !r.tekPuan ? `<s>${once}</s> ${son}` : `${son}`;
+      return `<tr><th scope="row">${KRITER_AD[k]}</th><td class="w-p">${p}<span class="muted">/5</span></td><td>${esc(ham.gerekce[k] ?? '')}</td></tr>`;
+    }).join('');
+    const kesinti = r.kesintiler.length
+      ? `<ul class="w-list">${r.kesintiler.map((k) => `<li><b>−${k.puan}</b> ${esc(k.neden)}</li>`).join('')}</ul>`
+      : '';
+    const hatalar = ham.hatalar.length
+      ? `<h3 class="sub">Düzeltilecekler</h3><ul class="w-err">${ham.hatalar
+          .map((h) => `<li><span class="w-old">${esc(h.alinti)}</span> → <span class="w-new">${esc(h.duzeltme)}</span><span class="w-why">${esc(h.aciklama)}</span></li>`)
+          .join('')}</ul>`
+      : '';
+    const oneriler = ham.oneriler.length
+      ? `<h3 class="sub">Puanını yükseltmek için</h3><ul class="w-list">${ham.oneriler.map((o) => `<li>${esc(o)}</li>`).join('')}</ul>`
+      : '';
+    govde.innerHTML = `
+      <div class="verdict${r.toplam20 >= 15 ? ' ok' : r.toplam20 <= 9 ? ' bad' : ''}">
+        <p class="v-kicker">Tahmini puan</p>
+        <p class="v-num">${r.toplam20}<span class="v-of">/20</span></p>
+        <p class="v-text">WP ölçeğinde <b>${r.toplam100}/100</b>. ${esc(ham.ozet)}</p>
+      </div>
+      ${r.tekPuan ? `<p class="w-note">${esc(r.tekPuan)}</p>` : ''}
+      ${r.tavanNotu ? `<p class="w-note">${esc(r.tavanNotu)}</p>` : ''}
+      <table class="w-tab"><tbody>${satirlar}</tbody></table>
+      ${kesinti ? `<h3 class="sub">Kesintiler</h3>${kesinti}` : ''}
+      <p class="hint">${ham.kelime} kelime${lim > 0 ? ` · sınır ${lim}${az ? ' (sınırın altında; Content etkilenebilir)' : ''}` : ''} · ${ham.major_sayisi} ana fikir</p>
+      ${r.uyarilar.map((u) => `<p class="hint">${esc(u)}</p>`).join('')}
+      ${hatalar}
+      ${oneriler}
+      <p class="hint">Yapay zeka değerlendirmesidir, resmi not değildir; aynı yazı farklı denemelerde bir iki puan oynayabilir.</p>`;
+    sonuc.dataset.dolu = '1';
+    sonuc.hidden = false;
+    sonuc.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+  }
+</script>
+
 
 <style is:global>
   .mt {
@@ -1082,6 +1302,151 @@ import Base from '../layouts/Base.astro';
   }
   .mt .guess-note {
     margin-top: var(--space-2);
+  }
+
+  /* Sekmeler */
+  .mt .tabs {
+    display: flex;
+    gap: var(--space-1);
+    padding: var(--space-1);
+    border-radius: var(--radius-pill);
+    background: var(--paper-sunk);
+    justify-self: start;
+    max-width: 100%;
+  }
+  .mt .tab {
+    font: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    min-height: 44px;
+    padding: 0 var(--space-4);
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--ink-muted);
+    cursor: pointer;
+  }
+  .mt .tab[aria-selected='true'] {
+    background: var(--paper-raised);
+    color: var(--ink);
+    box-shadow: var(--shadow-lift);
+  }
+  .mt .tab:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* Writing */
+  .mt .w-form {
+    display: grid;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+  }
+  .mt .w-form textarea {
+    font-family: var(--font-sans);
+  }
+  .mt #w-metin {
+    font-family: var(--font-serif);
+    font-size: 17px;
+    line-height: 27px;
+  }
+  .mt .w-limit {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-3);
+  }
+  .mt .w-limit input {
+    width: 8rem;
+  }
+  .mt .w-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-3);
+    margin-top: var(--space-2);
+  }
+  .mt #w-sayac.az {
+    color: var(--accent-2);
+    font-weight: 500;
+  }
+  .mt .w-durum {
+    margin: 0;
+    font-size: 15px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .mt .w-durum.err {
+    color: var(--accent-2);
+  }
+  .mt .v-of {
+    font-size: 28px;
+    color: var(--ink-muted);
+    margin-left: 4px;
+  }
+  .mt .w-note {
+    margin: var(--space-3) 0 0;
+    padding: var(--space-2) var(--space-3);
+    background: var(--accent-2-soft);
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+  }
+  .mt .w-tab {
+    margin-top: var(--space-4);
+  }
+  .mt .w-tab th,
+  .mt .w-tab td {
+    vertical-align: top;
+    text-align: left;
+    white-space: normal;
+  }
+  .mt .w-tab td.w-p {
+    white-space: nowrap;
+    font-weight: 600;
+    font-size: 17px;
+    text-align: right;
+    padding-right: var(--space-3);
+  }
+  .mt .w-tab td:last-child {
+    color: var(--ink-muted);
+    font-size: 14px;
+    line-height: 21px;
+  }
+  .mt .w-p s {
+    color: var(--ink-muted);
+    font-weight: 400;
+  }
+  .mt .w-list,
+  .mt .w-err {
+    margin: 0;
+    padding-left: var(--space-5);
+    display: grid;
+    gap: var(--space-2);
+    font-size: 15px;
+    line-height: 23px;
+  }
+  .mt .w-err {
+    list-style: none;
+    padding-left: 0;
+  }
+  .mt .w-err li {
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    background: var(--paper-sunk);
+    overflow-wrap: anywhere;
+  }
+  .mt .w-old {
+    text-decoration: line-through;
+    text-decoration-color: var(--accent-2);
+    color: var(--ink-muted);
+  }
+  .mt .w-new {
+    font-weight: 600;
+  }
+  .mt .w-why {
+    display: block;
+    font-size: 14px;
+    color: var(--ink-muted);
   }
 
   /* İsim ve sıralama */
