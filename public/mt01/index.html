@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MT01 Çalışma Defteri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: a ruled exam notebook. Red margin line on the left, graph-paper header, white sheets on cool grey. */
+:root{
+  --paper:#eef0f4; --sheet:#ffffff; --ink:#14182b; --muted:#5a6177; --rule:#d7dbe6;
+  --accent:#b3122b; --accent-soft:#fbe8eb; --good:#12704b; --good-soft:#e2f4ec; --bad:#a3301c; --bad-soft:#fbeae6;
+  --hl:#fff3c2; --grid:rgba(20,24,43,.06);
+  --display:"Archivo","Arial Narrow",Arial,sans-serif;
+  --body:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0f121d; --sheet:#181c2b; --ink:#e8eaf2; --muted:#9aa1b8; --rule:#2d3349;
+    --accent:#ff6b7f; --accent-soft:#3a1a23; --good:#5fd6a6; --good-soft:#143326; --bad:#ff9a85; --bad-soft:#3b1d17;
+    --hl:#4a4014; --grid:rgba(232,234,242,.05); color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0f121d; --sheet:#181c2b; --ink:#e8eaf2; --muted:#9aa1b8; --rule:#2d3349;
+  --accent:#ff6b7f; --accent-soft:#3a1a23; --good:#5fd6a6; --good-soft:#143326; --bad:#ff9a85; --bad-soft:#3b1d17;
+  --hl:#4a4014; --grid:rgba(232,234,242,.05); color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto} *{transition:none!important}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+a{color:var(--accent)}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:980px;margin:0 auto;padding:0 18px}
+
+header.top{background:
+  linear-gradient(var(--grid) 1px,transparent 1px) 0 0/100% 24px,
+  linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/24px 100%, var(--sheet);
+  border-bottom:1px solid var(--rule)}
+.top .wrap{padding-top:28px;padding-bottom:22px;border-left:3px solid var(--accent);padding-left:22px}
+.eyebrow{font-family:var(--mono);font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(30px,6vw,46px);line-height:1.02;margin:6px 0 10px;letter-spacing:-.01em;text-wrap:balance}
+.lede{max-width:62ch;color:var(--muted);margin:0 0 18px}
+.facts{display:flex;flex-wrap:wrap;gap:10px}
+.fact{background:var(--sheet);border:1px solid var(--rule);border-radius:6px;padding:9px 13px;min-width:150px}
+.fact b{display:block;font-family:var(--display);font-size:21px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.15}
+.fact span{font-size:12.5px;color:var(--muted)}
+.fact.hot b{color:var(--accent)}
+
+nav.tabs{position:sticky;top:0;z-index:5;background:var(--paper);border-bottom:1px solid var(--rule)}
+nav.tabs .wrap{display:flex;gap:4px;overflow-x:auto;padding-top:8px;padding-bottom:8px;align-items:center}
+nav.tabs a{flex:none;text-decoration:none;color:var(--muted);font-weight:500;font-size:14.5px;padding:7px 12px;border-radius:5px;border:1px solid transparent}
+nav.tabs a:hover{color:var(--ink)}
+nav.tabs a.on{background:var(--ink);color:var(--paper)}
+nav.tabs a small{font-family:var(--mono);font-size:11px;margin-left:5px;opacity:.75}
+
+main{padding:26px 0 70px}
+.view{display:none}
+.view.on{display:block}
+h2{font-family:var(--display);font-weight:800;font-size:28px;line-height:1.1;margin:0 0 6px;text-wrap:balance}
+h3{font-family:var(--display);font-weight:800;font-size:20px;margin:0 0 8px;text-wrap:balance}
+h4{font-size:13px;font-family:var(--mono);font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:18px 0 8px}
+.sub{color:var(--muted);max-width:66ch;margin:0 0 20px}
+.sheet{background:var(--sheet);border:1px solid var(--rule);border-left:3px solid var(--accent);border-radius:4px;padding:20px 22px;margin:0 0 18px}
+.sheet.plain{border-left:1px solid var(--rule)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px}
+p{margin:0 0 10px} ul,ol{margin:0 0 10px;padding-left:20px} li{margin:3px 0}
+.en{font-family:var(--mono);font-size:14px}
+code,.pat{font-family:var(--mono);font-size:13.5px;background:var(--accent-soft);padding:1px 5px;border-radius:3px}
+mark{background:var(--hl);color:inherit;padding:0 3px;border-radius:2px}
+.x{color:var(--bad);text-decoration:line-through}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+.tw{overflow-x:auto}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:var(--mono);font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 18px}
+.chip{border:1px solid var(--rule);background:var(--sheet);border-radius:999px;padding:5px 12px;font-size:13.5px;cursor:pointer}
+.chip:hover{border-color:var(--ink)}
+.chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+/* exercises */
+.ex{border-top:1px dashed var(--rule);padding:14px 0 12px;display:grid;grid-template-columns:30px 1fr;gap:4px 8px}
+.ex:first-of-type{border-top:0}
+.ex .n{font-family:var(--mono);font-size:13px;color:var(--muted);padding-top:2px}
+.ex .q{margin:0 0 8px}
+.ex .clue{font-family:var(--mono);font-size:13px;color:var(--accent)}
+.opts{display:flex;flex-wrap:wrap;gap:7px}
+.opt{border:1px solid var(--rule);background:var(--sheet);border-radius:5px;padding:6px 12px;cursor:pointer;font-size:14.5px;text-align:left}
+.opt:hover:not(:disabled){border-color:var(--ink)}
+.opt:disabled{cursor:default;opacity:.75}
+.opt.ok{background:var(--good-soft);border-color:var(--good);color:var(--good);opacity:1;font-weight:600}
+.opt.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad);opacity:1}
+.row{display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+.ex input[type=text]{border:0;border-bottom:2px solid var(--ink);background:transparent;padding:4px 2px;font-family:var(--mono);font-size:14.5px;min-width:200px;flex:1 1 200px;max-width:420px;border-radius:0}
+.ex textarea{width:100%;min-height:54px;border:1px solid var(--rule);background:var(--paper);border-radius:4px;padding:8px 10px;font-family:var(--mono);font-size:14px;resize:vertical}
+.btn{border:1px solid var(--ink);background:var(--ink);color:var(--paper);border-radius:5px;padding:6px 13px;font-size:14px;font-weight:500;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--rule)}
+.btn.ghost:hover{border-color:var(--ink)}
+.fb{grid-column:2;font-size:14.5px;margin-top:8px;padding:8px 11px;border-radius:4px;background:var(--paper)}
+.fb.ok{background:var(--good-soft);color:var(--good)}
+.fb.no{background:var(--bad-soft);color:var(--bad)}
+.fb .ans{font-family:var(--mono);font-size:14px;color:var(--ink);display:block;margin-top:3px}
+.fb .why{color:var(--ink);display:block;margin-top:4px}
+.score{font-family:var(--mono);font-size:13px;color:var(--muted);float:right}
+
+/* flashcards */
+.card{min-height:190px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:10px;background:
+  linear-gradient(var(--grid) 1px,transparent 1px) 0 0/100% 24px,var(--sheet);border:1px solid var(--rule);border-radius:6px;padding:22px;cursor:pointer}
+.card .w{font-family:var(--display);font-weight:800;font-size:clamp(24px,5vw,34px);line-height:1.1;overflow-wrap:anywhere}
+.card .t{font-size:18px;color:var(--accent);font-weight:600}
+.card .hint{font-size:12.5px;color:var(--muted);font-family:var(--mono)}
+.bar{height:6px;background:var(--rule);border-radius:3px;overflow:hidden;margin:8px 0 14px}
+.bar i{display:block;height:100%;background:var(--good);width:0}
+.wl{columns:2 260px;column-gap:26px;font-size:14.5px;margin:0;padding:0;list-style:none}
+.wl li{break-inside:avoid;padding:4px 0;border-bottom:1px dotted var(--rule);margin:0}
+.wl b{font-weight:600}
+.wl span{color:var(--muted)}
+
+/* reading */
+.text p{max-width:68ch}
+.text .pn{font-family:var(--mono);font-size:12px;color:var(--accent);margin-right:6px}
+.text u{text-decoration-color:var(--accent);text-underline-offset:3px}
+
+/* plan */
+.day{display:grid;grid-template-columns:96px 1fr;gap:6px 16px;padding:13px 0;border-top:1px solid var(--rule)}
+.day:first-child{border-top:0}
+.day .d{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.day .d b{display:block;font-family:var(--display);font-size:18px;color:var(--ink)}
+.day.exam .d b{color:var(--accent)}
+.todo{list-style:none;padding:0;margin:0}
+.todo label{display:flex;gap:9px;align-items:flex-start;cursor:pointer;padding:2px 0}
+.todo input{margin-top:5px;accent-color:var(--accent)}
+.todo input:checked+span{color:var(--muted);text-decoration:line-through}
+.tag{display:inline-block;font-family:var(--mono);font-size:11.5px;border:1px solid var(--accent);color:var(--accent);border-radius:3px;padding:0 6px;margin-left:6px;vertical-align:1px}
+#wcount{font-family:var(--mono);font-size:13px}
+#essay{width:100%;min-height:260px;border:1px solid var(--rule);background:
+  linear-gradient(transparent 27px,var(--grid) 28px) 0 8px/100% 28px,var(--sheet);border-radius:4px;padding:10px 14px;line-height:28px;font-size:15.5px;resize:vertical}
+.model{border-left:3px solid var(--good);padding-left:14px;max-width:68ch}
+.model i{font-style:normal;border-bottom:2px solid var(--accent)}
+.model b{background:var(--hl);font-weight:500;padding:0 2px}
+footer{color:var(--muted);font-size:13px;padding:0 0 40px}
+@media (max-width:520px){.sheet{padding:16px 14px}.day{grid-template-columns:1fr}.ex{grid-template-columns:22px 1fr}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div class="eyebrow" lang="en">ODTÜ DBE · 501 · Span 1 · High Note 5 Unit 1–4</div>
+  <h1>MT01 Çalışma Defteri</h1>
+  <p class="lede">Dağıtılan handout'lar, span programı, Revision HO ve aktif kelime listelerinden çıkarıldı. Her bölümde kısa kural özeti, sınav formatında alıştırma ve anında geri bildirim var.</p>
+  <div class="facts">
+    <div class="fact"><b id="f-w">Çar 18 Kas</b><span>MT1B · Writing</span></div>
+    <div class="fact"><b id="f-m">Per 19 Kas</b><span>MT1A · Listening, Language, Vocabulary, Reading</span></div>
+    <div class="fact hot"><b>78+</b><span>hedef (İYS II eşiği için gereken ≈ 75,1)</span></div>
+    <div class="fact"><b id="f-p">0 / 0</b><span>doğru çözülen alıştırma</span></div>
+  </div>
+</div></header>
+
+<nav class="tabs" aria-label="Bölümler"><div class="wrap">
+  <a href="#plan">Plan</a><a href="#gramer">Gramer</a><a href="#kelime">Kelime</a><a href="#okuma">Okuma</a><a href="#dinleme">Dinleme</a><a href="#yazma">Yazma</a><a href="#anahtar">Revision HO anahtarı</a>
+</div></nav>
+
+<main><div class="wrap">
+
+<!-- PLAN -->
+<section class="view" id="v-plan">
+  <h2>Sınav haritası ve 5 günlük plan</h2>
+  <p class="sub">Programa göre pazartesi sınıfta Revision HO, salı soru-cevap var. Çarşamba yazma, perşembe ana sınav.</p>
+  <div class="grid2">
+    <div class="sheet"><h3>MT1A neleri ölçüyor</h3>
+      <div class="tw"><table>
+        <tr><th>Bölüm</th><th>Soru tipi (Revision HO'ya göre)</th></tr>
+        <tr><td>Listening</td><td>Röportaj çoktan seçmeli, özet doldurma (en fazla 2 kelime/sayı), eşleştirme</td></tr>
+        <tr><td>Language</td><td>Fiil formu doldurma, cloze çoktan seçmeli, tek kelime doldurma, ipucuyla yeniden yazma, relative clause birleştirme</td></tr>
+        <tr><td>Vocabulary</td><td>Kutudan kelime seçme, kelime türetme (word formation)</td></tr>
+        <tr><td>Reading</td><td>Referans, metinden kelime bulma, cümle tamamlama, açık uçlu, çoktan seçmeli</td></tr>
+      </table></div>
+    </div>
+    <div class="sheet"><h3>Kapsam</h3>
+      <ul>
+        <li><b>High Note 5:</b> Unit 1–4 ve aktif kelime listesi</li>
+        <li><b>GHO 1–4:</b> tenses, noun clauses, relative clauses, wish clauses</li>
+        <li><b>Outside:</b> inversion 1A–1B, reported passive, alternatives to <i>if</i>, VP 1–2</li>
+        <li><b>More to Read II:</b> ödev metinleri ve collocation listesi. 107 ve 109 MT1A'dan önce okunacak.</li>
+        <li><b>WHO 1–4 + Paraphrasing:</b> yazma kalıpları Language bölümünde de sorulabilir.</li>
+      </ul>
+      <p style="color:var(--muted);font-size:14px;margin:0">Short story ve TED Talk handout'ları sınav kapsamı dışında.</p>
+    </div>
+  </div>
+  <div class="sheet"><h3>Gün gün</h3><div id="plan"></div></div>
+  <div class="sheet plain"><h3>Senin için öncelik sırası</h3>
+    <ol>
+      <li><b>Yazma.</b> WA01 notun 60'tı; rubrikte iki major yoksa 20 üzerinden en fazla 12 alınıyor. Sınavdan önce en az üç paragraf yaz.</li>
+      <li><b>Kelime.</b> Son iki quizdeki düşüş büyük olasılıkla buradan. Kartları her gün 15 dakika çevir.</li>
+      <li><b>Yeniden yazma soruları.</b> Inversion, cleft, reported passive ve mixed conditional kalıpları ezber ister; kalıbı bilince puan garantidir.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- GRAMER -->
+<section class="view" id="v-gramer">
+  <h2>Gramer</h2>
+  <p class="sub">Dokuz konu. Önce kural kartını oku, sonra soruları çöz. Yeniden yazma sorularında cevabını yaz, anahtarla karşılaştır ve kendini işaretle.</p>
+  <div class="chips" id="gchips"></div>
+  <div id="gram"></div>
+</section>
+
+<!-- KELIME -->
+<section class="view" id="v-kelime">
+  <h2>Kelime</h2>
+  <p class="sub">Aktif listeden ve MTR collocation listesinden sınavda çıkma ihtimali en yüksek olanlar. Karta dokun, anlamı gör, bildiğini işaretle.</p>
+  <div class="sheet">
+    <div class="chips" id="decks"></div>
+    <div class="row" style="justify-content:space-between"><span class="en" id="fcpos"></span><span class="en" id="fcknown"></span></div>
+    <div class="bar"><i id="fcbar"></i></div>
+    <div class="card" id="card" tabindex="0" role="button" aria-label="Kartı çevir"></div>
+    <div class="row" style="margin-top:12px">
+      <button class="btn" id="fc-know">Biliyorum</button>
+      <button class="btn ghost" id="fc-again">Tekrar gelsin</button>
+      <button class="btn ghost" id="fc-list">Tüm listeyi göster</button>
+    </div>
+    <ul class="wl" id="wl" hidden style="margin-top:16px"></ul>
+  </div>
+  <div class="sheet"><h3>A. Doğru kelimeyi seç <span class="score" data-score="va"></span></h3><div data-set="va"></div></div>
+  <div class="sheet"><h3>B. Kelime türetme <span class="score" data-score="vb"></span></h3>
+    <p class="sub" style="margin-bottom:6px">Parantezdeki kelimenin doğru formunu yaz. Olumsuz ön ek ve çoğul eke dikkat.</p><div data-set="vb"></div></div>
+  <div class="sheet"><h3>C. Edat ve collocation <span class="score" data-score="vc"></span></h3>
+    <p class="sub" style="margin-bottom:6px">MTR listesi kelimeleri edatıyla birlikte veriyor; sınavda da öyle soruluyor.</p><div data-set="vc"></div></div>
+  <div class="sheet"><h3>D. Deyimle yeniden yaz <span class="score" data-score="vd"></span></h3><div data-set="vd"></div></div>
+</section>
+
+<!-- OKUMA -->
+<section class="view" id="v-okuma">
+  <h2>Okuma</h2>
+  <p class="sub">Soru tipine göre taktik, ardından sınav formatında bir deneme metni. Revision HO'daki iki metnin cevapları son sekmede.</p>
+  <div class="sheet"><h3>Soru tipi taktikleri</h3>
+    <div class="tw"><table>
+      <tr><th>Tip</th><th>Ne yapmalı</th></tr>
+      <tr><td>Referans (it, them, such products)</td><td>Zamirin tekil/çoğul olmasına bak, bir önceki cümleye git, bulduğun ifadeyi zamirin yerine koyup oku. Metindeki kelimelerle, eksiksiz isim öbeği olarak yaz.</td></tr>
+      <tr><td>Metinden kelime bulma</td><td>Tanımın yanındaki tür (v, n, adj) ve paragraf numarası arama alanını daraltır. Formu değiştirme: metinde <span class="en">concealing</span> ise <span class="en">conceal</span> yazma.</td></tr>
+      <tr><td>Cümle tamamlama</td><td>Boşluktan önceki ve sonraki yapıya gramer olarak uymalı. Metinden kopyalarken zamanı ve özneyi cümleye uydur.</td></tr>
+      <tr><td>Açık uçlu</td><td>Sorulan kadar yaz. "TWO ways" diyorsa iki madde. Gereksiz ekleme yanlış bilgi içerirse puan götürür.</td></tr>
+      <tr><td>Opinion mı fact mi</td><td><span class="en">surely, frankly, precious, charming, should</span> gibi değer yargısı taşıyan kelimeler görüş işaretidir. Sayı ve tarih içeren cümle genelde olgudur.</td></tr>
+      <tr><td>Yazar neden bahsediyor</td><td>Örneğin kendisini değil, bağlandığı iddiayı sor: bu örnek hangi cümleyi destekliyor?</td></tr>
+      <tr><td>Kelimenin anlamı</td><td>Kelimeyi kapat, cümleye şıkları tek tek koy. Zıtlık (<span class="en">however, whereas</span>) ve sonuç (<span class="en">therefore</span>) bağlaçları ipucu verir.</td></tr>
+    </table></div>
+  </div>
+  <div class="sheet text"><h3>The Planning Fallacy</h3>
+    <p><span class="pn">1</span>Ask a group of students how long their next assignment will take, and most will give an answer that later proves wildly inaccurate. Psychologists call this tendency the planning fallacy: the habit of underestimating the time a task requires, even when we know that similar tasks have overrun in the past. First described in 1979 by Daniel Kahneman and Amos Tversky, <u>it</u> has since been documented in settings ranging from kitchen renovations to billion-dollar construction projects.</p>
+    <p><span class="pn">2</span>Why do we keep falling prey to it? (I) One explanation is that people focus on the task in front of them and imagine it going smoothly. (II) In a well-known Canadian study, psychology students predicted that they would finish their theses in about 34 days; on average, they needed 56. (III) Frankly, such optimism is one of the most charming flaws of the human mind. What the students failed to take into account was not their ability but the interruptions, illnesses and other setbacks that almost always occur.</p>
+    <p><span class="pn">3</span>The consequences are not limited to missed deadlines. When governments misjudge large projects, taxpayers pay the price. The Sydney Opera House, which was expected to be completed in 1963 at a cost of seven million Australian dollars, opened a decade late and cost over a hundred million. Had the planners examined how comparable buildings had progressed, they might have produced a more realistic estimate.</p>
+    <p><span class="pn">4</span>This is precisely the remedy that researchers recommend. Rather than asking how long this task should take, we ought to ask how long similar ones actually took. Known as taking the “outside view”, this approach replaces hopeful imagination with evidence. It will not eliminate delays altogether; nevertheless, it makes <u>them</u> far less likely to come as a shock.</p>
+    <h4>Sorular <span class="score" data-score="rd"></span></h4>
+    <div data-set="rd"></div>
+  </div>
+</section>
+
+<!-- DINLEME -->
+<section class="view" id="v-dinleme">
+  <h2>Dinleme</h2>
+  <p class="sub">Ses dosyası gerektirdiği için burada alıştırma yok; taktikler ve klasöründeki hangi kayıtları tekrar dinlemen gerektiği var.</p>
+  <div class="grid2">
+    <div class="sheet"><h3>Çoktan seçmeli röportaj</h3>
+      <ul><li>Verilen 75 saniyede soru köklerindeki anahtar kelimelerin altını çiz; şıkları değil kökleri oku.</li>
+      <li>Sorular kayıt sırasıyla gelir. Bir soruyu kaçırırsan bırak, sonrakine geç.</li>
+      <li><span class="en">NOT mentioned</span> sorularında duyduğun iki şıkkı ele, kalan cevaptır.</li>
+      <li>Duygu ve amaç soruları (optimistic, to explain) genelde kapanış cümlesinden çıkar.</li></ul></div>
+    <div class="sheet"><h3>Özet doldurma</h3>
+      <ul><li><span class="en">NO MORE THAN TWO words or numbers</span>: üç kelime yazarsan doğru olsa da puan gider.</li>
+      <li>Boşluktan önceki kelimeye bak: <span class="en">a/an</span> varsa tekil isim, <span class="en">about</span> varsa sayı beklenir.</li>
+      <li>Özet, kaydı başka kelimelerle anlatır; boşluğa gelen kelime ise kayıttaki haliyle yazılır.</li>
+      <li>Yazım hatası puan götürebilir. Sayıları rakamla yaz.</li></ul></div>
+    <div class="sheet"><h3>Eşleştirme</h3>
+      <ul><li>Fazladan bir şık olur. Şıkları önceden birer kelimeyle etiketle (structure, repetition, visuals, stories).</li>
+      <li>Konuşmacı şıktaki kelimeyi değil eş anlamlısını söyler: <span class="en">bars, graphs</span> yerine <span class="en">charts</span>.</li></ul></div>
+    <div class="sheet"><h3>Not alma (NTHO)</h3>
+      <ul><li>Cümle yazma; isim, sayı, sebep-sonuç oku (→), karşılaştırma (≠, &gt;) kullan.</li>
+      <li><span class="en">first, another, the main reason, however, as a result</span> duyduğunda yeni satıra geç.</li>
+      <li>Kısaltma: <span class="en">w/ (with), b/c (because), e.g., govt, edu, ↑ ↓</span></li></ul></div>
+  </div>
+  <div class="sheet plain"><h3>Klasöründen tekrar dinle</h3>
+    <ol>
+      <li><b>WEEK 7 → REVISION HO LISTENING SECTION</b> (TR 1–4): sınavın birebir formatı. Soruları kapatıp bir kez daha çöz.</li>
+      <li><b>WEEK 5 → NTHO 2</b> (Green Architecture) ve <b>OUTSIDE NTHO 3</b>: not alarak dinle, sonra notundan soruları cevapla.</li>
+      <li><b>WEEK 6 → LHO 3 Humor &amp; Irony</b> (TR 01–04).</li>
+    </ol>
+  </div>
+</section>
+
+<!-- YAZMA -->
+<section class="view" id="v-yazma">
+  <h2>Yazma (MT1B)</h2>
+  <p class="sub">Yaklaşık 220 kelimelik tek bir akademik paragraf. WHO 3 (academic paragraph) ve WHO 4 (compare/contrast) kalıpları üzerinden.</p>
+  <div class="grid2">
+    <div class="sheet"><h3>İskelet</h3>
+      <ol>
+        <li><b>Topic sentence</b> = konu + controlling idea. Sayı ver: <span class="en">two main ways / two major effects</span>.</li>
+        <li><b>Major 1</b> + 2–3 minor (açıklama, sebep, örnek, sonuç)</li>
+        <li><b>Major 2</b> + 2–3 minor</li>
+        <li><b>Concluding sentence</b>: topic sentence'ı başka kelimelerle toparla, yeni fikir açma.</li>
+      </ol>
+      <h4>Major'ları tanıtma (enumeration)</h4>
+      <p class="en">The first difference is related to … / One advantage is that … / To begin with, …<br>The second difference concerns … / Another reason is that … / Furthermore, …</p>
+      <h4>Minor'lara geçiş</h4>
+      <p class="en">In other words, / That is, · This is because … · For example, / For instance, · As a result, / Consequently, · In addition, / Moreover,</p>
+    </div>
+    <div class="sheet"><h3>Rubrikteki puan tuzakları</h3>
+      <ul>
+        <li><b>Tek major yazarsan</b> Content en fazla 3 olur, diğer üç ölçüt de 3'e kilitlenir: 20 üzerinden en çok 12.</li>
+        <li><b>Sorunun tersini yazarsan</b> (fark yerine benzerlik, sebep yerine sonuç) Content 1 olur: en çok 7.</li>
+        <li><b>Konu dışı</b> ya da birkaç cümlelik cevap toplamda 1 alır.</li>
+        <li>Kelime sınırını aşmak ceza getirmez; altında kalmak Content'i düşürür.</li>
+        <li><span class="en">gonna, stuff, guess what</span> gibi gayriresmî ifadeler ve kısaltmalar puan götürür.</li>
+        <li>Zamir tutarlılığı: <span class="en">students … they</span> ile başladıysan <span class="en">you</span>'ya geçme.</li>
+        <li>Grammar ve Vocabulary ölçütlerinde <b>range</b> aranıyor: bir relative clause, bir concession (<span class="en">although / despite</span>), bir de <span class="en">which</span> ile yorum cümlesi koy.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="sheet"><h3>Compare / contrast dili</h3>
+    <div class="tw"><table>
+      <tr><th>Farklılık</th><th>Benzerlik</th></tr>
+      <tr><td class="en">A differs from / is different from B in two ways / in terms of … / in that …</td><td class="en">A and B are similar / alike in terms of … / in that they both …</td></tr>
+      <tr><td class="en">Unlike / In contrast to / As opposed to B, A …</td><td class="en">Like / Similar to B, A …</td></tr>
+      <tr><td class="en">A … , whereas / while B …</td><td class="en">Both A and B + plural verb</td></tr>
+      <tr><td class="en">A … . However, / On the other hand, / In contrast, B …</td><td class="en">A … . Similarly, / Likewise, / In the same way, B …</td></tr>
+      <tr><td class="en">A is much / a lot more … than B</td><td class="en">A is just the same as B in terms of …</td></tr>
+      <tr><td class="en">Although / Even though + clause, clause · Despite / In spite of + noun, clause</td><td class="en">Neither A nor B + verb (yakın özneye uyar) · … not … either</td></tr>
+    </table></div>
+    <h4>Noktalama</h4>
+    <p class="en">Clause; however, clause. · Clause. However, clause. · Clause, but clause. · Clause, whereas clause.</p>
+    <h4>İki cevap türü, iki düzen</h4>
+    <ul>
+      <li><b>Type 1:</b> yalnızca olguları karşılaştır, görüş verme. <b>Type 2:</b> “hangisi daha iyi” sorusu; görüşünü topic sentence'ta söyle, iki karşılaştırma noktasıyla destekle.</li>
+      <li><b>Point-by-point:</b> Nokta 1 (A → B), Nokta 2 (A → B). Sınavda en güvenlisi bu. <b>Block:</b> önce A'nın iki noktası, sonra aynı sırayla B.</li>
+    </ul>
+  </div>
+  <div class="sheet"><h3>Örnek paragraf</h3>
+    <p class="sub" style="margin-bottom:10px">Soru: <span class="en">What are the differences between studying in one's hometown and in another city? Discuss two points of contrast.</span> Altı çizili yerler iskelet, sarı yerler kalıp.</p>
+    <p class="model"><i>Attending university in one's hometown <b>differs from</b> studying in another city <b>in two main ways</b>.</i> <i><b>The first difference is related to</b> living costs.</i> Students who stay in their hometown usually live with their families, so they do not have to pay rent or spend much on food. <b>As a result,</b> they can save their money for books or hobbies. <b>In contrast,</b> those who move to another city must cover accommodation, bills and daily meals, <b>which</b> often forces them to rely on scholarships or part-time jobs. <i><b>The second difference concerns</b> personal independence.</i> <b>Unlike</b> students living at home, <b>whose</b> parents tend to handle most household tasks, students in a new city have to manage everything on their own. <b>For example,</b> they need to cook, do their laundry and plan a monthly budget. <b>Although</b> this can be stressful at first, it teaches them valuable life skills at an early age. Students who remain at home, <b>on the other hand,</b> may enjoy more comfort, but they have fewer opportunities to learn how to stand on their own feet. <i><b>In conclusion,</b> <b>while</b> studying in one's hometown is more economical and comfortable, moving to another city offers young people a greater chance to become independent adults.</i></p>
+  </div>
+  <div class="sheet"><h3>Kendi paragrafın</h3>
+    <div class="chips" id="prompts"></div>
+    <p id="prompt" class="en" style="margin-bottom:10px"></p>
+    <label for="outline" class="eyebrow">Önce 3 dakikada taslak: TS · Major 1 (A/B) · Major 2 (A/B) · CS</label>
+    <textarea id="outline" style="width:100%;min-height:92px;border:1px solid var(--rule);background:var(--paper);border-radius:4px;padding:8px 12px;font-family:var(--mono);font-size:14px;margin:6px 0 12px;resize:vertical"></textarea>
+    <label for="essay" class="eyebrow">Paragraf</label>
+    <textarea id="essay" spellcheck="false" style="margin-top:6px"></textarea>
+    <div class="row" style="justify-content:space-between;margin:8px 0 14px"><span id="wcount">0 kelime · hedef ≈ 220</span><button class="btn ghost" id="copy">Metni kopyala</button></div>
+    <h4>Teslim etmeden önce</h4>
+    <ul class="todo" id="wcheck"></ul>
+    <p style="color:var(--muted);font-size:14px;margin:10px 0 0">Taslağın bu tarayıcıda saklanır. Yazdığını kopyalayıp sohbete yapıştırırsan rubriğe göre puanlayıp düzeltebilirim.</p>
+  </div>
+</section>
+
+<!-- ANAHTAR -->
+<section class="view" id="v-anahtar">
+  <h2>Revision HO cevap anahtarı</h2>
+  <p class="sub">Öğrenci kopyasını çözüp çıkardığım cevaplar; resmî anahtar değil. Pazartesi sınıfta hocanınkiyle karşılaştır. Listening bölümü ses kaydı gerektirdiği için yok.</p>
+  <div id="key"></div>
+</section>
+
+</div></main>
+<footer><div class="wrap">Kaynak: BASE 501 Section 9 klasörü, 501 Span 1 Programme, Span 1 Revision HO, HN5 ve MTR II aktif kelime listeleri. Alıştırma cümleleri bu defter için yazıldı. <button class="btn ghost" id="reset" style="margin-left:8px;font-size:13px;padding:3px 10px">İlerlemeyi sıfırla</button></div></footer>
+
+<script>
+/* ---------- storage ---------- */
+const KEY='mt01-defter-v1';
+let S={ans:{},known:{},plan:{},wc:{},essay:'',outline:'',deck:'u1',prompt:0};
+try{const r=localStorage.getItem(KEY); if(r) S=Object.assign(S,JSON.parse(r));}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}};
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const norm=s=>s.toLowerCase().replace(/[’‘`]/g,"'").replace(/[.!?,;]+$/,'').replace(/\s+/g,' ').trim();
+
+/* ---------- exercise data ---------- */
+// m: multiple choice {q,o,a,w}   f: fill {q,c,a:[...],w}   r: rewrite {q,c,a,w}
+const SETS={
+g1:[
+ {t:'f',q:`By the time the guests arrive, we ____ decorating the hall.`,c:'finish',a:['will have finished'],w:`<i>By the time</i> + present → ana cümlede future perfect.`},
+ {t:'f',q:`My flatmate ____ dirty dishes in the sink; it drives me insane.`,c:'always / leave',a:['is always leaving',"'s always leaving"],w:`Rahatsız edici alışkanlık: <i>always</i> + present continuous.`},
+ {t:'f',q:`When I finally got to the stop, the last shuttle ____ .`,c:'already / leave',a:['had already left'],w:`Geçmişteki bir andan önce tamamlanmış olay: past perfect.`},
+ {t:'f',q:`She ____ on her thesis for two years when she decided to change her topic.`,c:'work',a:['had been working'],w:`Geçmişteki bir noktaya kadar süren eylem + <i>for</i>: past perfect continuous.`},
+ {t:'f',q:`Don't call me at ten tomorrow. I ____ the midterm then.`,c:'sit',a:['will be sitting',"'ll be sitting"],w:`Gelecekte belirli bir anda devam eden eylem: future continuous.`},
+ {t:'f',q:`Since he moved to Ankara, he ____ a lot of new friends.`,c:'make',a:['has made',"'s made"],w:`<i>since</i> + past simple → ana cümlede present perfect.`},
+ {t:'f',q:`By next June, they ____ in this dormitory for a whole year.`,c:'live',a:['will have been living','will have lived'],w:`<i>By</i> + gelecek zaman + <i>for</i>: future perfect (continuous).`},
+ {t:'f',q:`I'll text you as soon as the results ____ .`,c:'announce',a:['are announced','have been announced'],w:`Zaman cümleciğinde <i>will</i> kullanılmaz; ayrıca sonuçlar “açıklanır”, yani pasif.`},
+ {t:'m',q:`The project ____ to be a great success so far.`,o:['proved','has proved','had proved','is proving'],a:1,w:`<i>so far</i> → present perfect.`}
+],
+g2:[
+ {t:'m',q:`____ surprised the committee was how quickly she learned.`,o:['That','What','Which','It'],a:1,w:`Cümlecik içinde özne eksik (“___ surprised”) → <i>What</i> (= the thing that).`},
+ {t:'m',q:`____ he failed the exam shocked nobody.`,o:['What','Whether','That','Which'],a:2,w:`Cümlecik kendi içinde tam (“he failed the exam”) → <i>That</i>.`},
+ {t:'m',q:`Could you tell me where ____?`,o:['is the registrar’s office','the registrar’s office is','does the registrar’s office','the registrar’s office does'],a:1,w:`Gömülü soruda düz cümle sırası: özne + fiil.`},
+ {t:'m',q:`It is still unclear ____ the exam will include the MTR texts.`,o:['what','which','whether','whatever'],a:2,w:`Evet/hayır belirsizliği → <i>whether</i>.`},
+ {t:'m',q:`We spent an hour arguing about ____ we should cancel the trip.`,o:['if','that','whether','what'],a:2,w:`Edattan sonra <i>if</i> kullanılmaz, <i>whether</i> gelir.`},
+ {t:'m',q:`____ wins the debate will represent the school in the finals.`,o:['Whatever','Whoever','Whichever','However'],a:1,w:`Kişi + “her kim” → <i>Whoever</i>.`},
+ {t:'m',q:`____ hard he tries, he can't grasp the concept.`,o:['Whatever','However','Whichever','Whenever'],a:1,w:`<i>However</i> + sıfat/zarf = ne kadar … olursa olsun.`},
+ {t:'m',q:`I have no idea what ____ .`,o:['does this word mean','means this word','this word means','this word mean'],a:2,w:`Düz sıra ve fiilde -s.`},
+ {t:'r',q:`“Why did the council reject the proposal?” Nobody knows.`,c:'Nobody knows why',a:`Nobody knows why the council rejected the proposal.`,w:`<i>did</i> düşer, fiil past simple olur.`}
+],
+g3:[
+ {t:'m',q:`My uncle, ____ lives in İzmir, is a paramedic.`,o:['that','who','which','whose'],a:1,w:`Virgüllü (non-defining) cümlecikte <i>that</i> kullanılmaz.`},
+ {t:'m',q:`He passed all his exams, ____ astonished his family.`,o:['what','that','which','it'],a:2,w:`Önceki cümlenin tamamına gönderme: virgül + <i>which</i>.`},
+ {t:'m',q:`The start-up ____ founder is only nineteen has broken into the market.`,o:['who','which','whose','who’s'],a:2,w:`Sahiplik → <i>whose</i> + isim.`},
+ {t:'m',q:`The dormitory ____ I live is in Çankaya.`,o:['which','that','where','when'],a:2,w:`“In the dormitory” anlamı → <i>where</i> (ya da <i>in which</i>).`},
+ {t:'m',q:`The lecturer to ____ I spoke was extremely helpful.`,o:['who','that','whom','which'],a:2,w:`Edattan hemen sonra kişi için <i>whom</i>.`},
+ {t:'m',q:`The texts ____ in the testing syllabus are listed below.`,o:['including','included','which included','are included'],a:1,w:`Kısaltılmış pasif relative: <i>which are included</i> → <i>included</i>.`},
+ {t:'m',q:`Students ____ to take the make-up must submit a medical report.`,o:['wished','wishing','who wishing','are wishing'],a:1,w:`Kısaltılmış aktif relative: <i>who wish</i> → <i>wishing</i>.`},
+ {t:'r',q:`Ankara has a continental climate. It is the capital of Türkiye.`,c:'which',a:`Ankara, which is the capital of Türkiye, has a continental climate.`,w:`Özel isim → non-defining, iki virgül şart. (Diğer sıra da olur: Ankara, which has a continental climate, is the capital of Türkiye.)`},
+ {t:'r',q:`The film was fantastic. We watched it last night.`,c:'Ø (zamir kullanma)',a:`The film we watched last night was fantastic.`,w:`Nesne konumundaki zamir defining cümlecikte atılabilir.`}
+],
+g4:[
+ {t:'r',q:`People believe that the company is losing money.`,c:'The company',a:`The company is believed to be losing money.`,w:`Aynı zamanda süren eylem → <i>to be V-ing</i>.`},
+ {t:'r',q:`They think that the thieves escaped through the roof.`,c:'The thieves',a:`The thieves are thought to have escaped through the roof.`,w:`Daha önce olmuş eylem → <i>to have V3</i>.`},
+ {t:'r',q:`Reports say that three people were injured in the accident.`,c:'Three people',a:`Three people are reported to have been injured in the accident.`,w:`Önce olmuş + pasif → <i>to have been V3</i>.`},
+ {t:'r',q:`Everyone knows that she is a brilliant negotiator.`,c:'She',a:`She is known to be a brilliant negotiator.`,w:`Aynı zaman, durum → <i>to be</i>.`},
+ {t:'r',q:`A technician repaired my laptop yesterday.`,c:'had',a:`I had my laptop repaired (by a technician) yesterday.`,w:`Causative: <i>have + nesne + V3</i>.`},
+ {t:'f',q:`When I arrived, the classroom ____ , so I waited outside.`,c:'still / clean',a:['was still being cleaned'],w:`Past continuous passive: <i>was being V3</i>.`},
+ {t:'f',q:`He hates ____ what to do.`,c:'tell',a:['being told'],w:`-ing alan fiilden sonra pasif: <i>being V3</i>.`},
+ {t:'m',q:`The manuscript ____ in the twelfth century.`,o:['is thought to be written','is thought to have been written','thinks to have written','was thought being written'],a:1,w:`Geçmişte yazılmış + pasif.`},
+ {t:'f',q:`The exam results ____ by the end of next week.`,c:'announce',a:['will have been announced','will be announced'],w:`<i>by</i> + gelecek → future perfect passive en iyi cevap.`}
+],
+g5:[
+ {t:'r',q:`I had no sooner closed my eyes than the alarm went off.`,c:'No sooner',a:`No sooner had I closed my eyes than the alarm went off.`,w:`<i>No sooner … than</i>, <i>Hardly/Scarcely … when</i>.`},
+ {t:'r',q:`She rarely eats out during the week.`,c:'Rarely',a:`Rarely does she eat out during the week.`,w:`Yardımcı fiil yoksa <i>do/does/did</i> gelir, asıl fiil yalın kalır.`},
+ {t:'r',q:`You should not open this door on any account.`,c:'On no account',a:`On no account should you open this door.`,w:`Olumsuzluk başa geçti; cümlede ikinci bir <i>not</i> kalmaz.`},
+ {t:'r',q:`He only understood the joke after I had explained it.`,c:'Only after',a:`Only after I had explained it did he understand the joke.`,w:`Devrik yapı <b>ana cümlede</b> olur, <i>only after</i> cümleciğinde değil.`},
+ {t:'r',q:`We didn't find out the truth until we read the report.`,c:'Not until',a:`Not until we read the report did we find out the truth.`,w:`<i>Not until</i> + cümlecik (düz) + devrik ana cümle.`},
+ {t:'r',q:`The lecture was so boring that half the class left.`,c:'So',a:`So boring was the lecture that half the class left.`,w:`<i>So + adj + be + özne + that</i>.`},
+ {t:'r',q:`He forgot my birthday, and he also lost my present.`,c:'Not only',a:`Not only did he forget my birthday, but he also lost my present.`,w:`Devrik yapı yalnızca <i>Not only</i> tarafında.`},
+ {t:'m',q:`____ did I know that the quiz would be so difficult.`,o:['Only','Hardly','Little','No sooner'],a:2,w:`<i>Little did I know</i> = hiç bilmiyordum.`},
+ {t:'m',q:`Hardly had the match started ____ it began to rain.`,o:['than','when','that','then'],a:1,w:`<i>Hardly … when</i>; <i>than</i> yalnızca <i>No sooner</i> ile.`},
+ {t:'m',q:`On the top shelf ____ .`,o:['an old dictionary did lie','lay an old dictionary','did an old dictionary lay','an old dictionary lying'],a:1,w:`Yer zarfı başta: fiil + özne, <i>do</i> kullanılmaz.`}
+],
+g6:[
+ {t:'r',q:`I need a long holiday.`,c:'What',a:`What I need is a long holiday.`,w:`<i>What</i> + cümlecik + <i>is/was</i> + vurgulanan öğe.`},
+ {t:'r',q:`He fixed the printer himself.`,c:'What he did',a:`What he did was fix the printer himself.`,w:`<i>What … did was</i> + yalın fiil.`},
+ {t:'r',q:`Selin recommended this book, not Deniz.`,c:'It',a:`It was Selin who recommended this book, not Deniz.`,w:`<i>It was + kişi + who/that</i>.`},
+ {t:'r',q:`I met my best friend in prep school.`,c:'It was in',a:`It was in prep school that I met my best friend.`,w:`Yer/zaman vurgusunda <i>that</i> kullan, <i>where/when</i> değil.`},
+ {t:'r',q:`The traffic irritates me most about İstanbul.`,c:'What',a:`What irritates me most about İstanbul is the traffic.`,w:``},
+ {t:'m',q:`It was not until 2005 ____ the secrets of the device were revealed.`,o:['when','which','that','what'],a:2,w:`<i>It was not until … that</i> (devrik yapı yok).`},
+ {t:'m',q:`____ in the technology sector that productivity rose the most.`,o:['There was','What was','It was','That was'],a:2,w:`Cleft: <i>It was … that</i>.`}
+],
+g7:[
+ {t:'r',q:`I didn't save any money, so I can't buy the ticket now.`,c:'If',a:`If I had saved some money, I could buy the ticket now.`,w:`Mixed: geçmiş koşul (had V3) → şimdiki sonuç (would/could V1).`},
+ {t:'r',q:`She doesn't speak German, so she didn't get the job in Berlin.`,c:'If',a:`If she spoke German, she would have got the job in Berlin.`,w:`Mixed: genel durum (V2) → geçmiş sonuç (would have V3).`},
+ {t:'r',q:`If you need any further information, contact the office.`,c:'Should',a:`Should you need any further information, contact the office.`,w:`Type 1 devrik: <i>Should + özne + V1</i>.`},
+ {t:'r',q:`If I were in your position, I would accept the offer.`,c:'Were',a:`Were I in your position, I would accept the offer.`,w:`Type 2 devrik. Fiil <i>be</i> değilse: <i>Were I to know …</i>`},
+ {t:'r',q:`If he hadn't missed the bus, he would have arrived on time.`,c:'Had',a:`Had he not missed the bus, he would have arrived on time.`,w:`Olumsuzda <i>not</i> özneden sonra gelir: <span class="x">Hadn't he</span>.`},
+ {t:'r',q:`If it hadn't been for the scholarship, she couldn't have studied abroad.`,c:'But for',a:`But for the scholarship, she couldn't have studied abroad.`,w:`<i>But for</i> + isim; ana cümle aynen kalır.`},
+ {t:'r',q:`You will only pass if you revise regularly.`,c:'Unless',a:`Unless you revise regularly, you won't pass.`,w:`<i>Unless</i> = if … not; cümleciğin içi olumlu kalır.`},
+ {t:'m',q:`You can borrow my notes ____ you return them by Friday.`,o:['unless','provided that','in case','otherwise'],a:1,w:`Şart: <i>provided that / as long as / on condition that</i>.`},
+ {t:'m',q:`Take an umbrella ____ it rains.`,o:['unless','even if','in case','as long as'],a:2,w:`Önlem: <i>in case</i> = olur diye.`},
+ {t:'m',q:`____ they offered me double the salary, I wouldn't take that job.`,o:['Unless','Provided','In case','Even if'],a:3,w:`Sonuç değişmiyor → <i>Even if</i>.`},
+ {t:'m',q:`We'd better hurry; ____ , we'll miss the shuttle.`,o:['unless','otherwise','in case','but for'],a:1,w:`<i>Otherwise</i> = if not; noktalı virgül ve virgülle.`},
+ {t:'m',q:`____ the ship not sunk, the device might have changed history.`,o:['If','Were','Should','Had'],a:3,w:`“not sunk” V3 → <i>Had</i>.`}
+],
+g8:[
+ {t:'f',q:`I wish I ____ more time to revise before Thursday.`,c:'have',a:['had'],w:`Şimdi/gelecek hakkında dilek: past simple.`},
+ {t:'f',q:`I wish you ____ tapping your pen. I can't concentrate!`,c:'stop',a:['would stop'],w:`Başkasının rahatsız edici davranışı: <i>would</i>.`},
+ {t:'f',q:`If only I ____ all my money last week.`,c:'not / spend',a:["hadn't spent",'had not spent'],w:`Geçmiş pişmanlık: past perfect.`},
+ {t:'f',q:`She wishes she ____ speak German fluently.`,c:'can',a:['could'],w:`Yetenek dileği: <i>could</i>.`},
+ {t:'f',q:`I wish the dormitory ____ closer to campus.`,c:'be',a:['were','was'],w:`Durum fiilinde <span class="x">would be</span> olmaz.`},
+ {t:'m',q:`I wish I ____ snacking between meals.`,o:['would stop','could stop','will stop','stop'],a:1,w:`Kendi hakkında <i>I wish I would</i> denmez.`},
+ {t:'m',q:`I wish it ____ raining. We want to eat outside.`,o:['stops','stopped being','would stop','had stopped'],a:2,w:`Hava için istisna: değişim istiyoruz → <i>would</i>.`},
+ {t:'r',q:`I regret not going to the Q&A session.`,c:'wish',a:`I wish I had gone to the Q&A session.`,w:`<i>regret not doing</i> → <i>wish + had V3</i> (olumlu).`},
+ {t:'r',q:`It's a pity that I told him my secret.`,c:'If only',a:`If only I hadn't told him my secret.`,w:``}
+],
+g9:[
+ {t:'r',q:`If you read more, your vocabulary will get richer.`,c:'The more',a:`The more you read, the richer your vocabulary will get.`,w:`<i>The + comparative …, the + comparative …</i>`},
+ {t:'r',q:`Many students feel stressed because they take too many exams.`,c:'due to',a:`Many students feel stressed due to taking too many exams.`,w:`<i>due to / because of / owing to</i> + isim ya da V-ing. (… due to the high number of exams they take de olur.)`},
+ {t:'r',q:`Although the fees are high, the university is very popular.`,c:'Despite',a:`Despite its high fees, the university is very popular.`,w:`<i>Despite / In spite of</i> + isim öbeği; cümle gelmez.`},
+ {t:'r',q:`The council decided to close the library, which angered local residents.`,c:'decision',a:`The council's decision to close the library angered local residents.`,w:`Nominalization: fiil → isim, cümle tek özneye iner.`},
+ {t:'r',q:`Ayşe started teaching in 2016. In 2026 it will be exactly ten years.`,c:'By 2026',a:`By 2026, Ayşe will have been teaching for ten years.`,w:``},
+ {t:'m',q:`Neither the instructor nor the students ____ aware of the room change.`,o:['was','were','is','has been'],a:1,w:`<i>Neither … nor</i>: fiil yakın özneye (students) uyar.`},
+ {t:'m',q:`Not only the students but also the instructor ____ surprised by the results.`,o:['were','are','was','have been'],a:2,w:`Yakın özne <i>the instructor</i> → tekil.`},
+ {t:'m',q:`Traditional education is costly; ____ , it is still the most preferred type.`,o:['although','despite','nevertheless','whereas'],a:2,w:`Noktalı virgül + … + virgül kalıbına yalnızca <i>nevertheless / however</i> girer.`}
+],
+va:[
+ {t:'m',q:`Even after failing the driving test twice, she was ____ enough to try again.`,o:['resilient','conceited','gullible','livid'],a:0,w:`resilient = çabuk toparlanan`},
+ {t:'m',q:`He is so ____ that he believed an email promising him a free phone.`,o:['wary','shrewd','gullible','versatile'],a:2,w:`gullible = saf, kolay kanan`},
+ {t:'m',q:`Too much screen time can be ____ to children's sleep.`,o:['feasible','detrimental','impartial','bespoke'],a:1,w:`detrimental to = -e zararlı`},
+ {t:'m',q:`I hadn't eaten since morning, so by dinner I was absolutely ____ .`,o:['soggy','ravenous','succulent','mouldy'],a:1,w:`ravenous = kurt gibi aç`},
+ {t:'m',q:`A referee must remain ____ and treat both teams equally.`,o:['impartial','credulous','gluttonous','thin-skinned'],a:0,w:`impartial = tarafsız`},
+ {t:'m',q:`Building a metro line to the village is not a ____ option; it would cost far too much.`,o:['hereditary','feasible','livid','reciprocal'],a:1,w:`feasible = uygulanabilir`},
+ {t:'m',q:`The two witnesses' statements completely ____ each other.`,o:['reassured','concealed','contradicted','induced'],a:2,w:`contradict = çelişmek`},
+ {t:'m',q:`The government has ____ a ban on single-use plastics.`,o:['imposed','diminished','attained','retained'],a:0,w:`impose a ban on = yasak getirmek`},
+ {t:'m',q:`Her eyesight began to ____ in her sixties.`,o:['persevere','deteriorate','reciprocate','procrastinate'],a:1,w:`deteriorate = kötüleşmek`},
+ {t:'m',q:`Since he was cheated online, he has been ____ of buying anything from strangers.`,o:['wary','envious','capable','nuts'],a:0,w:`wary of = -e karşı temkinli`},
+ {t:'m',q:`There is a clear ____ between what the minister says and what he does.`,o:['compulsion','longevity','discrepancy','inclination'],a:2,w:`discrepancy between A and B = tutarsızlık`},
+ {t:'m',q:`Stop ____ and start your project. It is due on Monday!`,o:['persevering','relinquishing','procrastinating','safeguarding'],a:2,w:`procrastinate = ertelemek, oyalanmak`},
+ {t:'m',q:`News of the tiny bakery spread entirely by ____ ; it never paid for an advert.`,o:['word-of-mouth','knock-on effect','profit margin','impulse buy'],a:0,w:`word-of-mouth = kulaktan kulağa`},
+ {t:'m',q:`Since the campus opened, cafés have ____ all over the neighbourhood.`,o:['kicked in','set in','passed up','sprung up'],a:3,w:`spring up = (bir anda) türemek`},
+ {t:'m',q:`Japan is famous for the ____ of its people; many live beyond ninety.`,o:['longevity','obedience','censorship','recession'],a:0,w:`longevity = uzun ömür`},
+ {t:'m',q:`The fine is meant to ____ drivers from parking on the pavement.`,o:['defy','deter','dwell','denounce'],a:1,w:`deter sb from doing = caydırmak`},
+ {t:'m',q:`The instructions were so ____ that nobody knew what to do.`,o:['ambiguous','avid','affectionate','attainable'],a:0,w:`ambiguous = muğlak, belirsiz`},
+ {t:'m',q:`He finally ____ to temptation and ordered a second helping of dessert.`,o:['abstained','succumbed','adjusted','resorted'],a:1,w:`succumb to temptation = dayanamamak`}
+],
+vb:[
+ {t:'f',q:`Her ____ finally paid off when the journal accepted her article.`,c:'persist',a:['persistence'],w:``},
+ {t:'f',q:`You are making the ____ that everyone has access to the internet.`,c:'assume',a:['assumption'],w:``},
+ {t:'f',q:`After the reforms, it became one of the most ____ countries in the region.`,c:'prosper',a:['prosperous'],w:``},
+ {t:'f',q:`The two ministers gave ____ statements about the new tax.`,c:'contradict',a:['contradictory'],w:``},
+ {t:'f',q:`To say that he saved the company would be an ____ .`,c:'exaggerate',a:['exaggeration'],w:``},
+ {t:'f',q:`Without the doctor's early ____ , the patient would not have survived.`,c:'intervene',a:['intervention'],w:``},
+ {t:'f',q:`Nobody doubted the ____ of her apology.`,c:'sincere',a:['sincerity'],w:``},
+ {t:'f',q:`What I love about him is his ____ ; he never plans anything.`,c:'spontaneous',a:['spontaneity'],w:``},
+ {t:'f',q:`Language may shape our ____ of colour.`,c:'perceive',a:['perception'],w:``},
+ {t:'f',q:`There has been a rapid ____ in air quality this winter.`,c:'deteriorate',a:['deterioration'],w:``},
+ {t:'f',q:`His excuse was totally ____ ; nobody believed a word of it.`,c:'convince',a:['unconvincing'],w:`Anlam olumsuz → <i>un-</i> ön eki.`},
+ {t:'f',q:`The ____ of smoking in restaurants was introduced in 2009.`,c:'prohibit',a:['prohibition'],w:``},
+ {t:'f',q:`She agreed with great ____ , as she didn't trust the plan.`,c:'reluctant',a:['reluctance'],w:``},
+ {t:'f',q:`He bears a striking ____ to his grandfather.`,c:'resemble',a:['resemblance'],w:``},
+ {t:'f',q:`Winning the scholarship gave her a real sense of ____ .`,c:'accomplish',a:['accomplishment'],w:``},
+ {t:'f',q:`Some illnesses are ____ and run in families.`,c:'heredity',a:['hereditary'],w:``},
+ {t:'f',q:`The witness's story was full of ____ , so the police ignored it.`,c:'consistent',a:['inconsistencies'],w:`Olumsuz + çoğul: <i>full of</i> sayılabilir çoğul ister.`},
+ {t:'f',q:`The film was praised for the ____ of its cast.`,c:'inclusive',a:['inclusivity','inclusiveness'],w:``}
+],
+vc:[
+ {t:'f',q:`The law forbids employers to discriminate ____ older applicants.`,a:['against'],w:``},
+ {t:'f',q:`He was advised to abstain ____ sugar for a month.`,a:['from'],w:``},
+ {t:'f',q:`Parents shouldn't impose their own dreams ____ their children.`,a:['on','upon'],w:``},
+ {t:'f',q:`The café prides itself ____ its home-made desserts.`,a:['on'],w:``},
+ {t:'f',q:`Many small towns are entirely reliant ____ tourism.`,a:['on','upon'],w:``},
+ {t:'f',q:`After graduating, she embarked ____ a career in journalism.`,a:['on','upon'],w:``},
+ {t:'f',q:`The species is ____ the verge of extinction.`,a:['on'],w:``},
+ {t:'f',q:`Could you elaborate ____ your second point?`,a:['on'],w:``},
+ {t:'f',q:`Even experts fall prey ____ this bias.`,a:['to'],w:``},
+ {t:'f',q:`Most of these problems arise ____ a lack of communication.`,a:['from'],w:``},
+ {t:'f',q:`She is highly proficient ____ three programming languages.`,a:['in','at'],w:``},
+ {t:'f',q:`He has nobody to confide ____ .`,a:['in'],w:``},
+ {t:'f',q:`Contrary ____ popular belief, bats are not blind.`,a:['to'],w:``},
+ {t:'f',q:`A research team is ____ your disposal if you need help.`,a:['at'],w:``},
+ {t:'f',q:`How do you account ____ the sudden drop in sales?`,a:['for'],w:``},
+ {t:'f',q:`Children are particularly vulnerable ____ online advertising.`,a:['to'],w:``},
+ {t:'f',q:`You should take the weather ____ account before you set off.`,a:['into'],w:``},
+ {t:'f',q:`He got away ____ cheating because nobody checked.`,a:['with'],w:``}
+],
+vd:[
+ {t:'r',q:`I still can't decide whether to stay in the dorm or rent a flat.`,c:'be in two minds',a:`I am still in two minds about whether to stay in the dorm or rent a flat.`,w:``},
+ {t:'r',q:`We only just caught the last shuttle.`,c:'by the skin of one’s teeth',a:`We caught the last shuttle by the skin of our teeth.`,w:``},
+ {t:'r',q:`The seller charged me double; he completely cheated me.`,c:'take sb for a ride',a:`The seller charged me double; he really took me for a ride.`,w:``},
+ {t:'r',q:`You should avoid that part of town at night.`,c:'steer clear of',a:`You should steer clear of that part of town at night.`,w:``},
+ {t:'r',q:`He wanted 400 euros and I offered 300, so we compromised on 350.`,c:'meet halfway',a:`He wanted 400 euros and I offered 300, so we met halfway at 350.`,w:``},
+ {t:'r',q:`I'm sure I've heard that name before.`,c:'ring a bell',a:`That name rings a bell.`,w:``},
+ {t:'r',q:`He seems arrogant to people who don't know him.`,c:'come across as',a:`He comes across as arrogant to people who don't know him.`,w:``},
+ {t:'r',q:`The only thing we could do was wait.`,c:'have no choice but to',a:`We had no choice but to wait.`,w:``},
+ {t:'r',q:`Handwritten letters no longer exist in most offices.`,c:'become a thing of the past',a:`Handwritten letters have become a thing of the past in most offices.`,w:``},
+ {t:'r',q:`Since the manager left, the team's performance has been getting worse.`,c:'go downhill',a:`Since the manager left, the team's performance has been going downhill.`,w:``}
+],
+rd:[
+ {t:'f',q:`What does <u>it</u> (para. 1) refer to?`,a:['the planning fallacy','planning fallacy'],w:`İlk cümlede adı konan eğilim.`},
+ {t:'f',q:`What does <u>them</u> (para. 4) refer to?`,a:['delays'],w:`Bir önceki cümlecikteki çoğul isim.`},
+ {t:'f',q:`Find ONE WORD in para. 1 that means “taken longer than planned” (v).`,a:['overrun'],w:``},
+ {t:'f',q:`Find ONE WORD in para. 3 that means “similar enough to be judged together” (adj).`,a:['comparable'],w:``},
+ {t:'m',q:`Which of the numbered sentences in para. 2 is an opinion?`,o:['I','II','III'],a:2,w:`<i>Frankly</i> ve <i>charming</i> değer yargısı taşıyor.`},
+ {t:'m',q:`What is the text mainly about?`,o:['Why students are worse at planning than governments','How people underestimate task time and how past evidence can help','Why the Sydney Opera House was poorly designed'],a:1,w:``},
+ {t:'m',q:`According to para. 2, what did the thesis students fail to consider?`,o:['Their own ability','The setbacks that usually occur','Their supervisors’ advice'],a:1,w:`“not their ability but the interruptions, illnesses and other setbacks”.`},
+ {t:'m',q:`The writer mentions the Sydney Opera House in order to ____ .`,o:['show that the fallacy can be very costly on a large scale','criticise Australian architects','prove that all public buildings open late'],a:0,w:`Bağlandığı iddia: “taxpayers pay the price”.`},
+ {t:'m',q:`Taking the “outside view” means ____ .`,o:['imagining the task going smoothly','basing an estimate on how long similar tasks took','asking somebody else to do the task'],a:1,w:``},
+ {t:'m',q:`In para. 4, the writer's attitude towards the remedy is ____ .`,o:['cautiously positive','dismissive','uncritically enthusiastic'],a:0,w:`“It will not eliminate delays altogether; nevertheless …”`},
+ {t:'r',q:`Complete: According to para. 3, a more realistic estimate might have been produced if the planners ____ .`,c:'metinden',a:`had examined how comparable buildings had progressed`,w:`Devrik yapıyı (<i>Had the planners examined</i>) <i>if</i> cümlesine çevir.`}
+]
+};
+
+/* ---------- grammar topics ---------- */
+const G=[
+['g1','Tenses','GHO 1 · HN U1',`<ul>
+<li><span class="pat">so far, since, yet, already</span> → present perfect. <span class="pat">since + past simple</span>, ana cümle present perfect.</li>
+<li>Geçmişteki bir andan öncesi → <span class="pat">had V3</span>; süre vurgusu → <span class="pat">had been V-ing</span>.</li>
+<li><span class="pat">always + be V-ing</span> = şikâyet. <span class="en">He is always interrupting me.</span></li>
+<li><span class="pat">this time next year</span> → <span class="pat">will be V-ing</span>. <span class="pat">by + gelecek</span> → <span class="pat">will have V3</span>; <span class="pat">+ for</span> → <span class="pat">will have been V-ing</span>.</li>
+<li><span class="pat">when, as soon as, by the time, until</span> cümleciğinde <span class="x">will</span> yok, present kullanılır.</li></ul>`],
+['g2','Noun clauses','GHO 2A–B',`<ul>
+<li>Cümlecik tamsa <span class="pat">that</span>, içinde özne ya da nesne eksikse <span class="pat">what</span>. <span class="en">That he lied is obvious. / What he said is a lie.</span></li>
+<li>Evet/hayır belirsizliği → <span class="pat">whether / if</span>. Edattan sonra ve cümle başında yalnızca <span class="pat">whether</span>.</li>
+<li>Gömülü soruda düz sıra: <span class="en">I wonder where she <b>lives</b>.</span> <span class="x">where does she live</span></li>
+<li>Özne konumundaki noun clause tekil fiil alır.</li>
+<li><span class="pat">whoever, whatever, whichever, however + adj</span> = “her kim / her ne / ne kadar … olursa”.</li></ul>`],
+['g3','Relative clauses','GHO 3A–B',`<ul>
+<li><b>Defining:</b> virgül yok, <span class="pat">that</span> olur, nesne zamiri atılabilir. <b>Non-defining:</b> iki virgül, <span class="x">that</span> olmaz, zamir atılmaz. Özel isim ve tek olan şeyler non-defining'dir.</li>
+<li><span class="pat">whose + isim</span> sahiplik. <span class="pat">, which</span> önceki cümlenin tamamına gönderme yapar.</li>
+<li><span class="pat">where = in/at which</span>, <span class="pat">when</span>, <span class="pat">the reason why</span>. Edat + <span class="pat">whom / which</span>.</li>
+<li>Kısaltma: aktif → <span class="pat">V-ing</span>, pasif → <span class="pat">V3</span>. <span class="en">The man <s>who is</s> standing … / The book <s>which was</s> written …</span></li>
+<li>Noktalama hatası sınavda puan götürüyor.</li></ul>`],
+['g4','Passive, reported passive, causative','HN U3 · Outside',`<div class="tw"><table>
+<tr><th>Aktif cümledeki zaman ilişkisi</th><th>Kalıp</th><th>Örnek</th></tr>
+<tr><td>Aynı zaman</td><td class="en">is said to V1</td><td class="en">He is said to live abroad.</td></tr>
+<tr><td>O anda sürüyor</td><td class="en">to be V-ing</td><td class="en">… is believed to be hiding.</td></tr>
+<tr><td>Daha önce olmuş</td><td class="en">to have V3</td><td class="en">… is thought to have left.</td></tr>
+<tr><td>Daha önce + pasif</td><td class="en">to have been V3</td><td class="en">… is known to have been built in 1500.</td></tr>
+<tr><td>Gelecek + pasif</td><td class="en">is expected to be V3</td><td class="en">It is expected to be found soon.</td></tr></table></div>
+<ul><li><span class="pat">It is said that + cümle</span> de aynı anlamı verir.</li>
+<li>Causative: <span class="pat">have/get + nesne + V3</span>. <span class="en">I'm going to have my car serviced.</span></li>
+<li>-ing alan fiil ya da edattan sonra pasif: <span class="pat">being V3</span>, geçmişse <span class="pat">having been V3</span>.</li></ul>`],
+['g5','Inversion','HN U2 · Worksheet 1A–1B',`<p>Olumsuz ya da kısıtlayıcı ifade başa gelince soru sırası: <span class="pat">ifade + yardımcı fiil + özne + fiil</span>.</p>
+<ul><li><span class="pat">Never (before), Rarely, Seldom, Little</span></li>
+<li><span class="pat">Hardly / Scarcely … when</span>, <span class="pat">No sooner … than</span> (past perfect ile)</li>
+<li><span class="pat">Not only … but also</span></li>
+<li><span class="pat">Under no circumstances, On no account, At no time, In no way</span></li>
+<li><span class="pat">Not until / Only when / Only after / Only if</span> + düz cümlecik + <b>devrik ana cümle</b></li>
+<li><span class="pat">So + adj + be + özne + that</span></li>
+<li>Yer zarfı başta: <span class="en">Among the coins <b>was a strange object</b>.</span> (do yok)</li>
+<li>Benzerlik: <span class="en">So do I. / Neither have they. / … , as do most students.</span></li></ul>`],
+['g6','Cleft sentences','HN U2',`<ul>
+<li><span class="pat">What + cümlecik + is/was + vurgu</span>: <span class="en">What annoys me is the noise.</span></li>
+<li>Eylemi vurgulama: <span class="pat">What + özne + did + was + V1</span>: <span class="en">What she did was lose her temper.</span></li>
+<li><span class="pat">It is/was + vurgu + that/who</span>: <span class="en">It was my brother who broke the window.</span></li>
+<li><span class="pat">It was not until … that</span>, <span class="pat">It was only when … that</span>. Bunlarda devrik yapı yok.</li></ul>`],
+['g7','Conditionals ve if alternatifleri','HN U4 · Outside',`<div class="tw"><table>
+<tr><th>Tür</th><th>Kalıp</th></tr>
+<tr><td>Mixed (geçmiş → şimdi)</td><td class="en">If + had V3, would V1 (now)</td></tr>
+<tr><td>Mixed (genel → geçmiş)</td><td class="en">If + V2 / were, would have V3</td></tr>
+<tr><td>Devrik Type 1</td><td class="en">Should + S + V1</td></tr>
+<tr><td>Devrik Type 2</td><td class="en">Were + S (+ to V1)</td></tr>
+<tr><td>Devrik Type 3</td><td class="en">Had + S (+ not) + V3</td></tr></table></div>
+<ul><li><span class="pat">unless</span> = if not · <span class="pat">provided/providing (that), as long as, on condition that</span> = şartıyla</li>
+<li><span class="pat">even if</span> = olsa bile · <span class="pat">in case</span> = olur diye · <span class="pat">otherwise</span> = yoksa · <span class="pat">supposing / assuming that</span></li>
+<li><span class="pat">But for + isim</span> = If it weren't / hadn't been for</li></ul>`],
+['g8','Wish clauses','GHO 4',`<ul>
+<li>Şimdi / gelecek: <span class="pat">wish + V2 / were / could V1</span>. <span class="en">I wish I had a bigger kitchen.</span></li>
+<li>Başkasının davranışından rahatsızlık: <span class="pat">wish + sb + would V1</span>. Kendin için ve durum fiilleriyle kullanılmaz; hava durumu istisna.</li>
+<li>Geçmiş pişmanlık: <span class="pat">wish + had V3</span>. <span class="en">I wish I had said no.</span></li>
+<li><span class="pat">If only</span> aynı kalıpları alır, daha güçlüdür.</li>
+<li><span class="pat">regret (not) V-ing</span> ↔ <span class="pat">wish + had(n't) V3</span>: olumlu/olumsuz ters döner.</li></ul>`],
+['g9','Karışık: the more, nominalization, bağlaçlar','WHO 2–4 · Paraphrasing',`<ul>
+<li><span class="pat">The more …, the + comparative …</span></li>
+<li><span class="pat">because → because of / due to / owing to + isim / V-ing</span></li>
+<li><span class="pat">although + cümle</span> ↔ <span class="pat">despite / in spite of + isim</span></li>
+<li>Fiili isme çevir: <span class="en">decided → decision, failed → failure, grew → growth</span></li>
+<li><span class="pat">both … and</span> çoğul; <span class="pat">neither … nor, either … or, not only … but also</span> yakın özneye uyar.</li>
+<li><span class="pat">; however, / ; nevertheless,</span> · <span class="pat">, but</span> · <span class="pat">, whereas</span></li></ul>`]
+];
+
+/* ---------- flashcards ---------- */
+const D={
+u1:['Unit 1',`assertive|kendinden emin, girişken;conceited|kendini beğenmiş;compassionate|şefkatli;discreet|ağzı sıkı, ölçülü;frank|açık sözlü;humble|alçakgönüllü;resilient|dirençli, çabuk toparlanan;sincere|samimi;spontaneous|plansız, içinden geldiği gibi;tactful|ince düşünceli;thin-skinned|alıngan;tight-fisted|cimri;tongue-tied|dili tutulmuş;narrow-minded|dar görüşlü;laid-back|rahat, geniş;highly strung|gergin, sinirli;strong-willed|iradeli;trustworthy|güvenilir;like-minded|aynı kafada;self-centred|bencil;come across as|… izlenimi vermek;click with sb|hemen anlaşmak;get a kick out of sth|-den büyük keyif almak;be nuts about sth|bayılmak;ring a bell|tanıdık gelmek;in a nutshell|kısacası;keep an eye on|göz kulak olmak;have no choice but to|-mekten başka çaresi olmamak;hereditary|kalıtsal;upbringing|yetiştirilme tarzı;trait|özellik;offspring|yavru, çocuklar;predispose|yatkın kılmak;proponent|savunucu;inherit sth from sb|miras almak;perceive|algılamak;grasp|kavramak;deduce|sonuç çıkarmak;contemplate|derin düşünmek;shortcomings|eksiklikler;subtle distinction|ince ayrım;profound influence on|-de derin etki;go-getter|hırslı, girişken kişi;wet blanket|oyunbozan;dark horse|sürpriz yapan, gizli yetenek`],
+u2:['Unit 2',`steer clear of|uzak durmak;in the same boat|aynı durumda;go downhill|kötüye gitmek;take sb for a ride|kandırmak;driving force behind|arkasındaki itici güç;relinquish|bırakmak, vazgeçmek;cease|durmak, sona ermek;loom|belirmek, yaklaşmak;ineffectual|etkisiz;disrupt|aksatmak;breakthrough|çığır açan gelişme;setback|aksilik;outbreak|salgın, patlak verme;outcome|sonuç;outcry|büyük tepki;outlay|harcama, yatırım;outlook|bakış açısı, görünüm;outset|başlangıç;cutback|kesinti;cut back on|kısmak;knock-on effect|zincirleme etki;likelihood|olasılık;debris|enkaz;astound|hayrete düşürmek;brag about|övünmek;defunct|artık var olmayan;be in two minds|kararsız olmak;on balance|her şey göz önüne alındığında;hence|bu yüzden;wipe out|yok etmek;pin sb down|kesin cevap almak;by the skin of one's teeth|kıl payı;cut it fine|son ana bırakmak;faulty|kusurlu;necessitate|gerektirmek;inexcusable|affedilemez;in excess of|-den fazla;vehemently opposed|şiddetle karşı;wildly inaccurate|fazlasıyla yanlış;wholly unjustified|tamamen haksız;vastly overrated|fazlasıyla abartılmış;monetary compensation|maddi tazminat;scarcely|güçlükle, hemen hemen hiç`],
+u3:['Unit 3',`bespoke|kişiye özel;branch out|yeni alana açılmak;break into|(pazara) girmek;spring up|bir anda türemek;pass up|(fırsatı) kaçırmak;win over|ikna edip kazanmak;set up|kurmak;meticulous|titiz;niche market|niş pazar;turnover|ciro;profit margin|kâr marjı;word-of-mouth|kulaktan kulağa;impulse buy|plansız alışveriş;eyesore|göze batan çirkin şey;crave|canı çekmek;relish|keyfini çıkarmak;pride oneself on|-le gurur duymak;confide in sb|sırrını açmak;gullible|saf, kolay kanan;credulous|her şeye inanan;wary|temkinli;shrewd|işbilir, zeki;cunning|kurnaz;devious|dolambaçlı, sinsi;livid|çok öfkeli;bewildered|şaşkın;be taken aback|şaşırıp kalmak;reciprocate|karşılık vermek;infer|çıkarım yapmak;tempt|ayartmak, cezbetmek;meet halfway|orta yolda buluşmak;the bottom line is|işin özü;detrimental|zararlı;impartial|tarafsız;bias|önyargı, yanlılık;fallacy|yanılgı;fall prey to|kurbanı olmak;outweigh|ağır basmak;procrastinate|ertelemek;persevere|sebat etmek;pitfall|olası tuzak;propensity|eğilim;notwithstanding|-e rağmen;versatile|çok yönlü;downturn|düşüş, durgunluk;negate|etkisiz kılmak;take into account|hesaba katmak;contrary to popular belief|sanılanın aksine;put sth aside|kenara ayırmak`],
+u4:['Unit 4',`appetising|iştah açıcı;succulent|sulu, lezzetli;soggy|sulanmış, vıcık;gooey|yapış yapış;greasy|yağlı;mouldy|küflü;scalding|haşlayacak kadar sıcak;tender|yumuşak (et);ravenous|kurt gibi aç;devour|silip süpürmek;binge|aşırıya kaçmak;give in to|boyun eğmek;succumb to temptation|dayanamamak;hunger pangs|açlık sancısı;kick in|etkisini göstermeye başlamak;set in|(kötü bir şey) başlamak;rustle up|çabucak hazırlamak;trigger|tetiklemek;prompt sb to do|-meye sevk etmek;waver|tereddüt etmek;uncanny|tekinsiz, tuhaf;onset|başlangıç;lost cause|kaybedilmiş dava;indulge yourself|kendini şımartmak;contaminate|kirletmek;pesticide|tarım ilacı;safeguard|korumak;withdraw|geri çekmek;breed|yetiştirmek, üremek;bear fruit|meyvesini vermek;play it safe|riske girmemek;lend a helping hand|yardım eli uzatmak;provided that|şartıyla;on condition that|koşuluyla;more often than not|çoğu zaman;deteriorate|kötüleşmek;feasible|uygulanabilir;malnourished|yetersiz beslenmiş;gluttonous|obur;appalling|berbat;culprit|suçlu, sorumlu;indefensible|savunulamaz;become a thing of the past|tarihe karışmak;go by the board|rafa kalkmak;haul sb over the coals|fırça atmak;when all is said and done|sonuçta;get to the root of the problem|sorunun köküne inmek;try your hand at|şansını denemek`],
+m1:['MTR 1–4. hafta',`induce sb to do sth|-meye yöneltmek;plausible explanation|akla yatkın açıklama;mutual respect|karşılıklı saygı;discriminate against|-e karşı ayrımcılık yapmak;imply|ima etmek;in view of|-i göz önünde tutarak;address an issue|sorunu ele almak;fulfil a promise|sözünü yerine getirmek;misinterpret|yanlış yorumlamak;arise from|-den kaynaklanmak;contradict|çelişmek;abruptly|aniden;solely|yalnızca;impose sth on sb|dayatmak;reassure|içini rahatlatmak;discrepancy|tutarsızlık;conceal|gizlemek;counterpart|muadil;reciprocal|karşılıklı;elaborate on|ayrıntılandırmak;shortage|kıtlık;drought|kuraklık;impair|bozmak, zayıflatmak;hazard to|-e tehlike;recur|tekrarlamak;constraint on|kısıtlama;impoverished|yoksullaşmış;diminish|azalmak;foremost|en önde gelen;take measures|önlem almak;attain|ulaşmak, elde etmek;longevity|uzun ömür;inclination to do|eğilim;consistent|tutarlı;affectionate|sevecen;retain|korumak, elde tutmak;tackle|üstesinden gelmek;persist in|ısrar etmek;compulsion|karşı konulmaz dürtü;neglect|ihmal etmek;abstain from|-den uzak durmak;intervene in|müdahale etmek;exaggerate|abartmak;obstruct|engellemek;distort|çarpıtmak;account for|açıklamak;be liable to do|-meye yatkın olmak;peculiar|tuhaf;withdrawal|geri çekilme;prosperity|refah;embark on|-e girişmek;accomplishment|başarı;outspoken|sözünü sakınmayan;denounce|kınamak;enact|yasalaştırmak;envision|tasavvur etmek`],
+m2:['MTR 5–8. hafta',`proficient in|-de yetkin;reckless|pervasız;soar|süzülmek, hızla yükselmek;act accordingly|ona göre davranmak;predetermined|önceden belirlenmiş;urge sb to do|ısrarla teşvik etmek;at sb's disposal|emrinde, kullanımında;undertaking|girişim, üstlenilen iş;submit|teslim etmek;prospect of|ihtimal, beklenti;as regards|-e gelince;apparent|belli, görünürdeki;hint at|ima etmek;bear a resemblance to|-e benzemek;on the verge of|eşiğinde;vanish|ortadan kaybolmak;ultimate goal|nihai hedef;formidable|zorlu, heybetli;prolong|uzatmak;inception|başlangıç, kuruluş;quest for|arayış;censorship|sansür;prohibit sb from doing|yasaklamak;enforce|uygulamak, yaptırmak;justify|haklı çıkarmak;notion|kavram, düşünce;for the sake of|uğruna;antidote to|panzehir;be reliant on|-e bağımlı olmak;come up with|bulmak, ortaya atmak;convince sb of|ikna etmek;improper|uygunsuz;be fed up with|bıkmak;recession|durgunluk;manipulate|yönlendirmek;resist temptation|dayanmak;irresistible|karşı konulmaz;get away with|yanına kâr kalmak;reluctant to do|isteksiz;pursue|peşine düşmek, sürdürmek;assume|varsaymak;bystander|olaya tanık olan kişi;interfere with|engellemek, karışmak;encounter|karşılaşmak;ambiguous|muğlak;foster|teşvik etmek, geliştirmek;prejudiced against|-e karşı önyargılı;vulnerable to|-e karşı savunmasız;be rooted in|kökeni -e dayanmak;instinct|içgüdü;stimulus|uyaran;substitute A for B|B yerine A'yı koymak;distinct from|-den farklı;relieve|hafifletmek;compel sb to do|zorlamak;suppress|bastırmak;illuminate|aydınlatmak;defy|karşı gelmek;deter sb from doing|caydırmak;dweller|sakin, oturan;avid reader|tutkulu okur;stand for|anlamına gelmek;transmit|iletmek;insert into|yerleştirmek;delicate|hassas`]
+};
+Object.keys(D).forEach(k=>D[k][1]=D[k][1].split(';').map(x=>x.split('|')));
+
+/* ---------- exercise renderer ---------- */
+function total(){return Object.values(SETS).reduce((n,s)=>n+s.length,0)}
+function okCount(id){const a=S.ans[id]||{};return Object.values(a).filter(v=>v&&v.ok).length}
+function refresh(){
+  let all=0; Object.keys(SETS).forEach(id=>{const c=okCount(id);all+=c;$$(`[data-score="${id}"]`).forEach(e=>e.textContent=`${c} / ${SETS[id].length}`)});
+  $('#f-p').textContent=`${all} / ${total()}`;
+}
+function record(id,i,v){(S.ans[id]=S.ans[id]||{})[i]=v;save();refresh()}
+function blank(q){return q.replace(/____/g,'<span class="en">______</span>')}
+function renderSet(host){
+  const id=host.dataset.set; host.innerHTML='';
+  SETS[id].forEach((it,i)=>{
+    const st=(S.ans[id]||{})[i];
+    const ex=document.createElement('div'); ex.className='ex';
+    const clue=it.c?` <span class="clue">(${it.c})</span>`:'';
+    ex.innerHTML=`<div class="n">${i+1}</div><div><p class="q">${blank(it.q)}${clue}</p><div class="ctl"></div></div>`;
+    const ctl=$('.ctl',ex);
+    const fb=(ok,html)=>{let f=$('.fb',ex); if(!f){f=document.createElement('div');ex.appendChild(f)} f.className='fb '+(ok===true?'ok':ok===false?'no':''); f.innerHTML=html};
+    const why=it.w?`<span class="why">${it.w}</span>`:'';
+    if(it.t==='m'){
+      ctl.className='ctl opts';
+      const show=ch=>{$$('.opt',ctl).forEach((b,j)=>{b.disabled=true; if(j===it.a)b.classList.add('ok'); else if(j===ch)b.classList.add('no')}); fb(ch===it.a,(ch===it.a?'Doğru.':'Yanlış.')+why)};
+      it.o.forEach((o,j)=>{const b=document.createElement('button');b.className='opt';b.type='button';b.textContent=o;b.onclick=()=>{record(id,i,{ch:j,ok:j===it.a});show(j)};ctl.appendChild(b)});
+      if(st) show(st.ch);
+    }else if(it.t==='f'){
+      ctl.className='ctl row';
+      ctl.innerHTML=`<input type="text" id="${id}-${i}" aria-label="Cevap" autocomplete="off" autocapitalize="off" spellcheck="false"><button class="btn" type="button">Kontrol et</button><button class="btn ghost" type="button">Cevabı göster</button>`;
+      const inp=$('input',ctl),[chk,rev]=$$('button',ctl);
+      const check=()=>{const v=norm(inp.value); if(!v)return; const ok=it.a.some(a=>norm(a)===v); record(id,i,{v:inp.value,ok}); fb(ok,ok?'Doğru.'+why:`Olmadı. Bir daha dene ya da cevabı aç.`)};
+      chk.onclick=check; inp.onkeydown=e=>{if(e.key==='Enter')check()};
+      rev.onclick=()=>{fb(null,`<span class="ans">${it.a.join(' / ')}</span>${why}`)};
+      if(st){inp.value=st.v||''; if(st.ok) fb(true,'Doğru.'+why)}
+    }else{
+      ctl.innerHTML=`<textarea id="${id}-${i}" aria-label="Cevabın" spellcheck="false"></textarea><div class="row" style="margin-top:6px"><button class="btn" type="button">Cevabı göster</button></div>`;
+      const ta=$('textarea',ctl),btn=$('button',ctl);
+      const reveal=()=>{fb((S.ans[id]||{})[i]?.ok??null,`<span class="ans">${it.a}</span>${why}<span class="row" style="margin-top:8px"><button class="btn ghost" data-y type="button">Tuttu</button><button class="btn ghost" data-n type="button">Tutmadı</button></span>`);
+        $('[data-y]',ex).onclick=()=>{record(id,i,{v:ta.value,ok:true});reveal()}; $('[data-n]',ex).onclick=()=>{record(id,i,{v:ta.value,ok:false});reveal()}};
+      btn.onclick=reveal; ta.oninput=()=>{const o=(S.ans[id]||{})[i]||{}; (S.ans[id]=S.ans[id]||{})[i]=Object.assign(o,{v:ta.value}); save()};
+      if(st){ta.value=st.v||''; if(st.ok!==undefined) reveal()}
+    }
+    host.appendChild(ex);
+  });
+}
+
+/* ---------- build grammar ---------- */
+const gram=$('#gram'), gchips=$('#gchips');
+G.forEach(([id,title,src,rule])=>{
+  const s=document.createElement('div'); s.className='sheet'; s.id='t-'+id;
+  s.innerHTML=`<div class="eyebrow">${src}</div><h3>${title} <span class="score" data-score="${id}"></span></h3>${rule}<h4>Alıştırma</h4><div data-set="${id}"></div>`;
+  gram.appendChild(s);
+  const c=document.createElement('button'); c.className='chip'; c.type='button'; c.textContent=title; c.onclick=()=>s.scrollIntoView({block:'start'}); gchips.appendChild(c);
+});
+$$('[data-set]').forEach(renderSet);
+
+/* ---------- flashcards ---------- */
+let fi=0, flipped=false, queue=[];
+function deckWords(){return D[S.deck][1]}
+function buildQueue(){const k=S.known[S.deck]||{}; queue=deckWords().map((_,i)=>i).filter(i=>!k[i]); if(!queue.length) queue=deckWords().map((_,i)=>i); fi=0; flipped=false}
+function drawCard(){
+  const w=deckWords(), k=S.known[S.deck]||{}, n=Object.keys(k).filter(x=>k[x]).length;
+  const [en,tr]=w[queue[fi]];
+  $('#card').innerHTML=`<div class="w">${en}</div>`+(flipped?`<div class="t">${tr}</div>`:`<div class="hint">anlamı görmek için dokun</div>`);
+  $('#fcpos').textContent=`${D[S.deck][0]} · kalan ${queue.length}`;
+  $('#fcknown').textContent=`${n} / ${w.length} biliniyor`;
+  $('#fcbar').style.width=(100*n/w.length)+'%';
+  $('#wl').innerHTML=w.map(([a,b])=>`<li><b>${a}</b> <span>${b}</span></li>`).join('');
+}
+function nextCard(known){
+  const idx=queue[fi]; S.known[S.deck]=S.known[S.deck]||{};
+  if(known){S.known[S.deck][idx]=1; queue.splice(fi,1)} else {S.known[S.deck][idx]=0; queue.push(queue.splice(fi,1)[0])}
+  save(); if(!queue.length) buildQueue(); if(fi>=queue.length) fi=0; flipped=false; drawCard();
+}
+Object.keys(D).forEach(k=>{const b=document.createElement('button');b.className='chip';b.type='button';b.textContent=D[k][0];b.dataset.k=k;b.onclick=()=>{S.deck=k;save();buildQueue();paintDecks();drawCard()};$('#decks').appendChild(b)});
+function paintDecks(){$$('#decks .chip').forEach(b=>b.classList.toggle('on',b.dataset.k===S.deck))}
+if(!D[S.deck]) S.deck='u1';
+$('#card').onclick=()=>{flipped=!flipped;drawCard()};
+$('#card').onkeydown=e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();flipped=!flipped;drawCard()}};
+$('#fc-know').onclick=()=>nextCard(true); $('#fc-again').onclick=()=>nextCard(false);
+$('#fc-list').onclick=e=>{const l=$('#wl');l.hidden=!l.hidden;e.target.textContent=l.hidden?'Tüm listeyi göster':'Listeyi gizle'};
+buildQueue(); paintDecks(); drawCard();
+
+/* ---------- plan ---------- */
+const PLAN=[
+ ['Cmt','14 Kas',0,['Gramer: Tenses, Noun clauses, Relative clauses','Kelime: Unit 1 ve Unit 2 kartları, VP1','Yazma sekmesindeki örnek paragrafı incele, iskeleti ezberle']],
+ ['Paz','15 Kas',0,['Gramer: Passive, Inversion, Cleft','Kelime: Unit 3 kartları + “A. Doğru kelimeyi seç”','İlk paragrafını yaz (private vs public universities)','MTR 107 ve 109 metinlerini oku']],
+ ['Pzt','16 Kas',0,['Sınıfta MT Revision HO: cevaplarını son sekmeyle karşılaştır','Gramer: Conditionals, Wish, Karışık','Kelime: Unit 4 + MTR 1–4. hafta, kelime türetme seti']],
+ ['Sal','17 Kas',0,['Sınıfta Q&A: takıldığın yeniden yazma sorularını sor','İkinci ve üçüncü paragrafı süre tutarak yaz','Compare/contrast tablosunu ve noktalama kurallarını tekrar et','Kelime: MTR 5–8. hafta, edat seti']],
+ ['Çar','18 Kas',1,['MT1B · Writing','Akşam: Revision HO dinleme kayıtları, okuma deneme metni','Yanlış yaptığın gramer sorularını yeniden çöz, bilmediğin kartları çevir']],
+ ['Per','19 Kas',1,['MT1A · Listening, Language, Vocabulary, Reading']]
+];
+$('#plan').innerHTML=PLAN.map(([d,dt,ex,items],i)=>`<div class="day${ex?' exam':''}"><div class="d"><b>${d}</b>${dt}</div><ul class="todo">${items.map((t,j)=>`<li><label><input type="checkbox" id="p-${i}-${j}" ${S.plan[i+'-'+j]?'checked':''}><span>${t}${ex&&j===0?'<span class="tag">sınav</span>':''}</span></label></li>`).join('')}</ul></div>`).join('');
+$('#plan').onchange=e=>{S.plan[e.target.id.slice(2)]=e.target.checked;save()};
+
+/* ---------- writing ---------- */
+const PROMPTS=[
+ 'What are the differences between private and public universities? Discuss two points of contrast.',
+ 'What are the similarities between high school and university life? Discuss two points of comparison.',
+ 'Is it better to study alone or with a group of friends? Give your opinion and support it with two points of contrast.',
+ 'What are the differences between living in a dormitory and living in a shared flat? Discuss two points of contrast.',
+ 'What are two main negative effects of procrastination on university students?',
+ 'Is shopping online better than shopping in physical stores? Give your opinion and support it with two points of contrast.'
+];
+PROMPTS.forEach((p,i)=>{const b=document.createElement('button');b.className='chip';b.type='button';b.textContent='Soru '+(i+1)+(i<3?' · WHO 4':'');b.onclick=()=>{S.prompt=i;save();paintPrompt()};$('#prompts').appendChild(b)});
+function paintPrompt(){$$('#prompts .chip').forEach((b,i)=>b.classList.toggle('on',i===S.prompt));$('#prompt').textContent=PROMPTS[S.prompt]||PROMPTS[0]}
+paintPrompt();
+const essay=$('#essay'),outline=$('#outline'); essay.value=S.essay||''; outline.value=S.outline||'';
+const wc=()=>{const n=(essay.value.trim().match(/\S+/g)||[]).length;$('#wcount').textContent=`${n} kelime · hedef ≈ 220`;$('#wcount').style.color=n>=200?'var(--good)':''};
+essay.oninput=()=>{S.essay=essay.value;save();wc()}; outline.oninput=()=>{S.outline=outline.value;save()}; wc();
+$('#copy').onclick=async e=>{try{await navigator.clipboard.writeText(`${PROMPTS[S.prompt]}\n\n${essay.value}`);e.target.textContent='Kopyalandı'}catch(_){essay.select();e.target.textContent='Seçildi, Ctrl/Cmd+C'} setTimeout(()=>e.target.textContent='Metni kopyala',1800)};
+const WC=['Soruyu tam olarak cevapladım (fark istendiyse fark, benzerlik istendiyse benzerlik).','Topic sentence konuyu ve iki noktayı haber veriyor.','İki ayrı major var ve her birinin en az iki minor desteği var.','Her major\'da hem A\'yı hem B\'yi anlattım.','En az üç farklı karşılaştırma kalıbı kullandım (whereas, unlike, in contrast …).','Bir relative clause, bir concession ve bir “, which” cümlesi var.','However / whereas / but noktalamasını kontrol ettim.','Özne-fiil uyumu, fragment ve run-on taraması yaptım.','Concluding sentence var ve yeni fikir içermiyor.','Zamirler tutarlı, gayriresmî ifade yok, 200 kelimenin üstündeyim.'];
+$('#wcheck').innerHTML=WC.map((t,i)=>`<li><label><input type="checkbox" id="w-${i}" ${S.wc[i]?'checked':''}><span>${t}</span></label></li>`).join('');
+$('#wcheck').onchange=e=>{S.wc[e.target.id.slice(2)]=e.target.checked;save()};
+
+/* ---------- revision HO key ---------- */
+const KEYS=[
+['II. Language · A · Two Wheels Instead of Four',`1 took · 2 had never ridden · 3 has proved · 4a opened · 4b has risen / has been rising · 5 are cycling · 6 had been complaining · 7 are always complaining · 8 is completed / has been completed · 9 will have built · 10 will have been running · 11 will be using · 12 will still be cycling · 13 will you be using / are you going to use`],
+['II. Language · A · The Missing Painting',`1 was stolen · 2 was not discovered · 3 had been left · 4 were being repaired · 5 to have entered · 6 to be · 7 have been questioned · 8 has been arrested · 9 having been told / being told · 10 had been working · 11 had installed · 12 installed · 13 to be found · 14 will have been replaced · 15 is estimated`],
+['II. Language · B · Working from Home',`1 c (What) · 2 b (No sooner) · 3 b (did employees save) · 4 c (whose) · 5 c (which) · 6 a (whether) · 7 d (whatever) · 8 c (Should) · 9 d (But for) · 10 a (it was) · 11 b (as long as) · 12 c (would stop) · 13 d (Had)`],
+['II. Language · C · The World’s Oldest Computer',`1 c (were diving) · 2 a (was a strange object) · 3 c (Little) · 4 b (how the device worked) · 5 b (is thought to have been built) · 6 c (it was only) · 7 d (had been designed) · 8 a (Only when) · 9 b (had) · 10 d (which) · 11 b (Even if)`],
+['II. Language · D · One word only',`1 for · 2 so · 3 What · 4 which · 5 whether / if · 6 only · 7 Had · 8 would · 9 Unless · 10 that`],
+['II. Language · E · Rewrite',`<ol>
+<li>Never before have I seen such a beautiful sunset.</li>
+<li>Hardly had we sat down at the table when the lights went out.</li>
+<li>Under no circumstances must passengers leave their luggage unattended.</li>
+<li>Not until the doctor explained it to us did we realise how serious the problem was.</li>
+<li>What annoys me most is the noise from the building site next door.</li>
+<li>What she did was lose her temper in the middle of the meeting.</li>
+<li>It was my brother who/that broke the window, not my sister.</li>
+<li>The old castle on the hill is said to be haunted.</li>
+<li>The fire is believed to have started in the kitchen.</li>
+<li>The roof will have been repaired by the time winter starts.</li>
+<li>I am going to have my car serviced (by a mechanic) tomorrow.</li>
+<li>If I had brought my umbrella this morning, I wouldn't be completely wet now.</li>
+<li>If he were more organised, he wouldn't have missed the deadline last week.</li>
+<li>I wish I had studied harder for the exam last week.</li>
+<li>But for your help, I couldn't have finished this project on time.</li>
+<li>Should you (happen to) see Ahmet, tell him to call me.</li>
+<li>The more you exercise, the healthier you will feel.</li>
+<li>The government's decision to reduce taxes surprised everyone.</li>
+<li>By 2026, Ayşe will have been teaching for (exactly) ten years.</li></ol>`],
+['II. Language · F · Relative clauses',`<ol>
+<li>The scientist whose research changed the way cancer is treated won the Nobel Prize.</li>
+<li>The train was delayed for three hours, which meant that we missed our connecting flight.</li>
+<li>My grandmother, who was born in İzmir, has lived in Ankara for over fifty years.</li>
+<li>This is the café where we first met.</li>
+<li>The Eiffel Tower, which was built in 1889, attracts millions of tourists every year.</li>
+<li>The book I borrowed from the library is on the kitchen table.</li></ol>`],
+['III. Vocabulary · A · Are We All Addicted to Our Screens?',`1 compulsion · 2 neglect · 3 vulnerable · 4 detrimental · 5 deteriorate · 6 reluctant · 7 address · 8 impose · 9 feasible · 10 ultimate`],
+['III. Vocabulary · B · Word formation',`1 contradiction · 2 assumption · 3 prosperity · 4 affection · 5 exaggerating · 6 prohibited · 7 persistence · 8 accomplishment · 9 unconvincing · 10 intervention`],
+['IV. Reading · Text I · The Beauty of Broken Things',`<ol>
+<li>the cracks</li><li>(mass-produced) ceramics decorated with imitation gold lines</li><li>concealing</li><li>uniformity</li><li>b</li>
+<li>bears the visible marks</li>
+<li>They miss the point: the value of kintsugi lies in the story of damage and recovery, not in the gold itself.</li>
+<li>by ugly metal staples</li>
+<li>İkisi yeter: leave a fingerprint pressed into the clay · allow a rim to curve unevenly · leave a surface rough and unglazed</li>
+<li>perfection belongs to God alone</li>
+<li>Perfectionists may abandon projects before completing them or be unable to take pride in what they have achieved.</li></ol>`],
+['IV. Reading · Text II · The Silent Extinction',`<p><b>A.</b> 1 a language (that is enshrined in law or granted privileged status in schools) · 2 English having spread far beyond Britain's borders, yani dünyada yaygın dil konumu · 3 contend · 4 plummeted</p><p><b>B.</b> 1 c (III) · 2 a · 3 b · 4 c · 5 a · 6 b · 7 a</p>`]
+];
+$('#key').innerHTML=KEYS.map(([h,b])=>`<div class="sheet plain"><h4 style="margin-top:0">${h}</h4><div class="en" style="line-height:1.8">${b}</div></div>`).join('');
+
+/* ---------- header facts, routing, reset ---------- */
+(function(){const d=x=>Math.ceil((new Date(x)-new Date())/864e5); const w=d('2026-11-18T09:00:00+03:00'), m=d('2026-11-19T09:00:00+03:00');
+  if(w>0) $('#f-w').textContent=`Çar 18 Kas · ${w} gün`; if(m>0) $('#f-m').textContent=`Per 19 Kas · ${m} gün`})();
+const VIEWS=['plan','gramer','kelime','okuma','dinleme','yazma','anahtar'];
+function route(){let h=location.hash.slice(1); if(!VIEWS.includes(h)) h='plan';
+  $$('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+h)); $$('nav.tabs a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+h)); window.scrollTo(0,0)}
+window.addEventListener('hashchange',route); route(); refresh();
+let armed=false; $('#reset').onclick=e=>{if(!armed){armed=true;e.target.textContent='Emin misin? Tekrar tıkla';setTimeout(()=>{armed=false;e.target.textContent='İlerlemeyi sıfırla'},3000);return}
+  try{localStorage.removeItem(KEY)}catch(_){} location.reload()};
+</script>
+</body>
+</html>
