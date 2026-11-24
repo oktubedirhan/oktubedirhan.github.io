@@ -1,0 +1,15 @@
+{
+  "name": "Poker Okulu",
+  "order": 6,
+  "description": "Hiç bilmeyen birine Texas Hold'em'i 11 seviyede öğreten uygulama: kartları tanımaktan final turnuvasına kadar dersler, alıştırmalar, her kararı açıklayan bir koç ve farklı tarzda oynayan beş bot.",
+  "description_en": "An app that teaches Texas Hold'em from zero in 11 levels: from learning the cards to a final tournament, with lessons, drills, a coach that explains every decision and five bots that each play a different style.",
+  "tags": [
+    "JavaScript",
+    "PWA"
+  ],
+  "detay": "Kartlar gerçek bir 52'lik desteden, yakma kartlarıyla dağıtılıyor; bu yüzden out ve olasılık sayımı gerçek. Sayma Antrenmanı modunda deste eller arasında karılmıyor, görülen kartlar 4×13'lük bir panelde takip ediliyor.",
+  "detay_en": "Cards come from a real 52-card deck, burn cards included, so counting outs and odds is real. In Counting Practice mode the deck isn't reshuffled between hands and every card you've seen is tracked on a 4×13 grid.",
+  "gorsel": "karistirma",
+  "url": "/poker/",
+  "repo": "https://github.com/oktubedirhan/poker"
+}
